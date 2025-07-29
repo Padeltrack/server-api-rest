@@ -1,0 +1,77 @@
+{
+  "/user/all": {
+    "get": {
+      "summary": "Obtener todos los usuarios",
+      "tags": ["Users"],
+      "security": [{ "bearerAuth": [] }],
+      "parameters": [
+        {
+          "name": "page",
+          "in": "query",
+          "required": false,
+          "schema": { "type": "integer", "default": 1 }
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "required": false,
+          "schema": { "type": "integer", "default": 10 }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Lista paginada de usuarios",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "users": {
+                    "type": "array",
+                    "items": { "$ref": "#/components/schemas/User" }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "401": { "description": "No autorizado" },
+        "403": { "description": "Acceso denegado" }
+      }
+    }
+  },
+
+  "/user/me": {
+    "get": {
+      "summary": "Obtener información del usuario actual",
+      "tags": ["Users"],
+      "security": [{ "bearerAuth": [] }],
+      "responses": {
+        "200": {
+          "description": "Usuario actual",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "user": { "$ref": "#/components/schemas/User" }
+                }
+              }
+            }
+          }
+        },
+        "401": { "description": "No autorizado" }
+      }
+    },
+
+    "delete": {
+      "summary": "Eliminar la cuenta del usuario actual",
+      "tags": ["Users"],
+      "security": [{ "bearerAuth": [] }],
+      "responses": {
+        "200": { "description": "Usuario eliminado exitosamente" },
+        "401": { "description": "No autorizado" }
+      }
+    }
+  }
+}

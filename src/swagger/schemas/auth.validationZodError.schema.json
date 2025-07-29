@@ -1,0 +1,52 @@
+{
+  "UserRole": {
+    "type": "object",
+    "properties": {
+      "role": {
+        "type": "string",
+        "enum": ["Student", "Coach"],
+        "example": "Coach"
+      }
+    },
+    "required": ["role"]
+  },
+  "UserRoleError": {
+    "type": "object",
+    "properties": {
+      "issues": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "received": {
+              "type": "string",
+              "example": "Coacfh"
+            },
+            "code": {
+              "type": "string",
+              "example": "invalid_enum_value"
+            },
+            "options": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "example": ["Student", "Coach"]
+            },
+            "path": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "example": ["role"]
+            },
+            "message": {
+              "type": "string",
+              "example": "Invalid enum value. Expected 'Student' | 'Coach', received 'Coacfh'"
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "User": {
+    "type": "object",
+    "properties": {
+      "_id": {
+        "type": "string",
+        "example": "86ef465wf4665wef46we"
+      },
+      "displayName": {
+        "type": "string",
+        "example": "Juan Pérez"
+      },
+      "email": {
+        "type": "string",
+        "example": "juan@email.com"
+      },
+      "photo": {
+        "type": "string",
+        "example": "https://photo.url/avatar.jpg"
+      },
+      "role": {
+        "type": "string",
+        "enum": ["SuperAdmin", "Admin", "Student", "Coach"],
+        "example": "Student"
+      },
+      "numberPhone": {
+        "type": "string",
+        "example": "+593999999999"
+      },
+      "birthdate": {
+        "type": "string",
+        "example": "2020-07-21"
+      }
+    }
+  }
+}

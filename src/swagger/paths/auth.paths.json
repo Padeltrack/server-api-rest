@@ -1,0 +1,162 @@
+{
+  "/api/auth/register": {
+    "post": {
+      "summary": "Register user with Google",
+      "tags": ["Auth"],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "idToken": {
+                  "type": "string"
+                },
+                "userName": {
+                  "type": "string",
+                  "example": "John Doe#989"
+                },
+                "gender": {
+                  "type": "string",
+                  "example": "Man / Woman"
+                },
+                "role": {
+                  "type": "string",
+                  "example": "Student / Coach"
+                }
+              }
+            }
+          }
+        }
+      },
+      "responses": {
+        "401": {
+          "description": "Usuario ya registrado",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "message": { "type": "String", "example": "User already exists" },
+                  "isRegister": { "type": "Boolean", "example": true }
+                }
+              }
+            }
+          }
+        },
+        "201": {
+          "description": "Usuario registrado",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "message": { "type": "String", "example": "Register successful" },
+                  "user": { "$ref": "#/components/schemas/User" }
+                }
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Error de validación de entrada",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "message": { "type": "String", "example": "Error de validación" },
+                  "issues": {
+                    "type": "array",
+                    "items": { "$ref": "#/components/schemas/UserRoleError" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/api/auth/login": {
+    "post": {
+      "summary": "Login con Google",
+      "tags": ["Auth"],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "idToken": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Usuario autenticado",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "message": { "type": "String", "example": "Login successful" },
+                  "user": { "$ref": "#/components/schemas/User" }
+                }
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Usuario no encontrado",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "message": { "type": "String", "example": "User not found" }
+                }
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "No autorizado por Firebase",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "message": { "type": "String", "example": "Unauthorized" }
+                }
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Error de validación de entrada",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "message": { "type": "String", "example": "Error de validación" },
+                  "issues": {
+                    "type": "array",
+                    "items": { "$ref": "#/components/schemas/UserRoleError" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

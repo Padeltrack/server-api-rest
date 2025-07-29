@@ -1,0 +1,155 @@
+{
+  "/api/vimeo/videos": {
+    "get": {
+      "summary": "Obtener videos desde Vimeo",
+      "tags": ["Vimeo"],
+      "parameters": [
+        {
+          "name": "page",
+          "in": "query",
+          "required": false,
+          "schema": { "type": "integer", "default": 1 }
+        },
+        {
+          "name": "perPage",
+          "in": "query",
+          "required": false,
+          "schema": { "type": "integer", "default": 10 }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Lista de videos obtenida exitosamente",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "data": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/VimeoVideo"
+                    }
+                  },
+                  "total": { "type": "integer", "example": 150 },
+                  "page": { "type": "integer", "example": 1 },
+                  "per_page": { "type": "integer", "example": 10 }
+                }
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Error al obtener los videos"
+        }
+      }
+    }
+  },
+
+  "/api/vimeo/videos/free": {
+    "get": {
+      "summary": "Obtener videos gratuitos desde Vimeo",
+      "tags": ["Vimeo"],
+      "parameters": [
+        {
+          "name": "page",
+          "in": "query",
+          "required": false,
+          "schema": { "type": "integer", "default": 1 }
+        },
+        {
+          "name": "perPage",
+          "in": "query",
+          "required": false,
+          "schema": { "type": "integer", "default": 10 }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Lista de videos obtenida exitosamente",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "data": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/VimeoVideo"
+                    }
+                  },
+                  "total": { "type": "integer", "example": 150 },
+                  "page": { "type": "integer", "example": 1 },
+                  "per_page": { "type": "integer", "example": 10 }
+                }
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Error al obtener los videos"
+        }
+      }
+    }
+  },
+
+  "/api/vimeo/upload": {
+    "post": {
+      "summary": "Subir un video a Vimeo",
+      "tags": ["Vimeo"],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "multipart/form-data": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "video": {
+                  "type": "string",
+                  "format": "binary"
+                },
+                "name": {
+                  "type": "string",
+                  "example": "Nombre del video"
+                },
+                "description": {
+                  "type": "string",
+                  "example": "Descripción opcional"
+                }
+              },
+              "required": ["video"]
+            }
+          }
+        }
+      },
+      "responses": {
+        "201": {
+          "description": "Video subido correctamente",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "uri": {
+                    "type": "string",
+                    "example": "/videos/987654321"
+                  },
+                  "link": {
+                    "type": "string",
+                    "example": "https://vimeo.com/987654321"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Archivo no válido o faltante"
+        },
+        "500": {
+          "description": "Error al subir el video"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,159 @@
+{
+  "VimeoVideo": {
+    "type": "object",
+    "properties": {
+      "uri": {
+        "type": "string",
+        "example": "/videos/123456789"
+      },
+      "name": {
+        "type": "string",
+        "example": "Entrenamiento técnico #1"
+      },
+      "description": {
+        "type": "string",
+        "example": "Sesión de entrenamiento para mejorar técnica"
+      },
+      "duration": {
+        "type": "integer",
+        "example": 360
+      },
+      "width": {
+        "type": "integer",
+        "example": 1920
+      },
+      "height": {
+        "type": "integer",
+        "example": 1080
+      },
+      "created_time": {
+        "type": "string",
+        "format": "date-time",
+        "example": "2024-07-07T12:00:00Z"
+      },
+      "modified_time": {
+        "type": "string",
+        "format": "date-time",
+        "example": "2024-07-08T12:00:00Z"
+      },
+      "release_time": {
+        "type": "string",
+        "format": "date-time",
+        "example": "2024-07-09T12:00:00Z"
+      },
+      "link": {
+        "type": "string",
+        "example": "https://vimeo.com/123456789"
+      },
+      "pictures": {
+        "type": "object",
+        "properties": {
+          "uri": {
+            "type": "string",
+            "example": "/videos/123456789/pictures/987654321"
+          },
+          "active": {
+            "type": "boolean",
+            "example": true
+          },
+          "type": {
+            "type": "string",
+            "example": "custom"
+          },
+          "sizes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "width": {
+                  "type": "integer",
+                  "example": 640
+                },
+                "height": {
+                  "type": "integer",
+                  "example": 360
+                },
+                "link": {
+                  "type": "string",
+                  "example": "https://i.vimeocdn.com/video/987654321_640x360.jpg"
+                }
+              }
+            }
+          }
+        }
+      },
+      "privacy": {
+        "type": "object",
+        "properties": {
+          "view": {
+            "type": "string",
+            "example": "anybody"
+          }
+        }
+      },
+      "user": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Usuario Vimeo"
+          },
+          "link": {
+            "type": "string",
+            "example": "https://vimeo.com/user123456"
+          },
+          "pictures": {
+            "type": "object",
+            "properties": {
+              "uri": {
+                "type": "string",
+                "example": "/users/123456/pictures/999999999"
+              },
+              "sizes": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "width": {
+                      "type": "integer",
+                      "example": 100
+                    },
+                    "height": {
+                      "type": "integer",
+                      "example": 100
+                    },
+                    "link": {
+                      "type": "string",
+                      "example": "https://i.vimeocdn.com/portrait/999999999_100x100"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "tags": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "example": "entrenamiento"
+            }
+          }
+        }
+      },
+      "stats": {
+        "type": "object",
+        "properties": {
+          "plays": {
+            "type": "integer",
+            "example": 120
+          }
+        }
+      }
+    }
+  }
+}

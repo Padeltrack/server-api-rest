@@ -1,0 +1,45 @@
+{
+  "/api/plans": {
+    "post": {
+      "summary": "Crear un plan",
+      "tags": ["Plans"],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Plan"
+            }
+          }
+        }
+      },
+      "responses": {
+        "201": {
+          "description": "Plan creado",
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Plan" }
+            }
+          }
+        }
+      }
+    },
+    "get": {
+      "summary": "Listar todos los planes",
+      "tags": ["Plans"],
+      "responses": {
+        "200": {
+          "description": "Lista de planes",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": { "$ref": "#/components/schemas/Plan" }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

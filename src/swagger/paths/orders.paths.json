@@ -1,0 +1,111 @@
+{
+  "/api/orders": {
+    "post": {
+      "summary": "Crear nueva orden",
+      "tags": ["Orders"],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Order"
+            },
+            "example": {
+              "userId": "firebase-uid-001",
+              "planId": "plan-001",
+              "paymentProof": "https://example.com/proof.png"
+            }
+          }
+        }
+      },
+      "responses": {
+        "201": {
+          "description": "Orden creada correctamente",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Order"
+              }
+            }
+          }
+        },
+        "400": { "description": "Error de validación" },
+        "500": { "description": "Error interno del servidor" }
+      }
+    }
+  },
+  "/api/orders/{userId}": {
+    "get": {
+      "summary": "Obtener órdenes por usuario",
+      "tags": ["Orders"],
+      "parameters": [
+        {
+          "name": "userId",
+          "in": "path",
+          "required": true,
+          "schema": { "type": "string" }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Lista de órdenes",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": { "$ref": "#/components/schemas/Order" }
+              }
+            }
+          }
+        },
+        "500": { "description": "Error al obtener órdenes" }
+      }
+    }
+  },
+  "/api/orders/{id}": {
+    "patch": {
+      "summary": "Actualizar estado de la orden",
+      "tags": ["Orders"],
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": { "type": "string" }
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "enum": ["pending", "approved", "rejected"]
+                }
+              },
+              "required": ["status"]
+            },
+            "example": {
+              "status": "approved"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Estado actualizado",
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Order" }
+            }
+          }
+        },
+        "404": { "description": "Orden no encontrada" },
+        "500": { "description": "Error al actualizar" }
+      }
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "Order": {
+    "type": "object",
+    "properties": {
+      "_id": { "type": "string", "example": "64e4b123f4b7cabc12345678" },
+      "userId": { "type": "string", "example": "firebase-uid-001" },
+      "planId": { "type": "string", "example": "plan-001" },
+      "status": {
+        "type": "string",
+        "enum": ["pending", "approved", "rejected"],
+        "example": "pending"
+      },
+      "paymentProof": {
+        "type": "string",
+        "example": "https://miservidor.com/comprobantes/imagen123.png"
+      },
+      "createdAt": { "type": "string", "format": "date-time" },
+      "updatedAt": { "type": "string", "format": "date-time" }
+    }
+  }
+}
