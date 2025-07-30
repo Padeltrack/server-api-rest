@@ -1,4 +1,8 @@
 import { vimeoClient } from '../../config/vimeo.config';
+import { promisify } from 'util';
+import fs from 'fs';
+
+const unlinkAsync = promisify(fs.unlink);
 
 export const uploadVideoToVimeo = (options: {
   filePath: string;
@@ -16,8 +20,9 @@ export const uploadVideoToVimeo = (options: {
           view: 'unlisted',
         },
       },
-      function (uri) {
+      async function (uri) {
         console.log(`✅ Video uploaded successfully: ${uri}`);
+        await unlinkAsync(filePath);
 
         if (folderId) {
           const videoId = uri.split('/').pop();

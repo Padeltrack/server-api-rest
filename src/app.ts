@@ -2,6 +2,8 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import LoggerColor from 'node-color-log';
+import fs from 'fs';
+import path from 'path';
 
 import vimeoRoutes from './routes/vimeo.route';
 import planRoutes from './routes/plan.route';
@@ -17,6 +19,11 @@ import { logger } from './middleware/logger.middleware';
 
 const { swaggerDocument } = require('./swagger');
 const swaggerUi = require('swagger-ui-express');
+
+const uploadDir = path.join('uploads');
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir);
+}
 
 dotenv.config();
 initializeFirebase();
