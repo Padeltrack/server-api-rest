@@ -9,7 +9,7 @@ export const uploadVideoToFolderVimeo = async (req: Request, res: Response) => {
   req.logger.info({ status: 'start' });
 
   try {
-    const { folderId } = uploadVideoToFolderVimeoSchemaZod.parse(req.body);
+    const { folderId, name, description, isPrivate } = uploadVideoToFolderVimeoSchemaZod.parse(req.body);
     const filePath = req.file?.path;
 
     if (!filePath) {
@@ -17,9 +17,13 @@ export const uploadVideoToFolderVimeo = async (req: Request, res: Response) => {
     }
 
     const result = await uploadVideoToVimeo({
-      filePath,
-      fileName: req.file?.originalname || 'Uju de video',
+      video: {
+        filePath,
+        name: name || req.file?.originalname || `Video subido desde la plataforma ${new Date().toISOString()}`,
+        description
+      },
       folderId,
+      isPrivate
     });
 
     res.status(200).json({

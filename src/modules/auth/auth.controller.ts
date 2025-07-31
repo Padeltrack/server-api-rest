@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import qrCode from 'qrcode';
 import speakeasy from 'speakeasy';
 import { ObjectId } from 'mongodb';
 import { SelectRoleModel, UserMongoModel } from '../user/user.model';
@@ -9,6 +8,8 @@ import { ZodError } from 'zod';
 import { generateAuthToken } from './auth.helper';
 import { generateUniqueUserName } from '../user/user.helper';
 import { validateOnboardingAnswers } from '../onboarding/onboarding.helper';
+import { selectAuthStrategy } from './strategies';
+import { HOST_ADMINS } from '../../shared/util/url.util';
 
 export const registerUserWithGoogle = async (req: Request, res: Response) => {
   req.logger = req.logger.child({ service: 'auth', serviceHandler: 'registerUserWithGoogle' });
@@ -93,11 +94,16 @@ export const loginWithGoogle = async (req: Request, res: Response) => {
   try {
     const { idToken } = GoogleLoginSchemaZod.parse(req.body);
     const { email } = await verifyIdFirebaseTokenGoogle(idToken);
+    const origin = req.headers['origin'] || '';
+    let isPanelAdmin = false;
+
+    if (HOST_ADMINS.includes(origin)) {
+      isPanelAdmin = true;
+    }
 
     if (!email) {
       return res.status(404).json({
         message: 'User not found',
-        isRegister: true,
       });
     }
 
@@ -106,52 +112,14 @@ export const loginWithGoogle = async (req: Request, res: Response) => {
     if (!getUser) {
       return res.status(404).json({
         message: 'User not found',
+        isRegister: false,
       });
     }
 
-    if ([SelectRoleModel.Admin, SelectRoleModel.SuperAdmin].includes(getUser.role as any)) {
-      if (!getUser.mfaSecret) {
-        const secret = speakeasy.generateSecret({
-          name: `Padel Track | ${getUser.email} | ${process.env.NODE_ENV}`,
-        }) as any;
+    const authStrategy = selectAuthStrategy(getUser.role);
+    const responseAuthStrategy = await authStrategy({ data: { user: getUser, isPanelAdmin }, res });
 
-        if (secret) {
-          const twoFaUrlQr = await qrCode.toDataURL(secret.otpauth_url);
-          console.log('getUser ', getUser, secret.base32);
-          await UserMongoModel.updateOne(
-            { _id: getUser._id },
-            { $set: { mfaSecret: secret.base32 } },
-          );
-
-          return res.status(200).json({
-            message: 'Verified admin',
-            mfaRequired: true,
-            twoFaUrlQr,
-          });
-        } else {
-          return res.status(200).json({
-            message: 'Verified admin',
-            mfaRequired: true,
-          });
-        }
-      }
-
-      return res.status(200).json({
-        message: 'Verified admin',
-        mfaRequired: true,
-      });
-    }
-
-    const me = {
-      user: getUser,
-      token: generateAuthToken({ _id: getUser._id }),
-      refreshToken: generateAuthToken({ _id: getUser._id }),
-    };
-
-    return res.status(200).json({
-      message: 'Login successful',
-      me,
-    });
+    return responseAuthStrategy;
   } catch (error) {
     if (error instanceof ZodError) {
       return res.status(400).json({

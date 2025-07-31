@@ -1,0 +1,14 @@
+// URLS
+const HOST_CLIENT_ADMIN_LOCAL = 'http://localhost:5173';
+export const HOST_CLIENT_ADMIN_PROD = '';
+export const HOST_CLIENT_PUBLIC_LOCAL = '';
+export const HOST_CLIENT_PUBLIC_PROD = '';
+
+// CLIENT
+export const HOST_ADMINS = [HOST_CLIENT_ADMIN_LOCAL, HOST_CLIENT_ADMIN_PROD];
+export const HOST_CLIENTS = [HOST_CLIENT_PUBLIC_LOCAL, HOST_CLIENT_PUBLIC_PROD];
+
+export const HOST_PERMITS = [
+  ...HOST_ADMINS,
+  ...HOST_CLIENTS,
+];

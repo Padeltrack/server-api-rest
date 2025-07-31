@@ -10,12 +10,13 @@ import planRoutes from './routes/plan.route';
 import authRoutes from './routes/auth.route';
 import userRoutes from './routes/user.route';
 import onboarding from './routes/onboarding.route';
-import Exam from './routes/exam.route';
+import exam from './routes/exam.route';
 import orderRoutes from './routes/order.route';
 import { errorHandler } from './middleware/errorHandler.middleware';
 import { connectToMongo } from './config/mongo.config';
 import { initializeFirebase } from './config/firebase.config';
 import { logger } from './middleware/logger.middleware';
+import { HOST_PERMITS } from './shared/util/url.util';
 
 const { swaggerDocument } = require('./swagger');
 const swaggerUi = require('swagger-ui-express');
@@ -30,7 +31,9 @@ initializeFirebase();
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+  origin: HOST_PERMITS
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -43,7 +46,7 @@ app.use('/api', logger, [
   authRoutes,
   userRoutes,
   onboarding,
-  Exam,
+  exam,
 ]);
 
 app.use(errorHandler);

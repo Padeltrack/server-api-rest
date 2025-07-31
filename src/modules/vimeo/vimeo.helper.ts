@@ -4,20 +4,44 @@ import fs from 'fs';
 
 const unlinkAsync = promisify(fs.unlink);
 
-export const uploadVideoToVimeo = (options: {
+export type UploadVideoVimeo = {
+  name: string;
+  description?: string;
   filePath: string;
-  fileName: string;
+}
+
+export const uploadVideoToVimeo = (options: {
+  video: UploadVideoVimeo;
   folderId?: string;
+  isPrivate?: boolean;
 }) => {
-  const { filePath, fileName, folderId } = options;
+  const { video, folderId, isPrivate } = options;
+  const { filePath, name, description } = video;
+
+  const privacy = isPrivate ? {
+    view: 'disable',
+    embed: 'whitelist',
+  } : {
+    view: 'unlisted',
+  };
+
   return new Promise((resolve, reject) => {
     vimeoClient.upload(
       filePath,
       {
-        name: fileName,
-        description: 'Video subido desde la plataforma',
+        name,
+        description,
+        license: 'by',
+        locale: 'es',
         privacy: {
-          view: 'unlisted',
+          ...privacy,
+          download: false,
+          add: false
+        },
+        embed: {
+          logos: {
+            vimeo: false
+          }
         },
       },
       async function (uri) {
