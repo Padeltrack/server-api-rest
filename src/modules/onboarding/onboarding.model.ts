@@ -12,7 +12,7 @@ const OnboardingQuestionSchema = new Schema<OnboardingQuestionModel>(
     _id: { type: String, required: true },
     question: { type: String, required: true },
     order: { type: Number, required: true },
-    options: [{ type: Array, required: true }],
+    options: [{ type: String, required: true }],
   },
   {
     timestamps: true,
