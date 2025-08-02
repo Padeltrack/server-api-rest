@@ -9,8 +9,9 @@ import vimeoRoutes from './routes/vimeo.route';
 import planRoutes from './routes/plan.route';
 import authRoutes from './routes/auth.route';
 import userRoutes from './routes/user.route';
-import onboarding from './routes/onboarding.route';
-import exam from './routes/exam.route';
+import onboardingRoutes from './routes/onboarding.route';
+import examRoutes from './routes/exam.route';
+import videoRoutes from './routes/video.route';
 import orderRoutes from './routes/order.route';
 import { errorHandler } from './middleware/errorHandler.middleware';
 import { connectToMongo } from './config/mongo.config';
@@ -45,8 +46,9 @@ app.use('/api', logger, [
   planRoutes,
   authRoutes,
   userRoutes,
-  onboarding,
-  exam,
+  onboardingRoutes,
+  examRoutes,
+  videoRoutes
 ]);
 
 app.use(errorHandler);

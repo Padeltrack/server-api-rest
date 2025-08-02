@@ -1,12 +1,16 @@
 import { Router } from 'express';
-import { getQuestionsExam, registerAnswerExam, registerGradeExam } from '../modules/exam/exam.controller';
+import { getQuestionsExam, getAnswerExamByList, registerAnswerExam, registerGradeExam, getAnswerExamById } from '../modules/exam/exam.controller';
 import { authenticate } from '../middleware/auth.middleware';
+import { authorize } from '../middleware/roles.middleware';
+import { SelectRoleModel } from '../modules/user/user.model';
 
-const authRoutes = Router();
+const examRoutes = Router();
 const pathAuth = '/exam';
 
-authRoutes.get(`${pathAuth}/questions/list`, authenticate, getQuestionsExam);
-authRoutes.post(`${pathAuth}/register/answer`, authenticate, registerAnswerExam);
-authRoutes.post(`${pathAuth}/register/grade`, authenticate, registerGradeExam);
+examRoutes.get(`${pathAuth}/questions/list`, authenticate, getQuestionsExam);
+examRoutes.get(`${pathAuth}/answer/list`, authenticate, authorize(SelectRoleModel.SuperAdmin), getAnswerExamByList);
+examRoutes.get(`${pathAuth}/answer/:id`, authenticate, authorize(SelectRoleModel.SuperAdmin), getAnswerExamById);
+examRoutes.post(`${pathAuth}/register/answer`, authenticate, registerAnswerExam);
+examRoutes.post(`${pathAuth}/register/grade`, authenticate, authorize(SelectRoleModel.Coach), registerGradeExam);
 
-export default authRoutes;
+export default examRoutes;

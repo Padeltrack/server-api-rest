@@ -81,3 +81,24 @@ export const uploadVideoToVimeo = (options: {
     );
   });
 };
+
+export const deleteVimeoVideo = (options: { idVideoVimeo: string }): Promise<void> => {
+  const { idVideoVimeo } = options;
+  return new Promise((resolve, reject) => {
+    vimeoClient.request(
+      {
+        method: 'DELETE',
+        path: `/videos/${idVideoVimeo}`,
+      },
+      (error) => {
+        if (error) {
+          console.error('Error deleting video:', error);
+          return reject(error);
+        }
+
+        console.log('Video deleted successfully');
+        resolve();
+      }
+    );
+  });
+};

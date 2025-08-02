@@ -4,7 +4,7 @@ import { ExamQuestionMongoModel } from './exam.model';
 import { ExamAnswerMongoModel, SelectStatusAnswerModel } from './exam-answer.model';
 import { ExamAnswerRegisterSchemaZod, ExamGradeRegisterSchemaZod } from './exam.dto';
 import { ZodError } from 'zod';
-import { SelectUserLevelModel, UserLevelModel, UserMongoModel } from '../user/user.model';
+import { SelectRoleModel, SelectUserLevelModel, UserLevelModel, UserMongoModel } from '../user/user.model';
 
 export const getQuestionsExam = async (req: Request, res: Response) => {
   req.logger = req.logger.child({ service: 'exam', serviceHandler: 'getQuestionsExam' });
@@ -16,6 +16,50 @@ export const getQuestionsExam = async (req: Request, res: Response) => {
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
     return res.status(500).json({ message: 'Error fetching questions exam', error });
+  }
+};
+
+export const getAnswerExamByList = async (req: Request, res: Response) => {
+  req.logger = req.logger.child({ service: 'exam', serviceHandler: 'getAnswerExamByList' });
+  req.logger.info({ status: 'start' });
+
+  try {
+    const me = req.user;
+
+    const where: any = {};
+    if (me.role === SelectRoleModel.Coach) {
+      where['status'] = { $in: [SelectStatusAnswerModel.Revision, SelectStatusAnswerModel.Pendiente] };
+    }
+
+    const exams = await ExamAnswerMongoModel.find(where).select('_id userId status average createdAt').populate('userId', 'displayName photo gender email role').lean().sort({ order: -1 });
+    return res.status(200).json({ exams });
+  } catch (error) {
+    req.logger.error({ status: 'error', code: 500, error: error.message });
+    return res.status(500).json({ message: 'Error fetching answer exam list', error });
+  }
+};
+
+export const getAnswerExamById = async (req: Request, res: Response) => {
+  req.logger = req.logger.child({ service: 'exam', serviceHandler: 'getAnswerExamById' });
+  req.logger.info({ status: 'start' });
+
+  try {
+    const me = req.user;
+    const idAnswerExam = req.params.id as string;
+
+    const where: any = {
+      _id: idAnswerExam
+    };
+    if (me.role === SelectRoleModel.Coach) {
+      where['status'] = { $in: [SelectStatusAnswerModel.Revision, SelectStatusAnswerModel.Pendiente] };
+    }
+
+    const exam = await ExamAnswerMongoModel.findOne(where).populate('userId', 'displayName photo gender email role').lean().sort({ order: -1 });
+
+    return res.status(200).json({ exam });
+  } catch (error) {
+    req.logger.error({ status: 'error', code: 500, error: error.message });
+    return res.status(500).json({ message: 'Error fetching answer exam by id', error });
   }
 };
 

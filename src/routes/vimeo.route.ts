@@ -1,10 +1,10 @@
 import { Router } from 'express';
 import {
   uploadVideoToFolderVimeo,
+  removeVideoToFolderVimeo,
   getVimeoVideos,
   getFreeVimeoVideos,
   getFoldersVimeo,
-  getFolderByIdVimeo,
   getItemsFolderByIdVimeo,
 } from '../modules/vimeo/vimeo.controller';
 import { authenticate } from '../middleware/auth.middleware';
@@ -24,12 +24,6 @@ router.get(
   getFoldersVimeo,
 );
 router.get(
-  `${basePath}/folder/:id`,
-  authenticate,
-  authorize(SelectRoleModel.SuperAdmin),
-  getFolderByIdVimeo,
-);
-router.get(
   `${basePath}/folder/:id/items`,
   authenticate,
   authorize(SelectRoleModel.SuperAdmin),
@@ -41,6 +35,12 @@ router.post(
   authorize(SelectRoleModel.SuperAdmin),
   uploadVideo.single('upload_video'),
   uploadVideoToFolderVimeo,
+);
+router.delete(
+  `${basePath}/folder/video/:id`,
+  authenticate,
+  authorize(SelectRoleModel.SuperAdmin),
+  removeVideoToFolderVimeo,
 );
 
 export default router;

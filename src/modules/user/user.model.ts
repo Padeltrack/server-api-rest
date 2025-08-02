@@ -44,6 +44,7 @@ export interface UserModel extends Document {
   email: string;
   photo: string | null;
   role: RoleModel;
+  verified: boolean;
   level: UserLevelModel | null;
   mfaSecret: string | null;
   onboarding: string | null;
@@ -107,6 +108,10 @@ const UserMongoSchema = new Schema<UserModel>(
       required: false,
       enum: Object.values(SelectUserLevelModel),
       default: null,
+    },
+    verified: {
+      type: Boolean,
+      required: false,
     },
     role: {
       type: String,
