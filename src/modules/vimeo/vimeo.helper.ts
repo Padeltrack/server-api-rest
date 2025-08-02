@@ -12,7 +12,7 @@ export type UploadVideoVimeo = {
 
 export const uploadVideoToVimeo = (options: {
   video: UploadVideoVimeo;
-  folderId?: string;
+  folderId?: string | number;
   isPrivate?: boolean;
 }) => {
   const { video, folderId, isPrivate } = options;

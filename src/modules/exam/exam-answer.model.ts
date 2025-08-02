@@ -11,7 +11,7 @@ export type StatusAnswerModel = (typeof SelectStatusAnswerModel)[keyof typeof Se
 
 interface Answer {
   questionId: string;
-  answerUrlVideo: string;
+  idVideo: string;
   answerText?: string | null;
   score?: number;
   createdAt: Date;
@@ -23,8 +23,6 @@ export interface ExamAnswerModel extends Document {
   status: StatusAnswerModel;
   answers: Answer[];
   average?: number;
-  startedAt: Date;
-  submittedAt?: Date;
 }
 
 const AnswerSchema = new Schema<Answer>({
@@ -33,15 +31,9 @@ const AnswerSchema = new Schema<Answer>({
     ref: 'ExamQuestion',
     required: true,
   },
-  answerUrlVideo: {
+  idVideo: {
     type: String,
     required: true,
-    validate: {
-      validator: function (v: string) {
-        return /^https:\/\/(www\.)?vimeo\.com\/\d{7,}$/.test(v);
-      },
-      message: props => `${props.value} no es una URL válida de Vimeo.`,
-    },
   },
   answerText: {
     type: String,

@@ -5,6 +5,9 @@ import { ExamAnswerMongoModel, SelectStatusAnswerModel } from './exam-answer.mod
 import { ExamAnswerRegisterSchemaZod, ExamGradeRegisterSchemaZod } from './exam.dto';
 import { ZodError } from 'zod';
 import { SelectRoleModel, SelectUserLevelModel, UserLevelModel, UserMongoModel } from '../user/user.model';
+import { uploadVideoToVimeo } from '../vimeo/vimeo.helper';
+import { VideoMongoModel } from '../video/video.model';
+import { examFolder } from '../vimeo/viemo.constant';
 
 export const getQuestionsExam = async (req: Request, res: Response) => {
   req.logger = req.logger.child({ service: 'exam', serviceHandler: 'getQuestionsExam' });
@@ -54,9 +57,14 @@ export const getAnswerExamById = async (req: Request, res: Response) => {
       where['status'] = { $in: [SelectStatusAnswerModel.Revision, SelectStatusAnswerModel.Pendiente] };
     }
 
-    const exam = await ExamAnswerMongoModel.findOne(where).populate('userId', 'displayName photo gender email role').lean().sort({ order: -1 });
+    const exam = await ExamAnswerMongoModel.findOne(where).populate('userId', '_id displayName level photo gender email role').populate('answers.questionId').lean().sort({ order: -1 });
+    const allQuestions = await ExamQuestionMongoModel.find().select('_id').lean();
 
-    return res.status(200).json({ exam });
+    const expectedIds = allQuestions.map(q => q._id.toString());
+    const answeredIds = exam?.answers.map((a: any) => a.questionId?._id?.toString()).filter(Boolean);
+    const hasAllQuestionsAnswered = expectedIds.every(id => answeredIds?.includes(id));
+
+    return res.status(200).json({ exam, hasAllQuestionsAnswered });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
     return res.status(500).json({ message: 'Error fetching answer exam by id', error });
@@ -68,17 +76,17 @@ export const registerAnswerExam = async (req: Request, res: Response) => {
   req.logger.info({ status: 'start' });
 
   try {
-    const me = req.user;
+    const me = { _id: '687f061066f67f6f76f56744', level: null } // req.user;
     const userId = me._id;
     const { questionId, answerText } = ExamAnswerRegisterSchemaZod.parse(req.body);
-    const answerUrlVideo = 'https://vimeo.com/1100055243';
-    let isComplete = false;
+    const filePath = req.file?.path;
 
     if (me.level) {
-        return res.status(401).json({
-            message: 'You have already completed the exam'
-        });
+      return res.status(401).json({
+          message: 'You have already completed the exam'
+      });
     }
+    let isComplete = false;
 
     const getExistQuestionExam = await ExamQuestionMongoModel.exists({ _id: questionId });
     if (!getExistQuestionExam) {
@@ -94,6 +102,25 @@ export const registerAnswerExam = async (req: Request, res: Response) => {
       });
     }
 
+    if (!filePath) {
+      return res.status(400).json({ message: 'No file uploaded' });
+    }
+
+    const result: any = await uploadVideoToVimeo({
+      video: {
+        filePath,
+        name: req.file?.originalname || `Video de examen ${new Date().toISOString()}`,
+      },
+      folderId: examFolder,
+      isPrivate: true
+    });
+
+    const idVideo = new ObjectId().toHexString();
+    await VideoMongoModel.create({
+      _id: idVideo,
+      idVideoVimeo: result.uri.split('/').pop()
+    });
+
     if (!currentExam) {
       await ExamAnswerMongoModel.create({
         _id: new ObjectId().toHexString(),
@@ -103,7 +130,7 @@ export const registerAnswerExam = async (req: Request, res: Response) => {
           {
             questionId,
             answerText,
-            answerUrlVideo,
+            idVideo,
             createdAt: new Date(),
           },
         ],
@@ -127,7 +154,7 @@ export const registerAnswerExam = async (req: Request, res: Response) => {
           $set: {
             'status': SelectStatusAnswerModel.Pendiente,
             'answers.$.answerText': answerText,
-            'answers.$.answerUrlVideo': answerUrlVideo,
+            'answers.$.idVideo': idVideo,
             'answers.$.createdAt': new Date(),
           },
         },
@@ -143,7 +170,7 @@ export const registerAnswerExam = async (req: Request, res: Response) => {
             answers: {
               questionId,
               answerText,
-              answerUrlVideo,
+              idVideo,
               createdAt: new Date(),
             },
           },

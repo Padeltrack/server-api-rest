@@ -75,7 +75,9 @@ export const deleteMe = async (req: Request, res: Response) => {
 
     await UserMongoModel.deleteOne({ _id: me._id });
 
-    return res.status(200).json({});
+    return res.status(200).json({
+      message: 'User deleted successfully'
+    });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
     return res.status(401).json({ message: 'Error removing users' });

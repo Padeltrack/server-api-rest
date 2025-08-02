@@ -5,8 +5,7 @@ import { ObjectId } from 'mongodb';
 import { uploadVideoToFolderVimeoSchemaZod } from './vimeo.dto';
 import { ZodError } from 'zod';
 import { VideoMongoModel } from '../video/video.model';
-
-const freeFolder = 26080633;
+import { freeFolder } from './viemo.constant';
 
 export const uploadVideoToFolderVimeo = async (req: Request, res: Response) => {
   req.logger = req.logger.child({ service: 'vimeo', serviceHandler: 'uploadVideoToFolderVimeo' });
