@@ -8,7 +8,7 @@ export type UploadVideoVimeo = {
   name: string;
   description?: string;
   filePath: string;
-}
+};
 
 export const uploadVideoToVimeo = (options: {
   video: UploadVideoVimeo;
@@ -18,12 +18,14 @@ export const uploadVideoToVimeo = (options: {
   const { video, folderId, isPrivate } = options;
   const { filePath, name, description } = video;
 
-  const privacy = isPrivate ? {
-    view: 'disable',
-    embed: 'whitelist',
-  } : {
-    view: 'unlisted',
-  };
+  const privacy = isPrivate
+    ? {
+        view: 'disable',
+        embed: 'whitelist',
+      }
+    : {
+        view: 'unlisted',
+      };
 
   return new Promise((resolve, reject) => {
     vimeoClient.upload(
@@ -36,12 +38,12 @@ export const uploadVideoToVimeo = (options: {
         privacy: {
           ...privacy,
           download: false,
-          add: false
+          add: false,
         },
         embed: {
           logos: {
-            vimeo: false
-          }
+            vimeo: false,
+          },
         },
       },
       async function (uri) {
@@ -90,7 +92,7 @@ export const deleteVimeoVideo = (options: { idVideoVimeo: string }): Promise<voi
         method: 'DELETE',
         path: `/videos/${idVideoVimeo}`,
       },
-      (error) => {
+      error => {
         if (error) {
           console.error('Error deleting video:', error);
           return reject(error);
@@ -98,7 +100,7 @@ export const deleteVimeoVideo = (options: { idVideoVimeo: string }): Promise<voi
 
         console.log('Video deleted successfully');
         resolve();
-      }
+      },
     );
   });
 };
@@ -118,7 +120,7 @@ export const getVimeoVideoById = (options: { id: string }) => {
           return reject(error);
         }
         resolve(body);
-      }
+      },
     );
   });
 };
@@ -128,12 +130,26 @@ export const getUrlTokenExtractVimeoVideoById = (options: { videoVimeo: any }) =
   const progressVideo = videoVimeo?.play?.progressive;
   const lengthProgressVideo = progressVideo?.length;
   const linkVideo = progressVideo?.[lengthProgressVideo - 1]?.link;
-  
+
   const sizesPictures = videoVimeo.pictures?.sizes;
-  const thumbnail = sizesPictures?.[sizesPictures?.length - 1]?.link ?? ''
+  const thumbnail = sizesPictures?.[sizesPictures?.length - 1]?.link ?? '';
 
   return {
     linkVideo,
-    thumbnail
+    thumbnail,
+  };
+};
+
+export const getInfoPublicExtractVimeoVideoById = (options: { videoVimeo: any }) => {
+  const { videoVimeo } = options;
+  const { name, description, player_embed_url, duration, width, language, height } = videoVimeo;
+  return {
+    name,
+    description,
+    player_embed_url,
+    duration,
+    width,
+    language,
+    height,
   }
-}
+};

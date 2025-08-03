@@ -32,9 +32,11 @@ initializeFirebase();
 
 const app = express();
 
-app.use(cors({
-  origin: HOST_PERMITS
-}));
+app.use(
+  cors({
+    origin: HOST_PERMITS,
+  }),
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -48,7 +50,7 @@ app.use('/api', logger, [
   userRoutes,
   onboardingRoutes,
   examRoutes,
-  videoRoutes
+  videoRoutes,
 ]);
 
 app.use(errorHandler);

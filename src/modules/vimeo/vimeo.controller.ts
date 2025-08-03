@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { vimeoClient } from '../../config/vimeo.config';
-import { deleteVimeoVideo, uploadVideoToVimeo } from './vimeo.helper';
+import { deleteVimeoVideo, getInfoPublicExtractVimeoVideoById, uploadVideoToVimeo } from './vimeo.helper';
 import { ObjectId } from 'mongodb';
 import { uploadVideoToFolderVimeoSchemaZod } from './vimeo.dto';
 import { ZodError } from 'zod';
@@ -12,7 +12,9 @@ export const uploadVideoToFolderVimeo = async (req: Request, res: Response) => {
   req.logger.info({ status: 'start' });
 
   try {
-    const { folderId, name, description, isPrivate } = uploadVideoToFolderVimeoSchemaZod.parse(req.body);
+    const { folderId, name, description, isPrivate } = uploadVideoToFolderVimeoSchemaZod.parse(
+      req.body,
+    );
     const filePath = req.file?.path;
 
     if (!filePath) {
@@ -23,22 +25,25 @@ export const uploadVideoToFolderVimeo = async (req: Request, res: Response) => {
     const result: any = await uploadVideoToVimeo({
       video: {
         filePath,
-        name: name || req.file?.originalname || `Video subido desde la plataforma ${new Date().toISOString()}`,
-        description
+        name:
+          name ||
+          req.file?.originalname ||
+          `Video subido desde la plataforma ${new Date().toISOString()}`,
+        description,
       },
       folderId,
-      isPrivate: isFreeFolder ? false : isPrivate
+      isPrivate: isFreeFolder ? false : isPrivate,
     });
 
     if (!isFreeFolder) {
       await VideoMongoModel.create({
         _id: new ObjectId().toHexString(),
-        idVideoVimeo: result.uri.split('/').pop()
+        idVideoVimeo: result.uri.split('/').pop(),
       });
     }
 
     res.status(200).json({
-      message: 'Video uploaded successfully'
+      message: 'Video uploaded successfully',
     });
   } catch (error) {
     if (error instanceof ZodError) {
@@ -99,6 +104,15 @@ export const getFreeVimeoVideos = async (req: Request, res: Response) => {
         per_page: perPage,
       },
     });
+
+    const dataVideos = response.body.data.map((videoVimeo: any) => {
+      const getInfoVideoVimeo = getInfoPublicExtractVimeoVideoById({ videoVimeo });
+      return {
+        ...getInfoVideoVimeo
+      }
+    });
+
+    response.body.data = dataVideos;
 
     res.status(200).json({
       message: 'Videos fetched successfully',
@@ -191,10 +205,9 @@ export const removeVideoToFolderVimeo = async (req: Request, res: Response) => {
     await VideoMongoModel.deleteOne({ idVideoVimeo });
 
     res.status(200).json({
-      message: 'Video removed successfully'
+      message: 'Video removed successfully',
     });
   } catch (error) {
-
     req.logger.error({ status: 'error', code: 500, error: error.message });
     res.status(500).json({ message: 'Server error', error: error });
   }

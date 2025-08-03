@@ -7,7 +7,8 @@ export const SelectStatusAnswerModel = {
   Rechazado: 'Rechazado',
 } as const;
 
-export type StatusAnswerModel = (typeof SelectStatusAnswerModel)[keyof typeof SelectStatusAnswerModel];
+export type StatusAnswerModel =
+  (typeof SelectStatusAnswerModel)[keyof typeof SelectStatusAnswerModel];
 
 interface Answer {
   questionnaireId: string;
@@ -25,53 +26,59 @@ export interface ExamAnswerModel extends Document {
   average?: number;
 }
 
-const AnswerSchema = new Schema<Answer>({
-  questionnaireId: {
-    type: String,
-    ref: 'ExamQuestion',
-    required: true,
+const AnswerSchema = new Schema<Answer>(
+  {
+    questionnaireId: {
+      type: String,
+      ref: 'ExamQuestion',
+      required: true,
+    },
+    idVideoVimeo: {
+      type: String,
+      required: true,
+    },
+    answerText: {
+      type: String,
+      required: false,
+      default: null,
+    },
+    score: {
+      type: Number,
+      min: 0,
+      max: 10,
+      default: 0,
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now,
+    },
   },
-  idVideoVimeo: {
-    type: String,
-    required: true,
+  {
+    _id: false,
   },
-  answerText: {
-    type: String,
-    required: false,
-    default: null,
-  },
-  score: {
-    type: Number,
-    min: 0,
-    max: 10,
-    default: 0,
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-}, {
-  _id: false,
-});
+);
 
-const ExamAnswerSchema = new Schema<ExamAnswerModel>({
-  _id: { type: String, required: true },
-  userId: { type: String, required: true, ref: 'User' },
-  status: {
-    type: String,
-    required: true,
-    default: SelectStatusAnswerModel.Pendiente
+const ExamAnswerSchema = new Schema<ExamAnswerModel>(
+  {
+    _id: { type: String, required: true },
+    userId: { type: String, required: true, ref: 'User' },
+    status: {
+      type: String,
+      required: true,
+      default: SelectStatusAnswerModel.Pendiente,
+    },
+    answers: [AnswerSchema],
+    average: {
+      type: Number,
+      min: 0,
+      max: 10,
+      default: 0,
+    },
   },
-  answers: [AnswerSchema],
-  average: {
-    type: Number,
-    min: 0,
-    max: 10,
-    default: 0,
+  {
+    timestamps: true,
+    collection: 'exam-answers',
   },
-}, {
-  timestamps: true,
-  collection: 'exam-answers',
-});
+);
 
 export const ExamAnswerMongoModel = model<ExamAnswerModel>('ExamAnswer', ExamAnswerSchema);

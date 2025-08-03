@@ -2,7 +2,7 @@ import mongoose, { Schema, Document } from 'mongoose';
 
 export interface VideoModel extends Document {
   readonly _id: string;
-  idVideoVimeo: string;  
+  idVideoVimeo: string;
 }
 
 const VideoMongoSchema = new Schema<VideoModel>(

@@ -16,4 +16,7 @@ const ExamQuestionnaireSchema = new Schema<ExamQuestionnaireModel>({
   order: { type: Number, required: true },
 });
 
-export const ExamQuestionnaireMongoModel = model<ExamQuestionnaireModel>('ExamQuestion', ExamQuestionnaireSchema);
+export const ExamQuestionnaireMongoModel = model<ExamQuestionnaireModel>(
+  'ExamQuestion',
+  ExamQuestionnaireSchema,
+);

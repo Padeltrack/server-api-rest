@@ -42,7 +42,7 @@ export const markVerifiedUser = async (req: Request, res: Response) => {
 
     if (!idUser) {
       return res.status(400).json({
-        message: 'User id is required'
+        message: 'User id is required',
       });
     }
 
@@ -50,7 +50,7 @@ export const markVerifiedUser = async (req: Request, res: Response) => {
 
     if (!getCoachUser) {
       return res.status(404).json({
-        message: 'Coach not found'
+        message: 'Coach not found',
       });
     }
 
@@ -58,7 +58,7 @@ export const markVerifiedUser = async (req: Request, res: Response) => {
     await UserMongoModel.updateOne({ _id: idUser }, { $set: { verified } });
 
     return res.status(200).json({
-      message: 'User marked as verified successfully'
+      message: 'User marked as verified successfully',
     });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
@@ -76,7 +76,7 @@ export const deleteMe = async (req: Request, res: Response) => {
     await UserMongoModel.deleteOne({ _id: me._id });
 
     return res.status(200).json({
-      message: 'User deleted successfully'
+      message: 'User deleted successfully',
     });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });

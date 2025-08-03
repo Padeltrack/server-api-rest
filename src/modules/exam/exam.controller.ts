@@ -4,8 +4,17 @@ import { ExamQuestionnaireMongoModel } from './exam.model';
 import { ExamAnswerMongoModel, SelectStatusAnswerModel } from './exam-answer.model';
 import { ExamAnswerRegisterSchemaZod, ExamGradeRegisterSchemaZod } from './exam.dto';
 import { ZodError } from 'zod';
-import { SelectRoleModel, SelectUserLevelModel, UserLevelModel, UserMongoModel } from '../user/user.model';
-import { getUrlTokenExtractVimeoVideoById, getVimeoVideoById, uploadVideoToVimeo } from '../vimeo/vimeo.helper';
+import {
+  SelectRoleModel,
+  SelectUserLevelModel,
+  UserLevelModel,
+  UserMongoModel,
+} from '../user/user.model';
+import {
+  getUrlTokenExtractVimeoVideoById,
+  getVimeoVideoById,
+  uploadVideoToVimeo,
+} from '../vimeo/vimeo.helper';
 import { examAnswerStudentFolder } from '../vimeo/viemo.constant';
 
 export const getQuestionnaireExam = async (req: Request, res: Response) => {
@@ -21,9 +30,9 @@ export const getQuestionnaireExam = async (req: Request, res: Response) => {
         return {
           ...q._doc,
           linkVideo,
-          thumbnail
-        }
-      })
+          thumbnail,
+        };
+      }),
     );
 
     return res.status(200).json({ questionnaires });
@@ -42,10 +51,16 @@ export const getAnswerExamByList = async (req: Request, res: Response) => {
 
     const where: any = {};
     if (me.role === SelectRoleModel.Coach) {
-      where['status'] = { $in: [SelectStatusAnswerModel.Revision, SelectStatusAnswerModel.Pendiente] };
+      where['status'] = {
+        $in: [SelectStatusAnswerModel.Revision, SelectStatusAnswerModel.Pendiente],
+      };
     }
 
-    const exams = await ExamAnswerMongoModel.find(where).select('_id userId status average createdAt').populate('userId', 'displayName photo gender email role').lean().sort({ order: -1 });
+    const exams = await ExamAnswerMongoModel.find(where)
+      .select('_id userId status average createdAt')
+      .populate('userId', 'displayName photo gender email role')
+      .lean()
+      .sort({ order: -1 });
     return res.status(200).json({ exams });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
@@ -62,23 +77,31 @@ export const getAnswerExamById = async (req: Request, res: Response) => {
     const idAnswerExam = req.params.id as string;
 
     const where: any = {
-      _id: idAnswerExam
+      _id: idAnswerExam,
     };
     if (me.role === SelectRoleModel.Coach) {
-      where['status'] = { $in: [SelectStatusAnswerModel.Revision, SelectStatusAnswerModel.Pendiente] };
+      where['status'] = {
+        $in: [SelectStatusAnswerModel.Revision, SelectStatusAnswerModel.Pendiente],
+      };
     }
 
-    const getExam = await ExamAnswerMongoModel.findOne(where).populate('userId', '_id displayName level photo gender email role').populate('answers.questionnaireId').lean().sort({ order: -1 });
+    const getExam = await ExamAnswerMongoModel.findOne(where)
+      .populate('userId', '_id displayName level photo gender email role')
+      .populate('answers.questionnaireId')
+      .lean()
+      .sort({ order: -1 });
     if (!getExam) {
       return res.status(404).json({
-        message: 'Answer not found'
+        message: 'Answer not found',
       });
     }
 
     const allQuestions = await ExamQuestionnaireMongoModel.find().select('_id').lean();
 
     const expectedIds = allQuestions.map(q => q._id.toString());
-    const answeredIds = getExam?.answers.map((a: any) => a.questionId?._id?.toString()).filter(Boolean);
+    const answeredIds = getExam?.answers
+      .map((a: any) => a.questionId?._id?.toString())
+      .filter(Boolean);
     const hasAllQuestionsAnswered = expectedIds.every(id => answeredIds?.includes(id));
 
     const answersLinkVideo = await Promise.all(
@@ -88,9 +111,9 @@ export const getAnswerExamById = async (req: Request, res: Response) => {
         return {
           ...ans,
           linkVideo,
-          thumbnail
-        }
-      })
+          thumbnail,
+        };
+      }),
     );
 
     getExam.answers = answersLinkVideo;
@@ -107,14 +130,14 @@ export const registerAnswerExam = async (req: Request, res: Response) => {
   req.logger.info({ status: 'start' });
 
   try {
-    const me = { _id: '687f061066f67f6f76f56744', level: null } // req.user;
+    const me = req.user;
     const userId = me._id;
     const { questionnaireId, answerText } = ExamAnswerRegisterSchemaZod.parse(req.body);
     const filePath = req.file?.path;
 
     if (me.level) {
       return res.status(401).json({
-          message: 'You have already completed the exam'
+        message: 'You have already completed the exam',
       });
     }
     let isComplete = false;
@@ -143,7 +166,7 @@ export const registerAnswerExam = async (req: Request, res: Response) => {
         name: req.file?.originalname || `Video de examen ${new Date().toISOString()}`,
       },
       folderId: examAnswerStudentFolder,
-      isPrivate: true
+      isPrivate: true,
     });
 
     const idVideoVimeo = result.uri.split('/').pop();
@@ -165,7 +188,7 @@ export const registerAnswerExam = async (req: Request, res: Response) => {
 
       return res.status(200).json({
         message: 'Answer registered successfully',
-        isComplete: false
+        isComplete: false,
       });
     }
 
@@ -179,7 +202,7 @@ export const registerAnswerExam = async (req: Request, res: Response) => {
         { _id: currentExam._id, 'answers.questionnaireId': questionnaireId },
         {
           $set: {
-            'status': SelectStatusAnswerModel.Pendiente,
+            status: SelectStatusAnswerModel.Pendiente,
             'answers.$.answerText': answerText,
             'answers.$.idVideoVimeo': idVideoVimeo,
             'answers.$.createdAt': new Date(),
@@ -209,13 +232,16 @@ export const registerAnswerExam = async (req: Request, res: Response) => {
     const questionsExamCount = await ExamQuestionnaireMongoModel.countDocuments({});
     const countAnswers = currentExam?.answers?.length || 0;
     if (questionsExamCount === countAnswers + 1) {
-      await ExamAnswerMongoModel.updateOne({ _id: currentExam._id }, { $set: { status: SelectStatusAnswerModel.Revision } });
-      isComplete = true
+      await ExamAnswerMongoModel.updateOne(
+        { _id: currentExam._id },
+        { $set: { status: SelectStatusAnswerModel.Revision } },
+      );
+      isComplete = true;
     }
 
     return res.status(200).json({
       message: 'Answer registered successfully',
-      isComplete
+      isComplete,
     });
   } catch (error) {
     if (error instanceof ZodError) {
@@ -241,50 +267,53 @@ export const registerGradeExam = async (req: Request, res: Response) => {
 
     if (!getExamAnswer) {
       return res.status(404).json({
-        message: 'Answer not found'
+        message: 'Answer not found',
       });
     }
 
     if (getExamAnswer.status !== SelectStatusAnswerModel.Revision) {
       return res.status(400).json({
-        message: 'Answer not found'
+        message: 'Answer not found',
       });
     }
 
     if (!answers.length) {
       return res.status(404).json({
-        message: 'No answers found'
+        message: 'No answers found',
       });
     }
 
     if (getExamAnswer.answers.length !== answers.length) {
       return res.status(400).json({
-        message: 'Number of answers does not match'
+        message: 'Number of answers does not match',
       });
     }
 
     const getUser = await UserMongoModel.findOne({ _id: getExamAnswer.userId });
     if (!getUser) {
       return res.status(404).json({
-        message: 'User not found'
+        message: 'User not found',
       });
     }
 
     const updatedAnswers = answers.map(answer => {
-      const match = answers.find((a) => a.questionnaireId === answer.questionnaireId);
+      const match = answers.find(a => a.questionnaireId === answer.questionnaireId);
       return match ? { ...answer, score: match.score } : answer;
     });
     const average = answers.reduce((sum, a) => sum + (a.score || 0), 0) / (answers.length || 1);
 
-    await ExamAnswerMongoModel.updateOne({
-      _id: examAnswerId
-    }, { 
-      $set: {
-        answers: updatedAnswers,
-        average,
-        status: SelectStatusAnswerModel.Completado
-      }
-    });
+    await ExamAnswerMongoModel.updateOne(
+      {
+        _id: examAnswerId,
+      },
+      {
+        $set: {
+          answers: updatedAnswers,
+          average,
+          status: SelectStatusAnswerModel.Completado,
+        },
+      },
+    );
 
     // UPDATE LEVEL USER
     let levelUser: UserLevelModel = SelectUserLevelModel.Principiante;
@@ -293,16 +322,19 @@ export const registerGradeExam = async (req: Request, res: Response) => {
     } else if (average >= 8) {
       levelUser = SelectUserLevelModel.Avanzado;
     }
-    await UserMongoModel.updateOne({
-      _id: getUser._id
-    }, {
-      $set: {
-        level: levelUser
-      }
-    });
+    await UserMongoModel.updateOne(
+      {
+        _id: getUser._id,
+      },
+      {
+        $set: {
+          level: levelUser,
+        },
+      },
+    );
 
     return res.status(200).json({
-      message: 'Grade registered successfully'
+      message: 'Grade registered successfully',
     });
   } catch (error) {
     if (error instanceof ZodError) {

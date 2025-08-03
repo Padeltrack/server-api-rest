@@ -8,7 +8,7 @@ export type ParamsAuthStrategy = {
   user: UserModel;
   isPanelAdmin?: boolean;
 };
-type AuthStrategy = (option: { data: ParamsAuthStrategy, res: Response }) => Promise<any>;
+type AuthStrategy = (option: { data: ParamsAuthStrategy; res: Response }) => Promise<any>;
 
 const authStrategiesByRole: Record<RoleModel, AuthStrategy> = {
   [SelectRoleModel.Admin]: adminAuthStrategic,

@@ -9,7 +9,12 @@ const pathAuth = '/user';
 
 userRoutes.get(`${pathAuth}/all`, authenticate, authorize(SelectRoleModel.SuperAdmin), getUsers);
 userRoutes.get(`${pathAuth}/me`, authenticate, getMe);
-userRoutes.patch(`${pathAuth}/mark/verified/:id`, authenticate, authorize(SelectRoleModel.SuperAdmin), markVerifiedUser);
+userRoutes.patch(
+  `${pathAuth}/mark/verified/:id`,
+  authenticate,
+  authorize(SelectRoleModel.SuperAdmin),
+  markVerifiedUser,
+);
 userRoutes.delete(`${pathAuth}/me`, authenticate, deleteMe);
 
 export default userRoutes;
