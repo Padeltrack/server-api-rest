@@ -142,14 +142,16 @@ export const getUrlTokenExtractVimeoVideoById = (options: { videoVimeo: any }) =
 
 export const getInfoPublicExtractVimeoVideoById = (options: { videoVimeo: any }) => {
   const { videoVimeo } = options;
-  const { name, description, player_embed_url, duration, width, language, height } = videoVimeo;
+  const { name, description, player_embed_url, duration, width, language, height, pictures } = videoVimeo;
+  const thumbnail = pictures?.base_link ?? '';
   return {
     name,
     description,
     player_embed_url,
     duration,
-    width,
     language,
+    width,
     height,
+    thumbnail
   }
 };

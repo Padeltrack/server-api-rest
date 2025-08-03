@@ -130,7 +130,7 @@ export const registerAnswerExam = async (req: Request, res: Response) => {
   req.logger.info({ status: 'start' });
 
   try {
-    const me = req.user;
+    const me = { _id: "687f061066f67f6f76f56744", level: null } // req.user;
     const userId = me._id;
     const { questionnaireId, answerText } = ExamAnswerRegisterSchemaZod.parse(req.body);
     const filePath = req.file?.path;

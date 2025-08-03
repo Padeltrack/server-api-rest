@@ -16,8 +16,8 @@ const pathAuth = '/exam';
 
 examRoutes.get(
   `${pathAuth}/questionnaire/list`,
-  authenticate,
-  authorize(SelectRoleModel.Student),
+  // authenticate,
+  // authorize(SelectRoleModel.Student),
   getQuestionnaireExam,
 );
 examRoutes.get(
@@ -34,8 +34,8 @@ examRoutes.get(
 );
 examRoutes.post(
   `${pathAuth}/register/answer`,
-  authenticate,
-  authorize(SelectRoleModel.Student),
+  // authenticate,
+  // authorize(SelectRoleModel.Student),
   uploadVideo.single('upload_video'),
   registerAnswerExam,
 );

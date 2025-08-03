@@ -106,10 +106,7 @@ export const getFreeVimeoVideos = async (req: Request, res: Response) => {
     });
 
     const dataVideos = response.body.data.map((videoVimeo: any) => {
-      const getInfoVideoVimeo = getInfoPublicExtractVimeoVideoById({ videoVimeo });
-      return {
-        ...getInfoVideoVimeo
-      }
+      return getInfoPublicExtractVimeoVideoById({ videoVimeo });
     });
 
     response.body.data = dataVideos;
