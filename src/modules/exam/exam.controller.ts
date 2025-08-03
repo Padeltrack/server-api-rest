@@ -5,17 +5,28 @@ import { ExamAnswerMongoModel, SelectStatusAnswerModel } from './exam-answer.mod
 import { ExamAnswerRegisterSchemaZod, ExamGradeRegisterSchemaZod } from './exam.dto';
 import { ZodError } from 'zod';
 import { SelectRoleModel, SelectUserLevelModel, UserLevelModel, UserMongoModel } from '../user/user.model';
-import { uploadVideoToVimeo } from '../vimeo/vimeo.helper';
-import { VideoMongoModel } from '../video/video.model';
-import { examFolder } from '../vimeo/viemo.constant';
+import { getUrlTokenExtractVimeoVideoById, getVimeoVideoById, uploadVideoToVimeo } from '../vimeo/vimeo.helper';
+import { examAnswerStudentFolder } from '../vimeo/viemo.constant';
 
 export const getQuestionnaireExam = async (req: Request, res: Response) => {
   req.logger = req.logger.child({ service: 'exam', serviceHandler: 'getQuestionnaireExam' });
   req.logger.info({ status: 'start' });
 
   try {
-    const questionnaire = await ExamQuestionnaireMongoModel.find().sort({ order: 1 });
-    return res.status(200).json({ questionnaire });
+    const getQuestionnaires = await ExamQuestionnaireMongoModel.find().sort({ order: 1 });
+    const questionnaires = await Promise.all(
+      getQuestionnaires.map(async (q: any) => {
+        const videoVimeo: any = await getVimeoVideoById({ id: q.idVideoVimeo });
+        const { linkVideo, thumbnail } = getUrlTokenExtractVimeoVideoById({ videoVimeo });
+        return {
+          ...q._doc,
+          linkVideo,
+          thumbnail
+        }
+      })
+    );
+
+    return res.status(200).json({ questionnaires });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
     return res.status(500).json({ message: 'Error fetching questions exam', error });
@@ -57,14 +68,34 @@ export const getAnswerExamById = async (req: Request, res: Response) => {
       where['status'] = { $in: [SelectStatusAnswerModel.Revision, SelectStatusAnswerModel.Pendiente] };
     }
 
-    const exam = await ExamAnswerMongoModel.findOne(where).populate('userId', '_id displayName level photo gender email role').populate('answers.questionId').lean().sort({ order: -1 });
+    const getExam = await ExamAnswerMongoModel.findOne(where).populate('userId', '_id displayName level photo gender email role').populate('answers.questionnaireId').lean().sort({ order: -1 });
+    if (!getExam) {
+      return res.status(404).json({
+        message: 'Answer not found'
+      });
+    }
+
     const allQuestions = await ExamQuestionnaireMongoModel.find().select('_id').lean();
 
     const expectedIds = allQuestions.map(q => q._id.toString());
-    const answeredIds = exam?.answers.map((a: any) => a.questionId?._id?.toString()).filter(Boolean);
+    const answeredIds = getExam?.answers.map((a: any) => a.questionId?._id?.toString()).filter(Boolean);
     const hasAllQuestionsAnswered = expectedIds.every(id => answeredIds?.includes(id));
 
-    return res.status(200).json({ exam, hasAllQuestionsAnswered });
+    const answersLinkVideo = await Promise.all(
+      getExam.answers.map(async (ans: any) => {
+        const videoVimeo: any = await getVimeoVideoById({ id: ans.idVideoVimeo });
+        const { linkVideo, thumbnail } = getUrlTokenExtractVimeoVideoById({ videoVimeo });
+        return {
+          ...ans,
+          linkVideo,
+          thumbnail
+        }
+      })
+    );
+
+    getExam.answers = answersLinkVideo;
+
+    return res.status(200).json({ exam: getExam, hasAllQuestionsAnswered });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
     return res.status(500).json({ message: 'Error fetching answer exam by id', error });
@@ -111,15 +142,11 @@ export const registerAnswerExam = async (req: Request, res: Response) => {
         filePath,
         name: req.file?.originalname || `Video de examen ${new Date().toISOString()}`,
       },
-      folderId: examFolder,
+      folderId: examAnswerStudentFolder,
       isPrivate: true
     });
 
-    const idVideo = new ObjectId().toHexString();
-    await VideoMongoModel.create({
-      _id: idVideo,
-      idVideoVimeo: result.uri.split('/').pop()
-    });
+    const idVideoVimeo = result.uri.split('/').pop();
 
     if (!currentExam) {
       await ExamAnswerMongoModel.create({
@@ -130,7 +157,7 @@ export const registerAnswerExam = async (req: Request, res: Response) => {
           {
             questionnaireId,
             answerText,
-            idVideo,
+            idVideoVimeo,
             createdAt: new Date(),
           },
         ],
@@ -154,7 +181,7 @@ export const registerAnswerExam = async (req: Request, res: Response) => {
           $set: {
             'status': SelectStatusAnswerModel.Pendiente,
             'answers.$.answerText': answerText,
-            'answers.$.idVideo': idVideo,
+            'answers.$.idVideoVimeo': idVideoVimeo,
             'answers.$.createdAt': new Date(),
           },
         },
@@ -170,7 +197,7 @@ export const registerAnswerExam = async (req: Request, res: Response) => {
             answers: {
               questionnaireId,
               answerText,
-              idVideo,
+              idVideoVimeo,
               createdAt: new Date(),
             },
           },

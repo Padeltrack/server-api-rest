@@ -4,7 +4,7 @@ export interface ExamQuestionnaireModel extends Document {
   readonly _id: string;
   title: string;
   description: string;
-  idVideo: string;
+  idVideoVimeo: string;
   order: number;
 }
 
@@ -12,7 +12,7 @@ const ExamQuestionnaireSchema = new Schema<ExamQuestionnaireModel>({
   _id: { type: String, required: true },
   title: { type: String, required: true },
   description: { type: String, required: true },
-  idVideo: { type: String, required: true },
+  idVideoVimeo: { type: String, required: true },
   order: { type: Number, required: true },
 });
 

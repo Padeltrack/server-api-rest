@@ -102,3 +102,38 @@ export const deleteVimeoVideo = (options: { idVideoVimeo: string }): Promise<voi
     );
   });
 };
+
+export const getVimeoVideoById = (options: { id: string }) => {
+  const { id } = options;
+
+  return new Promise((resolve, reject) => {
+    vimeoClient.request(
+      {
+        method: 'GET',
+        path: `/me/videos/${id}`,
+      },
+      (error, body) => {
+        if (error) {
+          console.error('Error fetching video:', error);
+          return reject(error);
+        }
+        resolve(body);
+      }
+    );
+  });
+};
+
+export const getUrlTokenExtractVimeoVideoById = (options: { videoVimeo: any }) => {
+  const { videoVimeo } = options;
+  const progressVideo = videoVimeo?.play?.progressive;
+  const lengthProgressVideo = progressVideo?.length;
+  const linkVideo = progressVideo?.[lengthProgressVideo - 1]?.link;
+  
+  const sizesPictures = videoVimeo.pictures?.sizes;
+  const thumbnail = sizesPictures?.[sizesPictures?.length - 1]?.link ?? ''
+
+  return {
+    linkVideo,
+    thumbnail
+  }
+}

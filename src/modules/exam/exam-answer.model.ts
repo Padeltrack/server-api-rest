@@ -11,7 +11,7 @@ export type StatusAnswerModel = (typeof SelectStatusAnswerModel)[keyof typeof Se
 
 interface Answer {
   questionnaireId: string;
-  idVideo: string;
+  idVideoVimeo: string;
   answerText?: string | null;
   score?: number;
   createdAt: Date;
@@ -31,7 +31,7 @@ const AnswerSchema = new Schema<Answer>({
     ref: 'ExamQuestion',
     required: true,
   },
-  idVideo: {
+  idVideoVimeo: {
     type: String,
     required: true,
   },

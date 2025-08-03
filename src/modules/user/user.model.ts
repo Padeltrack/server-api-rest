@@ -79,7 +79,6 @@ const UserMongoSchema = new Schema<UserModel>(
       type: String,
       required: false,
       unique: true,
-      default: null,
       validate: {
         validator: function (v: string) {
           if (!v) return true;
