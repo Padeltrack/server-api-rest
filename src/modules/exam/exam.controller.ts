@@ -52,7 +52,7 @@ export const getAnswerExamByList = async (req: Request, res: Response) => {
     const where: any = {};
     if (me.role === SelectRoleModel.Coach) {
       where['status'] = {
-        $in: [SelectStatusAnswerModel.Revision, SelectStatusAnswerModel.Pendiente],
+        $in: [SelectStatusAnswerModel.Revision, SelectStatusAnswerModel.Pendiente, SelectStatusAnswerModel.Completado],
       };
     }
 
@@ -81,7 +81,7 @@ export const getAnswerExamById = async (req: Request, res: Response) => {
     };
     if (me.role === SelectRoleModel.Coach) {
       where['status'] = {
-        $in: [SelectStatusAnswerModel.Revision, SelectStatusAnswerModel.Pendiente],
+        $in: [SelectStatusAnswerModel.Revision, SelectStatusAnswerModel.Pendiente, SelectStatusAnswerModel.Completado],
       };
     }
 
@@ -100,7 +100,7 @@ export const getAnswerExamById = async (req: Request, res: Response) => {
 
     const expectedIds = allQuestions.map(q => q._id.toString());
     const answeredIds = getExam?.answers
-      .map((a: any) => a.questionId?._id?.toString())
+      .map((a: any) => a.questionnaireId?._id?.toString())
       .filter(Boolean);
     const hasAllQuestionsAnswered = expectedIds.every(id => answeredIds?.includes(id));
 
@@ -296,10 +296,17 @@ export const registerGradeExam = async (req: Request, res: Response) => {
       });
     }
 
-    const updatedAnswers = answers.map(answer => {
+    const updatedAnswers = getExamAnswer.answers.map((answer: any) => {
       const match = answers.find(a => a.questionnaireId === answer.questionnaireId);
-      return match ? { ...answer, score: match.score } : answer;
+      return match ? { ...answer._doc, score: match.score } : answer;
     });
+
+    if (updatedAnswers.length !== answers.length) {
+      return res.status(400).json({
+        message: 'Number of answers does not match',
+      });
+    }
+
     const average = answers.reduce((sum, a) => sum + (a.score || 0), 0) / (answers.length || 1);
 
     await ExamAnswerMongoModel.updateOne(
@@ -333,8 +340,15 @@ export const registerGradeExam = async (req: Request, res: Response) => {
       },
     );
 
+    const examAnswerUpdate = await ExamAnswerMongoModel.findOne({ _id: examAnswerId })
+      .populate('userId', '_id displayName level photo gender email role')
+      .populate('answers.questionnaireId')
+      .lean()
+      .sort({ order: -1 });
+
     return res.status(200).json({
       message: 'Grade registered successfully',
+      exam: examAnswerUpdate
     });
   } catch (error) {
     if (error instanceof ZodError) {
