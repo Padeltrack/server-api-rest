@@ -10,7 +10,7 @@ export const SelectStatusAnswerModel = {
 export type StatusAnswerModel = (typeof SelectStatusAnswerModel)[keyof typeof SelectStatusAnswerModel];
 
 interface Answer {
-  questionId: string;
+  questionnaireId: string;
   idVideo: string;
   answerText?: string | null;
   score?: number;
@@ -26,7 +26,7 @@ export interface ExamAnswerModel extends Document {
 }
 
 const AnswerSchema = new Schema<Answer>({
-  questionId: {
+  questionnaireId: {
     type: String,
     ref: 'ExamQuestion',
     required: true,

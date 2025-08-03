@@ -70,7 +70,7 @@ export const registerUserWithGoogle = async (req: Request, res: Response) => {
       refreshToken: generateAuthToken({ _id: user._id }),
     };
 
-    return res.status(201).json({
+    return res.status(200).json({
       message: 'Register successful',
       me,
     });

@@ -122,7 +122,6 @@ const UserMongoSchema = new Schema<UserModel>(
     mfaSecret: {
       type: String,
       required: false,
-      default: null,
     },
     onboarding: { type: UserOnboardingSchema, required: false, default: null },
   },

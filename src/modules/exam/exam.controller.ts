@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
-import { ExamQuestionMongoModel } from './exam.model';
+import { ExamQuestionnaireMongoModel } from './exam.model';
 import { ExamAnswerMongoModel, SelectStatusAnswerModel } from './exam-answer.model';
 import { ExamAnswerRegisterSchemaZod, ExamGradeRegisterSchemaZod } from './exam.dto';
 import { ZodError } from 'zod';
@@ -9,13 +9,13 @@ import { uploadVideoToVimeo } from '../vimeo/vimeo.helper';
 import { VideoMongoModel } from '../video/video.model';
 import { examFolder } from '../vimeo/viemo.constant';
 
-export const getQuestionsExam = async (req: Request, res: Response) => {
-  req.logger = req.logger.child({ service: 'exam', serviceHandler: 'getQuestionsExam' });
+export const getQuestionnaireExam = async (req: Request, res: Response) => {
+  req.logger = req.logger.child({ service: 'exam', serviceHandler: 'getQuestionnaireExam' });
   req.logger.info({ status: 'start' });
 
   try {
-    const questions = await ExamQuestionMongoModel.find().sort({ order: 1 });
-    return res.status(200).json({ questions });
+    const questionnaire = await ExamQuestionnaireMongoModel.find().sort({ order: 1 });
+    return res.status(200).json({ questionnaire });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
     return res.status(500).json({ message: 'Error fetching questions exam', error });
@@ -58,7 +58,7 @@ export const getAnswerExamById = async (req: Request, res: Response) => {
     }
 
     const exam = await ExamAnswerMongoModel.findOne(where).populate('userId', '_id displayName level photo gender email role').populate('answers.questionId').lean().sort({ order: -1 });
-    const allQuestions = await ExamQuestionMongoModel.find().select('_id').lean();
+    const allQuestions = await ExamQuestionnaireMongoModel.find().select('_id').lean();
 
     const expectedIds = allQuestions.map(q => q._id.toString());
     const answeredIds = exam?.answers.map((a: any) => a.questionId?._id?.toString()).filter(Boolean);
@@ -78,7 +78,7 @@ export const registerAnswerExam = async (req: Request, res: Response) => {
   try {
     const me = { _id: '687f061066f67f6f76f56744', level: null } // req.user;
     const userId = me._id;
-    const { questionId, answerText } = ExamAnswerRegisterSchemaZod.parse(req.body);
+    const { questionnaireId, answerText } = ExamAnswerRegisterSchemaZod.parse(req.body);
     const filePath = req.file?.path;
 
     if (me.level) {
@@ -88,7 +88,7 @@ export const registerAnswerExam = async (req: Request, res: Response) => {
     }
     let isComplete = false;
 
-    const getExistQuestionExam = await ExamQuestionMongoModel.exists({ _id: questionId });
+    const getExistQuestionExam = await ExamQuestionnaireMongoModel.exists({ _id: questionnaireId });
     if (!getExistQuestionExam) {
       return res.status(404).json({ message: 'Question not found' });
     }
@@ -128,7 +128,7 @@ export const registerAnswerExam = async (req: Request, res: Response) => {
         status: SelectStatusAnswerModel.Pendiente,
         answers: [
           {
-            questionId,
+            questionnaireId,
             answerText,
             idVideo,
             createdAt: new Date(),
@@ -144,12 +144,12 @@ export const registerAnswerExam = async (req: Request, res: Response) => {
 
     const isExistQuestionUser = await ExamAnswerMongoModel.exists({
       _id: currentExam._id,
-      answers: { $elemMatch: { questionId } },
+      answers: { $elemMatch: { questionnaireId } },
     });
 
     if (isExistQuestionUser) {
       await ExamAnswerMongoModel.updateOne(
-        { _id: currentExam._id, 'answers.questionId': questionId },
+        { _id: currentExam._id, 'answers.questionnaireId': questionnaireId },
         {
           $set: {
             'status': SelectStatusAnswerModel.Pendiente,
@@ -168,7 +168,7 @@ export const registerAnswerExam = async (req: Request, res: Response) => {
           },
           $push: {
             answers: {
-              questionId,
+              questionnaireId,
               answerText,
               idVideo,
               createdAt: new Date(),
@@ -179,7 +179,7 @@ export const registerAnswerExam = async (req: Request, res: Response) => {
       );
     }
 
-    const questionsExamCount = await ExamQuestionMongoModel.countDocuments({});
+    const questionsExamCount = await ExamQuestionnaireMongoModel.countDocuments({});
     const countAnswers = currentExam?.answers?.length || 0;
     if (questionsExamCount === countAnswers + 1) {
       await ExamAnswerMongoModel.updateOne({ _id: currentExam._id }, { $set: { status: SelectStatusAnswerModel.Revision } });
@@ -244,7 +244,7 @@ export const registerGradeExam = async (req: Request, res: Response) => {
     }
 
     const updatedAnswers = answers.map(answer => {
-      const match = answers.find((a) => a.questionId === answer.questionId);
+      const match = answers.find((a) => a.questionnaireId === answer.questionnaireId);
       return match ? { ...answer, score: match.score } : answer;
     });
     const average = answers.reduce((sum, a) => sum + (a.score || 0), 0) / (answers.length || 1);

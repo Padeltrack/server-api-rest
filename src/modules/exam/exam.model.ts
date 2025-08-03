@@ -1,15 +1,19 @@
 import { Schema, model, Document } from 'mongoose';
 
-export interface ExamQuestionModel extends Document {
+export interface ExamQuestionnaireModel extends Document {
   readonly _id: string;
-  question: string;
+  title: string;
+  description: string;
+  idVideo: string;
   order: number;
 }
 
-const ExamQuestionSchema = new Schema<ExamQuestionModel>({
+const ExamQuestionnaireSchema = new Schema<ExamQuestionnaireModel>({
   _id: { type: String, required: true },
-  question: { type: String, required: true },
+  title: { type: String, required: true },
+  description: { type: String, required: true },
+  idVideo: { type: String, required: true },
   order: { type: Number, required: true },
 });
 
-export const ExamQuestionMongoModel = model<ExamQuestionModel>('ExamQuestion', ExamQuestionSchema);
+export const ExamQuestionnaireMongoModel = model<ExamQuestionnaireModel>('ExamQuestion', ExamQuestionnaireSchema);
