@@ -7,6 +7,8 @@ node_modules/
 .env
 sendgrid.env
 
+/src/mocks
+
 # Environment variables
 .env*
 !.env.sample
