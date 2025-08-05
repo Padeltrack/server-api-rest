@@ -158,6 +158,29 @@ export const getFoldersVimeo = async (req: Request, res: Response) => {
   }
 };
 
+export const getFolderByIdVimeo = async (req: Request, res: Response) => {
+  req.logger = req.logger.child({ service: 'vimeo', serviceHandler: 'getFolderByIdVimeo' });
+  req.logger.info({ status: 'start' });
+
+  try {
+    const id = req.params.id as string;
+    const response = await vimeoClient.request({
+      method: 'GET',
+      path: `/me/projects/${id}`,
+    });
+    res.status(200).json({
+      message: 'Folders fetched successfully',
+      data: response.body,
+    });
+  } catch (error: any) {
+    req.logger.error({ status: 'error', code: 500, error: error.message });
+    res.status(500).json({
+      message: 'Error retrieving folders from Vimeo',
+      error: error.message || error,
+    });
+  }
+};
+
 export const getItemsFolderByIdVimeo = async (req: Request, res: Response) => {
   req.logger = req.logger.child({ service: 'vimeo', serviceHandler: 'getItemsFolderByIdVimeo' });
   req.logger.info({ status: 'start' });

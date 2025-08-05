@@ -6,6 +6,7 @@ import {
   getFreeVimeoVideos,
   getFoldersVimeo,
   getItemsFolderByIdVimeo,
+  getFolderByIdVimeo,
 } from '../modules/vimeo/vimeo.controller';
 import { authenticate } from '../middleware/auth.middleware';
 import { authorize } from '../middleware/roles.middleware';
@@ -22,6 +23,12 @@ router.get(
   authenticate,
   authorize(SelectRoleModel.SuperAdmin),
   getFoldersVimeo,
+);
+router.get(
+  `${basePath}/folder/:id`,
+  authenticate,
+  authorize(SelectRoleModel.SuperAdmin),
+  getFolderByIdVimeo,
 );
 router.get(
   `${basePath}/folder/:id/items`,
