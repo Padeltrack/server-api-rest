@@ -3,6 +3,7 @@ import { SelectRoleModel } from '../../user/user.model';
 import type { RoleModel, UserModel } from '../../user/user.model';
 import { adminAuthStrategic } from './admin.auth.strategic';
 import { studentsAuthStrategic } from './student.auth.strategic';
+import { coachesAuthStrategic } from './coach.auth.strategic';
 
 export type ParamsAuthStrategy = {
   user: UserModel;
@@ -14,7 +15,7 @@ const authStrategiesByRole: Record<RoleModel, AuthStrategy> = {
   [SelectRoleModel.Admin]: adminAuthStrategic,
   [SelectRoleModel.SuperAdmin]: adminAuthStrategic,
   [SelectRoleModel.Student]: studentsAuthStrategic,
-  [SelectRoleModel.Coach]: studentsAuthStrategic,
+  [SelectRoleModel.Coach]: coachesAuthStrategic,
 };
 
 export const selectAuthStrategy = (role: RoleModel): AuthStrategy => {

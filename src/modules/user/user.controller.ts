@@ -1,5 +1,7 @@
 import { Request, Response } from 'express';
 import { SelectRoleModel, UserMongoModel } from './user.model';
+import { UpdateUserSchemaZod } from './user.dto';
+import { ZodError } from 'zod';
 
 export const getMe = async (req: Request, res: Response) => {
   req.logger = req.logger.child({ service: 'users', serviceHandler: 'getMe' });
@@ -27,6 +29,28 @@ export const getUsers = async (req: Request, res: Response) => {
     const users = await UserMongoModel.find({ role }).skip(skip).limit(limit);
 
     return res.status(200).json({ users });
+  } catch (error) {
+    req.logger.error({ status: 'error', code: 500, error: error.message });
+    return res.status(401).json({ message: 'Error getting users' });
+  }
+};
+
+export const getUserById = async (req: Request, res: Response) => {
+  req.logger = req.logger.child({ service: 'users', serviceHandler: 'getUserById' });
+  req.logger.info({ status: 'start' });
+
+  try {
+    const _id = req.params.id;
+
+    if (!_id) {
+      return res.status(400).json({
+        message: 'User id is required',
+      });
+    }
+
+    const user = await UserMongoModel.findOne({ _id }).populate('onboarding.answers.questionId', 'question').lean();
+
+    return res.status(200).json({ user });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
     return res.status(401).json({ message: 'Error getting users' });
@@ -61,6 +85,74 @@ export const markVerifiedUser = async (req: Request, res: Response) => {
       message: 'User marked as verified successfully',
     });
   } catch (error) {
+    req.logger.error({ status: 'error', code: 500, error: error.message });
+    return res.status(401).json({ message: 'Error removing users' });
+  }
+};
+
+export const markWorkedUser = async (req: Request, res: Response) => {
+  req.logger = req.logger.child({ service: 'users', serviceHandler: 'markWorkedUser' });
+  req.logger.info({ status: 'start' });
+
+  try {
+    const idUser = req.params.id as string;
+
+    if (!idUser) {
+      return res.status(400).json({
+        message: 'User id is required',
+      });
+    }
+
+    const getCoachUser = await UserMongoModel.findOne({ _id: idUser, role: SelectRoleModel.Coach });
+
+    if (!getCoachUser) {
+      return res.status(404).json({
+        message: 'Coach not found',
+      });
+    }
+
+    const worked = !getCoachUser?.worked;
+    const update = { worked, verified: worked };
+
+    await UserMongoModel.updateOne({ _id: idUser }, { $set: update });
+
+    return res.status(200).json({
+      message: 'User successfully marked as member',
+    });
+  } catch (error) {
+    req.logger.error({ status: 'error', code: 500, error: error.message });
+    return res.status(401).json({ message: 'Error removing users' });
+  }
+};
+
+export const updateMe = async (req: Request, res: Response) => {
+  req.logger = req.logger.child({ service: 'users', serviceHandler: 'updateMe' });
+  req.logger.info({ status: 'start' });
+
+  try {
+    const me = req.user;
+    const { gender, birthdate, wherePlay, numberPhone } = UpdateUserSchemaZod.parse(req.body);
+    const fields: any = {};
+
+    if (gender) fields['gender'] = gender;
+    if (birthdate) fields['birthdate'] = birthdate;
+    if (wherePlay) fields['wherePlay'] = wherePlay;
+    if (numberPhone) fields['numberPhone'] = numberPhone;
+
+    if (Object.keys(fields).length) {
+      await UserMongoModel.updateOne({ _id: me._id }, { $set: fields });
+    }
+
+    return res.status(200).json({
+      message: 'User updated successfully',
+    });
+  } catch (error) {
+    if (error instanceof ZodError) {
+      return res.status(400).json({
+        message: 'Error de validación',
+        issues: error.errors,
+      });
+    }
     req.logger.error({ status: 'error', code: 500, error: error.message });
     return res.status(401).json({ message: 'Error removing users' });
   }

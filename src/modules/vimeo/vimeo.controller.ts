@@ -1,6 +1,10 @@
 import { Request, Response } from 'express';
 import { vimeoClient } from '../../config/vimeo.config';
-import { deleteVimeoVideo, getInfoPublicExtractVimeoVideoById, uploadVideoToVimeo } from './vimeo.helper';
+import {
+  deleteVimeoVideo,
+  getInfoPublicExtractVimeoVideoById,
+  uploadVideoToVimeo,
+} from './vimeo.helper';
 import { ObjectId } from 'mongodb';
 import { uploadVideoToFolderVimeoSchemaZod } from './vimeo.dto';
 import { ZodError } from 'zod';

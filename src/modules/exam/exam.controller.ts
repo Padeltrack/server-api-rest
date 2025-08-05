@@ -52,7 +52,11 @@ export const getAnswerExamByList = async (req: Request, res: Response) => {
     const where: any = {};
     if (me.role === SelectRoleModel.Coach) {
       where['status'] = {
-        $in: [SelectStatusAnswerModel.Revision, SelectStatusAnswerModel.Pendiente, SelectStatusAnswerModel.Completado],
+        $in: [
+          SelectStatusAnswerModel.Revision,
+          SelectStatusAnswerModel.Pendiente,
+          SelectStatusAnswerModel.Completado,
+        ],
       };
     }
 
@@ -81,7 +85,11 @@ export const getAnswerExamById = async (req: Request, res: Response) => {
     };
     if (me.role === SelectRoleModel.Coach) {
       where['status'] = {
-        $in: [SelectStatusAnswerModel.Revision, SelectStatusAnswerModel.Pendiente, SelectStatusAnswerModel.Completado],
+        $in: [
+          SelectStatusAnswerModel.Revision,
+          SelectStatusAnswerModel.Pendiente,
+          SelectStatusAnswerModel.Completado,
+        ],
       };
     }
 
@@ -106,12 +114,28 @@ export const getAnswerExamById = async (req: Request, res: Response) => {
 
     const answersLinkVideo = await Promise.all(
       getExam.answers.map(async (ans: any) => {
+        // Video pregunta cuestionario
+        const videoVimeoQuestion: any = await getVimeoVideoById({
+          id: ans.questionnaireId.idVideoVimeo,
+        });
+        const { linkVideo: linkVideoQuestion, thumbnail: thumbnailQuestion } =
+          getUrlTokenExtractVimeoVideoById({ videoVimeo: videoVimeoQuestion });
+
+        const questionnaireId = {
+          ...ans.questionnaireId,
+          linkVideo: linkVideoQuestion,
+          thumbnail: thumbnailQuestion,
+        };
+
+        // Video respuesta estudiante
         const videoVimeo: any = await getVimeoVideoById({ id: ans.idVideoVimeo });
         const { linkVideo, thumbnail } = getUrlTokenExtractVimeoVideoById({ videoVimeo });
+
         return {
           ...ans,
           linkVideo,
           thumbnail,
+          questionnaireId,
         };
       }),
     );
@@ -130,7 +154,7 @@ export const registerAnswerExam = async (req: Request, res: Response) => {
   req.logger.info({ status: 'start' });
 
   try {
-    const me = { _id: "687f061066f67f6f76f56744", level: null } // req.user;
+    const me = { _id: '687f061066f67f6f76f56744', level: null }; // req.user;
     const userId = me._id;
     const { questionnaireId, answerText } = ExamAnswerRegisterSchemaZod.parse(req.body);
     const filePath = req.file?.path;
@@ -348,7 +372,7 @@ export const registerGradeExam = async (req: Request, res: Response) => {
 
     return res.status(200).json({
       message: 'Grade registered successfully',
-      exam: examAnswerUpdate
+      exam: examAnswerUpdate,
     });
   } catch (error) {
     if (error instanceof ZodError) {

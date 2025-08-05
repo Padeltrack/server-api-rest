@@ -44,10 +44,11 @@ export interface UserModel extends Document {
   email: string;
   photo: string | null;
   role: RoleModel;
-  verified: boolean;
+  verified?: boolean;
+  worked?: boolean;
   level: UserLevelModel | null;
-  mfaSecret: string | null;
-  onboarding: string | null;
+  mfaSecret?: string | null;
+  onboarding: UserOnboardingModel | null;
 }
 
 const UserOnboardingSchema = new Schema(
@@ -109,6 +110,10 @@ const UserMongoSchema = new Schema<UserModel>(
       default: null,
     },
     verified: {
+      type: Boolean,
+      required: false,
+    },
+    worked: {
       type: Boolean,
       required: false,
     },

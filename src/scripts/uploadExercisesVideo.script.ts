@@ -17,7 +17,7 @@ const run = () => {
         await VideoMongoModel.create({
           _id: new ObjectId().toHexString(),
           ...doc,
-          semanas: parseSemanasField(doc?.semanas)
+          semanas: parseSemanasField(doc?.semanas),
         });
       } catch (err) {
         console.error('Error inserting:', doc, err);
