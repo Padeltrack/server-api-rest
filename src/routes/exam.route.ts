@@ -5,6 +5,7 @@ import {
   registerAnswerExam,
   registerGradeExam,
   getAnswerExamById,
+  addQuestionnaire,
 } from '../modules/exam/exam.controller';
 import { authenticate } from '../middleware/auth.middleware';
 import { authorize } from '../middleware/roles.middleware';
@@ -16,8 +17,8 @@ const pathAuth = '/exam';
 
 examRoutes.get(
   `${pathAuth}/questionnaire/list`,
-  // authenticate,
-  // authorize(SelectRoleModel.Student),
+  authenticate,
+  authorize(SelectRoleModel.Student),
   getQuestionnaireExam,
 );
 examRoutes.get(
@@ -31,6 +32,13 @@ examRoutes.get(
   authenticate,
   authorize(SelectRoleModel.SuperAdmin, SelectRoleModel.Coach),
   getAnswerExamById,
+);
+examRoutes.post(
+  `${pathAuth}/questionnaire/add`,
+  authenticate,
+  authorize(SelectRoleModel.SuperAdmin),
+  uploadVideo.single('upload_video'),
+  addQuestionnaire,
 );
 examRoutes.post(
   `${pathAuth}/register/answer`,

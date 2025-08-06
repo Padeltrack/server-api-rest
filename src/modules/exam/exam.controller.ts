@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
 import { ExamQuestionnaireMongoModel } from './exam.model';
 import { ExamAnswerMongoModel, SelectStatusAnswerModel } from './exam-answer.model';
-import { ExamAnswerRegisterSchemaZod, ExamGradeRegisterSchemaZod } from './exam.dto';
+import { addQuestionnaireSchemaZod, ExamAnswerRegisterSchemaZod, ExamGradeRegisterSchemaZod } from './exam.dto';
 import { ZodError } from 'zod';
 import {
   SelectRoleModel,
@@ -15,7 +15,7 @@ import {
   getVimeoVideoById,
   uploadVideoToVimeo,
 } from '../vimeo/vimeo.helper';
-import { examAnswerStudentFolder } from '../vimeo/viemo.constant';
+import { examAnswerStudentFolder, examFolder } from '../vimeo/viemo.constant';
 
 export const getQuestionnaireExam = async (req: Request, res: Response) => {
   req.logger = req.logger.child({ service: 'exam', serviceHandler: 'getQuestionnaireExam' });
@@ -154,7 +154,7 @@ export const registerAnswerExam = async (req: Request, res: Response) => {
   req.logger.info({ status: 'start' });
 
   try {
-    const me = { _id: '687f061066f67f6f76f56744', level: null }; // req.user;
+    const me = req.user;
     const userId = me._id;
     const { questionnaireId, answerText } = ExamAnswerRegisterSchemaZod.parse(req.body);
     const filePath = req.file?.path;
@@ -266,6 +266,60 @@ export const registerAnswerExam = async (req: Request, res: Response) => {
     return res.status(200).json({
       message: 'Answer registered successfully',
       isComplete,
+    });
+  } catch (error) {
+    if (error instanceof ZodError) {
+      return res.status(400).json({
+        message: 'Error de validación',
+        issues: error.errors,
+      });
+    }
+
+    req.logger.error({ status: 'error', code: 500, error: error.message });
+    return res.status(500).json({ message: 'Error register answer exam', error });
+  }
+};
+
+export const addQuestionnaire = async (req: Request, res: Response) => {
+  req.logger = req.logger.child({ service: 'exam', serviceHandler: 'addQuestionnaire' });
+  req.logger.info({ status: 'start' });
+
+  try {
+    const { title, description } = addQuestionnaireSchemaZod.parse(req.body);
+    const filePath = req.file?.path;
+
+    if (!filePath) {
+      return res.status(400).json({ message: 'No file uploaded' });
+    }
+
+    const result: any = await uploadVideoToVimeo({
+      video: {
+        filePath,
+        name: req.file?.originalname || `Video de examen ${new Date().toISOString()}`,
+      },
+      folderId: examFolder,
+      isPrivate: true,
+    });
+
+    const idVideoVimeo = result.uri.split('/').pop();
+
+    const lastItem = await ExamQuestionnaireMongoModel
+      .findOne()
+      .sort({ order: -1 })
+      .select('order');
+
+    const nextOrder = lastItem?.order != null ? lastItem.order + 1 : 1;
+
+    await ExamQuestionnaireMongoModel.create({
+      _id: new ObjectId().toHexString(),
+      title,
+      description,
+      idVideoVimeo,
+      order: nextOrder,
+    });
+
+    return res.status(200).json({
+      message: 'Add questionnaire successfully',
     });
   } catch (error) {
     if (error instanceof ZodError) {

@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { SelectRoleModel, UserMongoModel } from './user.model';
+import { RoleModel, SelectRoleModel, UserMongoModel } from './user.model';
 import { UpdateUserSchemaZod } from './user.dto';
 import { ZodError } from 'zod';
 
@@ -27,6 +27,41 @@ export const getUsers = async (req: Request, res: Response) => {
     const skip = (page - 1) * limit;
 
     const users = await UserMongoModel.find({ role }).skip(skip).limit(limit);
+
+    return res.status(200).json({ users });
+  } catch (error) {
+    req.logger.error({ status: 'error', code: 500, error: error.message });
+    return res.status(401).json({ message: 'Error getting users' });
+  }
+};
+
+export const getCoachOrStudentUsers = async (req: Request, res: Response) => {
+  req.logger = req.logger.child({ service: 'users', serviceHandler: 'getCoachOrStudentUsers' });
+  req.logger.info({ status: 'start' });
+
+  try {
+    const me = req.user;
+    const page = Number(req.query?.page) || 1;
+    const limit = Number(req.query?.limit) || 10;
+    const search = req.query?.search || '';
+    const skip = (page - 1) * limit;
+    let role: RoleModel = SelectRoleModel.Student;
+
+    if (me.role === SelectRoleModel.Student) {
+      role = SelectRoleModel.Coach;
+    }
+
+    const query: any = { role };
+
+    if (search) {
+      query.$or = [
+        { displayName: { $regex: search, $options: 'i' } },
+        { userName: { $regex: search, $options: 'i' } },
+        { email: { $regex: search, $options: 'i' } },
+      ];
+    }
+
+    const users = await UserMongoModel.find(query).skip(skip).limit(limit).sort({ createdAt: -1 });
 
     return res.status(200).json({ users });
   } catch (error) {

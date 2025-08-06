@@ -7,6 +7,13 @@ export const ExamAnswerRegisterSchemaZod = z.object({
   answerText: z.string().optional(),
 });
 
+export const addQuestionnaireSchemaZod = z.object({
+  title: z
+    .string({ required_error: 'El titulo es requerido' })
+    .min(1, 'El titulo es requerido'),
+  description: z.string({ required_error: 'La descripción es requerida' }).min(1, 'La descripción es requerida'),
+});
+
 export const ExamGradeRegisterSchemaZod = z.object({
   examAnswerId: z
     .string({ required_error: 'El identificador del examen es requerido' })
@@ -20,4 +27,5 @@ export const ExamGradeRegisterSchemaZod = z.object({
 });
 
 export type IExamAnswerRegisterDTO = z.infer<typeof ExamAnswerRegisterSchemaZod>;
+export type IAddQuestionnaireDTO = z.infer<typeof addQuestionnaireSchemaZod>;
 export type IExamGradeRegisterDTO = z.infer<typeof ExamGradeRegisterSchemaZod>;
