@@ -163,18 +163,18 @@ export const verifyAdminMfa = async (req: Request, res: Response) => {
       });
     }
 
-    speakeasy.totp.verify({
+    const verified = speakeasy.totp.verify({
       secret: getUser.mfaSecret,
       encoding: 'base32',
       token: code,
       window: 3,
     });
 
-    /*if (!verified) {
+    if (!verified) {
       return res.status(401).json({
         message: 'Invalid code',
       });
-    }*/
+    }
 
     getUser.mfaSecret = null;
     const me = {

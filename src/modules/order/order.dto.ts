@@ -2,8 +2,9 @@ import { z } from 'zod';
 import { SelectStatusOrderModel } from './order.model';
 
 export const createOrderSchema = z.object({
-  userId: z.string(),
-  planId: z.string(),
+  userId: z.string({ required_error: 'El identificador del usuario es requerido' }),
+  planId: z.string({ required_error: 'El identificador del plan es requerido' }),
+  imageBase64: z.string({ required_error: 'La imagen es requerida' }),
 });
 
 export const updateOrderStatusSchema = z.object({

@@ -1,9 +1,9 @@
 import { Schema, model, Document } from 'mongoose';
 
 export enum SelectStatusOrderModel {
-  Pending = 'pending',
-  Approved = 'approved',
-  Rejected = 'rejected',
+  Pending = 'Pendiente',
+  Approved = 'Aprobado',
+  Rejected = 'Rechazado',
 }
 
 export type StatusOrderModel =
@@ -27,11 +27,14 @@ const orderMongoSchema = new Schema<IOrderModel>(
     userId: { type: String, required: true, ref: 'User' },
     planId: { type: String, required: true, ref: 'Plan' },
     status: {
+      required: true,
       type: String,
       enum: Object.values(SelectStatusOrderModel),
       default: SelectStatusOrderModel.Pending,
     },
-    paymentProof: { type: String },
+    paymentProof: {
+      type: String,
+    },
   },
   {
     timestamps: true,
