@@ -11,6 +11,7 @@ import {
   UserMongoModel,
 } from '../user/user.model';
 import {
+  deleteVimeoVideo,
   getUrlTokenExtractVimeoVideoById,
   getVimeoVideoById,
   uploadVideoToVimeo,
@@ -438,5 +439,42 @@ export const registerGradeExam = async (req: Request, res: Response) => {
 
     req.logger.error({ status: 'error', code: 500, error: error.message });
     return res.status(500).json({ message: 'Error fetching grade exam', error });
+  }
+};
+
+export const deleteQuestionnaire = async (req: Request, res: Response) => {
+  req.logger = req.logger.child({ service: 'exam', serviceHandler: 'deleteQuestionnaire' });
+  req.logger.info({ status: 'start' });
+
+  try {
+    const idQuestionnaire = req.params.id;
+
+    const getQuestionnaire = await ExamQuestionnaireMongoModel
+      .findOne({ _id: idQuestionnaire })
+
+    if (!getQuestionnaire) {
+      return res.status(404).json({
+        message: 'Questionnaire not found',
+      });
+    }
+
+    await ExamQuestionnaireMongoModel.deleteOne({
+      _id: getQuestionnaire,
+    });
+    await deleteVimeoVideo({ idVideoVimeo: getQuestionnaire.idVideoVimeo });
+
+    return res.status(200).json({
+      message: 'Questionnaire deleted successfully',
+    });
+  } catch (error) {
+    if (error instanceof ZodError) {
+      return res.status(400).json({
+        message: 'Error de validación',
+        issues: error.errors,
+      });
+    }
+
+    req.logger.error({ status: 'error', code: 500, error: error.message });
+    return res.status(500).json({ message: 'Error register answer exam', error });
   }
 };

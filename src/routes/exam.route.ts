@@ -6,6 +6,7 @@ import {
   registerGradeExam,
   getAnswerExamById,
   addQuestionnaire,
+  deleteQuestionnaire,
 } from '../modules/exam/exam.controller';
 import { authenticate } from '../middleware/auth.middleware';
 import { authorize } from '../middleware/roles.middleware';
@@ -19,7 +20,7 @@ const pathAuth = '/exam';
 examRoutes.get(
   `${pathAuth}/questionnaire/list`,
   authenticate,
-  authorize(SelectRoleModel.Student),
+  authorize(SelectRoleModel.Student, SelectRoleModel.SuperAdmin),
   activeOrder,
   getQuestionnaireExam,
 );
@@ -55,6 +56,12 @@ examRoutes.post(
   authenticate,
   authorize(SelectRoleModel.Coach),
   registerGradeExam,
+);
+examRoutes.delete(
+  `${pathAuth}/questionnaire/delete/:id`,
+  authenticate,
+  authorize(SelectRoleModel.SuperAdmin),
+  deleteQuestionnaire,
 );
 
 export default examRoutes;
