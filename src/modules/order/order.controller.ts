@@ -23,7 +23,7 @@ export const getOrders = async (req: Request, res: Response) => {
 
     const orders = await OrderMongoModel.find().populate('planId').skip(skip).limit(limit).sort({ createdAt: -1 });
 
-    return res.status(200).json(orders);
+    return res.status(200).json({ orders });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
     return res.status(500).json({ message: 'Error fetching orders', error });
@@ -72,7 +72,7 @@ export const createOrder = async (req: Request, res: Response) => {
       paymentProof
     });
 
-    return res.status(200).json(order);
+    return res.status(200).json({ order });
   } catch (error) {
     if (error instanceof ZodError) {
       return res.status(400).json({
@@ -104,7 +104,7 @@ export const updateOrderStatus = async (req: Request, res: Response) => {
     );
     if (!updated) return res.status(404).json({ message: 'Order not found' });
 
-    return res.status(200).json(updated);
+    return res.status(200).json({ updated });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
     return res.status(500).json({ message: 'Error updating order', error });
