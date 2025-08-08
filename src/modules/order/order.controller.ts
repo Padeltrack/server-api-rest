@@ -3,7 +3,7 @@ import { ObjectId } from 'mongodb';
 import { createOrderSchema, updateOrderStatusSchema } from './order.dto';
 import { OrderMongoModel, SelectStatusOrderModel } from './order.model';
 import { PlanMongoModel } from '../plan/plan.model';
-import { SelectRoleModel, UserMongoModel } from '../user/user.model';
+import { SelectRoleModel } from '../user/user.model';
 import { ZodError } from 'zod';
 import { uploadImageBanner } from './order.service';
 
@@ -53,10 +53,9 @@ export const createOrder = async (req: Request, res: Response) => {
   req.logger.info({ status: 'start' });
 
   try {
-    const { userId, planId, imageBase64 } = createOrderSchema.parse(req.body);
-
-    const isUser = await UserMongoModel.countDocuments({ userId });
-    if (!isUser) return res.status(400).json({ message: 'User not found' });
+    const me = req.user;
+    const userId = me._id;
+    const { planId, imageBase64 } = createOrderSchema.parse(req.body);
 
     const isPlan = await PlanMongoModel.countDocuments({ planId, active: true });
     if (!isPlan) return res.status(400).json({ message: 'Plan not found' });
