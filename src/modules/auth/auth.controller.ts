@@ -167,7 +167,7 @@ export const verifyAdminMfa = async (req: Request, res: Response) => {
       secret: getUser.mfaSecret,
       encoding: 'base32',
       token: code,
-      window: 3,
+      window: 4,
     });
 
     if (!verified) {

@@ -7,10 +7,10 @@ export const coachesAuthStrategic = async (options: {
   res: Response;
 }) => {
   const { data, res } = options;
-  const { user } = data;
+  const { user, isPanelAdmin } = data;
   const { _id } = user;
 
-  if (!user?.worked) {
+  if (!user?.worked && isPanelAdmin) {
     return res.status(401).json({
       message: 'User not verified worked',
     });

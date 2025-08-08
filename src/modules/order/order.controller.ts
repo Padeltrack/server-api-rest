@@ -21,7 +21,7 @@ export const getOrders = async (req: Request, res: Response) => {
 
     if (me.role === SelectRoleModel.Student) query['userId'] = me._id;
 
-    const orders = await OrderMongoModel.find().populate('planId').skip(skip).limit(limit).sort({ createdAt: -1 });
+    const orders = await OrderMongoModel.find().populate('planId').populate('userId').skip(skip).limit(limit).sort({ createdAt: -1 });
 
     return res.status(200).json({ orders });
   } catch (error) {
@@ -39,7 +39,7 @@ export const getOrdersById = async (req: Request, res: Response) => {
 
     if (!orderId) return res.status(400).json({ message: 'Order id is required' });
 
-    const order = await OrderMongoModel.find({ _id: orderId }).populate('planId');
+    const order = await OrderMongoModel.findOne({ _id: orderId }).populate('planId').populate('userId');
 
     return res.status(200).json({ order });
   } catch (error) {
@@ -91,23 +91,26 @@ export const updateOrderStatus = async (req: Request, res: Response) => {
   req.logger = req.logger.child({ service: 'order', serviceHandler: 'updateOrderStatus' });
   req.logger.info({ status: 'start' });
 
-  const { id } = req.params;
-  const parsed = updateOrderStatusSchema.safeParse(req.body);
-
-  if (!parsed.success) {
-    return res.status(400).json({ errors: parsed.error.flatten() });
-  }
-
   try {
+    const orderId = req.params.id;
+    const { status } = updateOrderStatusSchema.parse(req.body);
+
     const updated = await OrderMongoModel.findByIdAndUpdate(
-      id,
-      { status: parsed.data.status },
+      { _id: orderId },
+      { status },
       { new: true },
     );
     if (!updated) return res.status(404).json({ message: 'Order not found' });
 
-    return res.status(200).json({ updated });
+    return res.status(200).json({ order: updated });
   } catch (error) {
+    if (error instanceof ZodError) {
+      return res.status(400).json({
+        message: 'Error de validación',
+        issues: error.errors,
+      });
+    }
+
     req.logger.error({ status: 'error', code: 500, error: error.message });
     return res.status(500).json({ message: 'Error updating order', error });
   }
