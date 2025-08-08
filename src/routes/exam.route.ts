@@ -11,6 +11,7 @@ import { authenticate } from '../middleware/auth.middleware';
 import { authorize } from '../middleware/roles.middleware';
 import { SelectRoleModel } from '../modules/user/user.model';
 import { uploadVideo } from '../middleware/multer.middleware';
+import { activeOrder } from '../middleware/orderActive.middleware';
 
 const examRoutes = Router();
 const pathAuth = '/exam';
@@ -19,6 +20,7 @@ examRoutes.get(
   `${pathAuth}/questionnaire/list`,
   authenticate,
   authorize(SelectRoleModel.Student),
+  activeOrder,
   getQuestionnaireExam,
 );
 examRoutes.get(
@@ -44,6 +46,7 @@ examRoutes.post(
   `${pathAuth}/register/answer`,
   authenticate,
   authorize(SelectRoleModel.Student),
+  activeOrder,
   uploadVideo.single('upload_video'),
   registerAnswerExam,
 );

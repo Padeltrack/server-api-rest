@@ -60,7 +60,7 @@ export const createOrder = async (req: Request, res: Response) => {
     const isPlan = await PlanMongoModel.countDocuments({ _id: planId, active: true });
     if (!isPlan) return res.status(400).json({ message: 'Plan not found' });
 
-    const isOrderPending = await OrderMongoModel.countDocuments({ userId, status: SelectStatusOrderModel.Pending });
+    const isOrderPending = await OrderMongoModel.countDocuments({ userId, $or: [{ status: SelectStatusOrderModel.Pending }, { status: SelectStatusOrderModel.Approved }] });
     if (isOrderPending) return res.status(400).json({ message: 'You have a pending order' });
 
     const idOrder = new ObjectId().toHexString();

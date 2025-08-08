@@ -1,12 +1,14 @@
 import { Schema, model, Document } from 'mongoose';
 
 export enum SelectStatusOrderModel {
+  Completed = 'Completado',
   Pending = 'Pendiente',
   Approved = 'Aprobado',
   Rejected = 'Rechazado',
 }
 
 export type StatusOrderModel =
+  | SelectStatusOrderModel.Completed
   | SelectStatusOrderModel.Approved
   | SelectStatusOrderModel.Pending
   | SelectStatusOrderModel.Rejected;

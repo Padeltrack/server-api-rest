@@ -2,6 +2,8 @@ import { Request, Response } from 'express';
 import { RoleModel, SelectRoleModel, UserMongoModel } from './user.model';
 import { UpdateUserSchemaZod } from './user.dto';
 import { ZodError } from 'zod';
+import { PlanMongoModel } from '../plan/plan.model';
+import { OrderMongoModel, SelectStatusOrderModel } from '../order/order.model';
 
 export const getMe = async (req: Request, res: Response) => {
   req.logger = req.logger.child({ service: 'users', serviceHandler: 'getMe' });
@@ -9,7 +11,14 @@ export const getMe = async (req: Request, res: Response) => {
 
   try {
     const user = req.user;
-    return res.status(200).json({ user });
+    const orderActive = await OrderMongoModel.findOne({ userId: user._id, status: SelectStatusOrderModel.Approved });
+    let usePlan = null;
+
+    if (orderActive) {
+      usePlan = await PlanMongoModel.findOne({ _id: orderActive.planId });
+    }
+
+    return res.status(200).json({ user, usePlan });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
     return res.status(401).json({ message: 'Unauthorized' });
