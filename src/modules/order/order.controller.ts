@@ -54,13 +54,16 @@ export const createOrder = async (req: Request, res: Response) => {
 
   try {
     const me = req.user;
-    const userId = me._id;
+    const userId =  me._id;
     const { planId, imageBase64 } = createOrderSchema.parse(req.body);
 
-    const isPlan = await PlanMongoModel.countDocuments({ planId, active: true });
+    const isPlan = await PlanMongoModel.countDocuments({ _id: planId, active: true });
     if (!isPlan) return res.status(400).json({ message: 'Plan not found' });
-    const idOrder = new ObjectId().toHexString();
 
+    const isOrderPending = await OrderMongoModel.countDocuments({ userId, status: SelectStatusOrderModel.Pending });
+    if (isOrderPending) return res.status(400).json({ message: 'You have a pending order' });
+
+    const idOrder = new ObjectId().toHexString();
     const paymentProof = await uploadImageBanner({ imageBase64, idOrder });
 
     const order = await OrderMongoModel.create({
