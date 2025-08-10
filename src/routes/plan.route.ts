@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { createPlan, getAllPlans } from '../modules/plan/plan.controller';
+import { createPlan, getPlans, updatePlan } from '../modules/plan/plan.controller';
 import { authenticate } from '../middleware/auth.middleware';
 import { authorize } from '../middleware/roles.middleware';
 import { SelectRoleModel } from '../modules/user/user.model';
@@ -7,7 +7,8 @@ import { SelectRoleModel } from '../modules/user/user.model';
 const router = Router();
 const basePath = '/plan';
 
+router.get(`${basePath}/all`, getPlans);
 router.post(basePath, authenticate, authorize(SelectRoleModel.SuperAdmin), createPlan);
-router.get(`${basePath}/all`, getAllPlans);
+router.patch(`${basePath}/:id`, authenticate, authorize(SelectRoleModel.SuperAdmin), updatePlan);
 
 export default router;

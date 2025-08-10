@@ -5,8 +5,6 @@ import LoggerColor from 'node-color-log';
 import fs from 'fs';
 import path from 'path';
 
-// consomé.log("aquí");
-
 import vimeoRoutes from './routes/vimeo.route';
 import planRoutes from './routes/plan.route';
 import authRoutes from './routes/auth.route';
