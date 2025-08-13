@@ -10,6 +10,7 @@ import { generateUniqueUserName } from '../user/user.helper';
 import { validateOnboardingAnswers } from '../onboarding/onboarding.helper';
 import { selectAuthStrategy } from './strategies';
 import { HOST_ADMINS } from '../../shared/util/url.util';
+import { getTextBeforeAtEmail } from '../../shared/util/string.util';
 
 export const registerUserWithGoogle = async (req: Request, res: Response) => {
   req.logger = req.logger.child({ service: 'auth', serviceHandler: 'registerUserWithGoogle' });
@@ -25,6 +26,12 @@ export const registerUserWithGoogle = async (req: Request, res: Response) => {
     } = GoogleRegisterSchemaZod.parse(req.body);
     const decodedToken = await verifyIdFirebaseTokenGoogle(idToken);
     const { name: displayName, email, picture = null } = decodedToken;
+
+    if (!email) {
+      return res.status(400).json({
+        message: 'Email is required',
+      });
+    }
 
     const countUser = await UserMongoModel.countDocuments({ email });
 
@@ -52,7 +59,7 @@ export const registerUserWithGoogle = async (req: Request, res: Response) => {
     const user = await UserMongoModel.create({
       _id: new ObjectId().toHexString(),
       displayName,
-      userName: await generateUniqueUserName(displayName),
+      userName: await generateUniqueUserName(displayName || getTextBeforeAtEmail(email)),
       email,
       gender,
       photo: picture,

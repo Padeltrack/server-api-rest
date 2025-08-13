@@ -6,6 +6,8 @@ import { PlanMongoModel } from '../plan/plan.model';
 import { SelectRoleModel } from '../user/user.model';
 import { ZodError } from 'zod';
 import { uploadImageBanner } from './order.service';
+import { WeeklyVideoMongoModel } from '../weeklyVideo/weeklyVideo.model';
+import { getVideosByWeek } from '../weeklyVideo/weeklyVideo.model.helper';
 
 export const getOrders = async (req: Request, res: Response) => {
   req.logger = req.logger.child({ service: 'order', serviceHandler: 'getOrders' });
@@ -94,13 +96,32 @@ export const updateOrderStatus = async (req: Request, res: Response) => {
   try {
     const orderId = req.params.id;
     const { status } = updateOrderStatusSchema.parse(req.body);
+    const fieldsUpdated: any = { status };
+
+    if (status === SelectStatusOrderModel.Approved) {
+      fieldsUpdated.currentWeek = 1;
+      fieldsUpdated.lastProgressDate = new Date();
+    } else if (status === SelectStatusOrderModel.Rejected) {
+      fieldsUpdated.currentWeek = undefined;
+      fieldsUpdated.lastProgressDate = undefined;
+    }
 
     const updated = await OrderMongoModel.findByIdAndUpdate(
       { _id: orderId },
-      { status },
+      fieldsUpdated,
       { new: true },
     );
     if (!updated) return res.status(404).json({ message: 'Order not found' });
+
+    if (fieldsUpdated.status === SelectStatusOrderModel.Approved) {
+      const week = fieldsUpdated.currentWeek;
+      await WeeklyVideoMongoModel.create({
+        _id: new ObjectId().toHexString(),
+        orderId,
+        week,
+        videos: await getVideosByWeek({ week }),
+      });
+    }
 
     return res.status(200).json({ order: updated });
   } catch (error) {

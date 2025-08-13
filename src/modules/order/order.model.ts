@@ -19,6 +19,8 @@ export interface IOrderModel extends Document {
   planId: string;
   status: StatusOrderModel;
   paymentProof?: string;
+  currentWeek?: number;
+  lastProgressDate?: Date;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -37,6 +39,8 @@ const orderMongoSchema = new Schema<IOrderModel>(
     paymentProof: {
       type: String,
     },
+    currentWeek: { type: Number, required: false },
+    lastProgressDate: { type: Date, required: false },
   },
   {
     timestamps: true,

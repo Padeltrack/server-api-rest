@@ -18,6 +18,7 @@ import { connectToMongo } from './config/mongo.config';
 import { initializeFirebase } from './config/firebase.config';
 import { logger } from './middleware/logger.middleware';
 import { HOST_PERMITS } from './shared/util/url.util';
+import { cronApp } from './core/crons';
 
 const { swaggerDocument } = require('./swagger');
 const swaggerUi = require('swagger-ui-express');
@@ -29,6 +30,7 @@ if (!fs.existsSync(uploadDir)) {
 
 dotenv.config();
 initializeFirebase();
+cronApp();
 
 const app = express();
 

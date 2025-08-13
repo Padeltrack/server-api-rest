@@ -25,3 +25,9 @@ export const getBufferBase64 = (options: { base64: string; name: string }) => {
 
   return { fileName, buffer: imageBuffer };
 };
+
+export const getTextBeforeAtEmail = (email: string) => {
+  if (typeof email !== 'string') return null;
+  const [before] = email.split('@');
+  return before;
+}
