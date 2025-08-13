@@ -3,6 +3,7 @@ import mongoose, { Schema, Document } from 'mongoose';
 export interface VideoModel extends Document {
   readonly _id: string;
   nombre: string;
+  idVideoVimeo: string;
   descripcion?: string;
   nivelFisico?: string;
   plan?: string[];
@@ -31,6 +32,7 @@ const VideoMongoSchema = new Schema<VideoModel>(
   {
     _id: { type: String, required: true },
     nombre: { type: String, required: true },
+    idVideoVimeo: { type: String, required: true },
     descripcion: String,
     nivelFisico: String,
     plan: [String],
