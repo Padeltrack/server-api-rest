@@ -150,6 +150,61 @@ export const getAnswerExamById = async (req: Request, res: Response) => {
   }
 };
 
+export const getRegisterAnswerExam = async (req: Request, res: Response) => {
+  req.logger = req.logger.child({ service: 'exam', serviceHandler: 'getRegisterAnswerExam' });
+  req.logger.info({ status: 'start' });
+
+  try {
+    const me = req.user;
+    
+    const currentExam = await ExamAnswerMongoModel.findOne({ userId: me._id }).sort({ createdAt: -1 });
+
+    if (!currentExam) {
+      return res.status(200).json({
+        message: 'You have not registered for the exam yet',
+        exam: null,
+        hasAllQuestionsAnswered: false,
+      });
+    }
+
+    if (currentExam.status !== SelectStatusAnswerModel.Pendiente) {
+      return res.status(400).json({
+        message: 'You have already completed the exam',
+        isComplete: true,
+      });
+    }
+
+    const allQuestions = await ExamQuestionnaireMongoModel.find().select('_id').lean();
+
+    const expectedIds = allQuestions.map(q => q._id.toString());
+    const answeredIds = currentExam.answers
+      .map((a: any) => a.questionnaireId?._id?.toString())
+      .filter(Boolean);
+    const hasAllQuestionsAnswered = expectedIds.every(id => answeredIds?.includes(id));
+
+    const answersLinkVideo = await Promise.all(
+      currentExam.answers.map(async (ans: any) => {
+        // Video respuesta estudiante
+        const videoVimeo: any = await getVimeoVideoById({ id: ans.idVideoVimeo });
+        const { linkVideo, thumbnail } = getUrlTokenExtractVimeoVideoById({ videoVimeo });
+
+        return {
+          ...ans,
+          linkVideo,
+          thumbnail,
+        };
+      }),
+    );
+
+    currentExam.answers = answersLinkVideo;
+
+    return res.status(200).json({ exam: currentExam, hasAllQuestionsAnswered });
+  } catch (error) {
+    req.logger.error({ status: 'error', code: 500, error: error.message });
+    return res.status(500).json({ message: 'Error fetching answer exam by id', error });
+  }
+};
+
 export const registerAnswerExam = async (req: Request, res: Response) => {
   req.logger = req.logger.child({ service: 'exam', serviceHandler: 'registerAnswerExam' });
   req.logger.info({ status: 'start' });

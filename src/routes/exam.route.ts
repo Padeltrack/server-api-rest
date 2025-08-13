@@ -7,6 +7,7 @@ import {
   getAnswerExamById,
   addQuestionnaire,
   deleteQuestionnaire,
+  getRegisterAnswerExam,
 } from '../modules/exam/exam.controller';
 import { authenticate } from '../middleware/auth.middleware';
 import { authorize } from '../middleware/roles.middleware';
@@ -35,6 +36,13 @@ examRoutes.get(
   authenticate,
   authorize(SelectRoleModel.SuperAdmin, SelectRoleModel.Coach),
   getAnswerExamById,
+);
+examRoutes.get(
+  `${pathAExam}/register/answer`,
+  authenticate,
+  authorize(SelectRoleModel.Student),
+  activeOrder,
+  getRegisterAnswerExam,
 );
 examRoutes.post(
   `${pathAExam}/questionnaire/add`,
