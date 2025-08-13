@@ -58,7 +58,7 @@ export const registerUserWithGoogle = async (req: Request, res: Response) => {
 
     const user = await UserMongoModel.create({
       _id: new ObjectId().toHexString(),
-      displayName,
+      displayName: displayName || getTextBeforeAtEmail(email),
       userName: await generateUniqueUserName(displayName || getTextBeforeAtEmail(email)),
       email,
       gender,
