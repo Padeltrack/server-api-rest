@@ -162,7 +162,7 @@ export const getRegisterAnswerExam = async (req: Request, res: Response) => {
     if (!currentExam) {
       return res.status(200).json({
         message: 'You have not registered for the exam yet',
-        exam: null,
+        answers: [],
         hasAllQuestionsAnswered: false,
       });
     }
@@ -174,14 +174,6 @@ export const getRegisterAnswerExam = async (req: Request, res: Response) => {
       });
     }
 
-    const allQuestions = await ExamQuestionnaireMongoModel.find().select('_id').lean();
-
-    const expectedIds = allQuestions.map(q => q._id.toString());
-    const answeredIds = currentExam.answers
-      .map((a: any) => a.questionnaireId?._id?.toString())
-      .filter(Boolean);
-    const hasAllQuestionsAnswered = expectedIds.every(id => answeredIds?.includes(id));
-
     const answersLinkVideo = await Promise.all(
       currentExam.answers.map(async (ans: any) => {
         // Video respuesta estudiante
@@ -189,16 +181,14 @@ export const getRegisterAnswerExam = async (req: Request, res: Response) => {
         const { linkVideo, thumbnail } = getUrlTokenExtractVimeoVideoById({ videoVimeo });
 
         return {
-          ...ans,
+          ...ans._doc,
           linkVideo,
           thumbnail,
         };
       }),
     );
 
-    currentExam.answers = answersLinkVideo;
-
-    return res.status(200).json({ exam: currentExam, hasAllQuestionsAnswered });
+    return res.status(200).json({ answers: answersLinkVideo });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
     return res.status(500).json({ message: 'Error fetching answer exam by id', error });
