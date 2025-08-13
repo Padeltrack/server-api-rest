@@ -3,7 +3,7 @@ import { RoleModel, SelectRoleModel, UserMongoModel } from './user.model';
 import { UpdateUserSchemaZod } from './user.dto';
 import { ZodError } from 'zod';
 import { PlanMongoModel } from '../plan/plan.model';
-import { OrderMongoModel, SelectStatusOrderModel } from '../order/order.model';
+import { OrderMongoModel } from '../order/order.model';
 
 export const getMe = async (req: Request, res: Response) => {
   req.logger = req.logger.child({ service: 'users', serviceHandler: 'getMe' });
@@ -11,14 +11,14 @@ export const getMe = async (req: Request, res: Response) => {
 
   try {
     const user = req.user;
-    const orderActive = await OrderMongoModel.findOne({ userId: user._id, status: SelectStatusOrderModel.Approved });
+    const lastOrder = await OrderMongoModel.findOne({ userId: user._id }).sort({ createdAt: -1 });
     let usePlan = null;
 
-    if (orderActive) {
-      usePlan = await PlanMongoModel.findOne({ _id: orderActive.planId });
+    if (lastOrder) {
+      usePlan = await PlanMongoModel.findOne({ _id: lastOrder.planId });
     }
 
-    return res.status(200).json({ user, usePlan });
+    return res.status(200).json({ user, usePlan, lastOrder });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
     return res.status(401).json({ message: 'Unauthorized' });

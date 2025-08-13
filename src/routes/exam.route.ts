@@ -15,36 +15,36 @@ import { uploadVideo } from '../middleware/multer.middleware';
 import { activeOrder } from '../middleware/orderActive.middleware';
 
 const examRoutes = Router();
-const pathAuth = '/exam';
+const pathAExam = '/exam';
 
 examRoutes.get(
-  `${pathAuth}/questionnaire/list`,
+  `${pathAExam}/questionnaire/list`,
   authenticate,
   authorize(SelectRoleModel.Student, SelectRoleModel.SuperAdmin),
   activeOrder,
   getQuestionnaireExam,
 );
 examRoutes.get(
-  `${pathAuth}/answer/list`,
+  `${pathAExam}/answer/list`,
   authenticate,
   authorize(SelectRoleModel.SuperAdmin, SelectRoleModel.Coach),
   getAnswerExamByList,
 );
 examRoutes.get(
-  `${pathAuth}/answer/:id`,
+  `${pathAExam}/answer/:id`,
   authenticate,
   authorize(SelectRoleModel.SuperAdmin, SelectRoleModel.Coach),
   getAnswerExamById,
 );
 examRoutes.post(
-  `${pathAuth}/questionnaire/add`,
+  `${pathAExam}/questionnaire/add`,
   authenticate,
   authorize(SelectRoleModel.SuperAdmin),
   uploadVideo.single('upload_video'),
   addQuestionnaire,
 );
 examRoutes.post(
-  `${pathAuth}/register/answer`,
+  `${pathAExam}/register/answer`,
   authenticate,
   authorize(SelectRoleModel.Student),
   activeOrder,
@@ -52,13 +52,13 @@ examRoutes.post(
   registerAnswerExam,
 );
 examRoutes.post(
-  `${pathAuth}/register/grade`,
+  `${pathAExam}/register/grade`,
   authenticate,
   authorize(SelectRoleModel.Coach),
   registerGradeExam,
 );
 examRoutes.delete(
-  `${pathAuth}/questionnaire/delete/:id`,
+  `${pathAExam}/questionnaire/delete/:id`,
   authenticate,
   authorize(SelectRoleModel.SuperAdmin),
   deleteQuestionnaire,
