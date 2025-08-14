@@ -6,8 +6,8 @@ export const getWeeklyVideos = async (req: Request, res: Response) => {
   req.logger.info({ status: 'start' });
 
   try {
-    const user = req.user;
-    const weeklyVideo = await WeeklyVideoMongoModel.findOne({ orderId: user._id });
+    const order = req.order;
+    const weeklyVideo = await WeeklyVideoMongoModel.findOne({ orderId: order._id, week: order.currentWeek });
 
     return res.status(200).json({ weeklyVideo });
   } catch (error) {

@@ -7,7 +7,15 @@ export const studentsAuthStrategic = async (options: {
   res: Response;
 }) => {
   const { data, res } = options;
-  const { _id } = data.user;
+  const { user, isPanelAdmin } = data;
+  const { _id } = user;
+
+  if (isPanelAdmin) {
+    return res.status(403).json({
+      message: 'Forbidden'
+    });
+  }
+
   const me = {
     user: data.user,
     token: generateAuthToken({ _id }),

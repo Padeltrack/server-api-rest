@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
 import { VideoMongoModel } from './video.model';
 import { CreateVideoSchemaZod } from './video.dto';
-import { uploadVideoToVimeo } from '../vimeo/vimeo.helper';
+import { deleteVimeoVideo, getUrlTokenExtractVimeoVideoById, getVimeoVideoById, uploadVideoToVimeo } from '../vimeo/vimeo.helper';
 import { planVideoFolder } from '../vimeo/viemo.constant';
 
 export const getVideos = async (req: Request, res: Response) => {
@@ -15,7 +15,22 @@ export const getVideos = async (req: Request, res: Response) => {
     const skip = (page - 1) * limit;
 
     const videos = await VideoMongoModel.find().skip(skip).limit(limit).sort({ createdAt: -1 });
-    return res.status(200).json({ videos });
+    const videosLinks = await Promise.all(
+      videos.map(async (video: any) => {
+        if (video?.idVideoVimeo) {
+          const getVideoVimeo = await getVimeoVideoById({ id: video.idVideoVimeo });
+          const { thumbnail, linkVideo } = getUrlTokenExtractVimeoVideoById({ videoVimeo: getVideoVimeo });
+          return {
+            ...video._doc,
+            thumbnail,
+            linkVideo
+          }
+        }
+        return video._doc;
+      })
+    );
+
+    return res.status(200).json({ videos: videosLinks });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
     return res.status(401).json({ message: 'Error getting videos' });
@@ -33,7 +48,15 @@ export const getVideoById = async (req: Request, res: Response) => {
       return res.status(400).json({ message: 'Video id is required' });
     }
 
-    const video = await VideoMongoModel.findOne({ _id });
+    const video: any = await VideoMongoModel.findOne({ _id });
+
+    if (video?.idVideoVimeo) {
+      const getVideoVimeo = await getVimeoVideoById({ id: video.idVideoVimeo });
+      const { thumbnail, linkVideo } = getUrlTokenExtractVimeoVideoById({ videoVimeo: getVideoVimeo });
+      video._doc.thumbnail = thumbnail;
+      video._doc.linkVideo = linkVideo;
+    }
+
     return res.status(200).json({ video });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
@@ -113,6 +136,10 @@ export const updateFileVideo = async (req: Request, res: Response) => {
     const getVideo = await VideoMongoModel.findOne({ _id: videoId });
     if (!getVideo) {
       return res.status(404).json({ message: 'Video not found' });
+    }
+
+    if (getVideo?.idVideoVimeo) {
+      await deleteVimeoVideo({ idVideoVimeo: getVideo.idVideoVimeo });
     }
 
     const result: any = await uploadVideoToVimeo({

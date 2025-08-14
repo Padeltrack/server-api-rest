@@ -1,16 +1,27 @@
 import { Request, Response, NextFunction } from 'express';
-import { OrderMongoModel, SelectStatusOrderModel } from '../modules/order/order.model';
+import { IOrderModel, OrderMongoModel, SelectStatusOrderModel } from '../modules/order/order.model';
 import { SelectRoleModel } from '../modules/user/user.model';
 
-export const activeOrder = async (req: Request, res: Response, next: NextFunction) => {
-    const user = req.user;
-    const isStudents = user.role === SelectRoleModel.Student;
-    const orderActive = await OrderMongoModel.countDocuments({ userId: user._id, status: SelectStatusOrderModel.Approved });
+declare module 'express-serve-static-core' {
+  interface Request {
+    order: IOrderModel;
+  }
+}
 
-    if (!orderActive && isStudents) {
-        return res.status(403).json({
-            message: 'Access denied'
-        });
+export const activeOrder = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const user = req.user;
+        const isStudents = user.role === SelectRoleModel.Student;
+        const orderActive = await OrderMongoModel.findOne({ userId: user._id, status: SelectStatusOrderModel.Approved });
+
+        if (!orderActive && isStudents) {
+            return res.status(403).json({
+                message: 'Access denied'
+            });
+        }
+        req.order = orderActive as IOrderModel;
+        next();
+    } catch (error) {
+        res.status(401).json({ message: 'Order not active' });
     }
-    next();
 };

@@ -175,10 +175,9 @@ export const updateMe = async (req: Request, res: Response) => {
 
   try {
     const me = req.user;
-    const { gender, birthdate, wherePlay, numberPhone } = UpdateUserSchemaZod.parse(req.body);
+    const { birthdate, wherePlay, numberPhone } = UpdateUserSchemaZod.parse(req.body);
     const fields: any = {};
 
-    if (gender) fields['gender'] = gender;
     if (birthdate) fields['birthdate'] = birthdate;
     if (wherePlay) fields['wherePlay'] = wherePlay;
     if (numberPhone) fields['numberPhone'] = numberPhone;
