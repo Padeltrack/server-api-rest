@@ -2,7 +2,7 @@
 import jwt, { TokenExpiredError } from 'jsonwebtoken';
 import LoggerColor from 'node-color-log';
 import {
-  TOKEN_JWT_EXPIRES_THIRTY_MINUTES_IN_SECONDS,
+  TOKEN_JWT_EXPIRES_THREE_DAYS_IN_MS,
   TOKEN_JWT_REFRESH_EXPIRES_SEVEN_DAYS_IN_SECONDS,
 } from './auth.constant';
 import { UserModel, UserMongoModel } from '../user/user.model';
@@ -35,7 +35,7 @@ export const verifyAuthToken = (options: { token: string; isRefresh?: boolean })
 
 export const generateAuthToken = (payload: string | object) => {
   return jwt.sign(payload, `${process.env.JWT_SECRET}`, {
-    expiresIn: TOKEN_JWT_EXPIRES_THIRTY_MINUTES_IN_SECONDS,
+    expiresIn: TOKEN_JWT_EXPIRES_THREE_DAYS_IN_MS,
   });
 };
 

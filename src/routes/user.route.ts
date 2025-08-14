@@ -33,7 +33,7 @@ userRoutes.patch(
   authorize(SelectRoleModel.SuperAdmin),
   markWorkedUser,
 );
-userRoutes.patch(`${pathUser}/me`, updateMe);
+userRoutes.patch(`${pathUser}/me`, authenticate, updateMe);
 userRoutes.delete(`${pathUser}/me`, authenticate, deleteMe);
 
 export default userRoutes;

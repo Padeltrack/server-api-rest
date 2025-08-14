@@ -79,14 +79,6 @@ const UserMongoSchema = new Schema<UserModel>(
     numberPhone: {
       type: String,
       required: false,
-      unique: true,
-      validate: {
-        validator: function (v: string) {
-          if (!v) return true;
-          return /^\+?[1-9]\d{7,14}$/.test(v);
-        },
-        message: props => `${props.value} no es un número de teléfono válido`,
-      },
     },
     userName: {
       type: String,
