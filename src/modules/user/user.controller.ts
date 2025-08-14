@@ -175,7 +175,7 @@ export const updateMe = async (req: Request, res: Response) => {
   req.logger.info({ status: 'start' });
 
   try {
-    const me = { _id: "687f05ca66f67f6f76f56742" } // req.user;
+    const me =  req.user;
     const { birthdate, wherePlay, numberPhone, photo, displayName } = UpdateUserSchemaZod.parse(req.body);
     const fields: any = {};
 
