@@ -23,9 +23,10 @@ export const getOrders = async (req: Request, res: Response) => {
 
     if (me.role === SelectRoleModel.Student) query['userId'] = me._id;
 
+    const count = await OrderMongoModel.countDocuments({});
     const orders = await OrderMongoModel.find().populate('planId').populate('userId').skip(skip).limit(limit).sort({ createdAt: -1 });
 
-    return res.status(200).json({ orders });
+    return res.status(200).json({ orders, count });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
     return res.status(500).json({ message: 'Error fetching orders', error });

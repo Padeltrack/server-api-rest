@@ -30,7 +30,9 @@ export const getVideos = async (req: Request, res: Response) => {
       })
     );
 
-    return res.status(200).json({ videos: videosLinks });
+    const count = await VideoMongoModel.countDocuments({});
+
+    return res.status(200).json({ videos: videosLinks, count });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
     return res.status(401).json({ message: 'Error getting videos' });

@@ -61,12 +61,14 @@ export const getAnswerExamByList = async (req: Request, res: Response) => {
       };
     }
 
+    const count = await ExamAnswerMongoModel.countDocuments(where);
     const exams = await ExamAnswerMongoModel.find(where)
       .select('_id userId status average createdAt')
       .populate('userId', 'displayName photo gender email role')
       .lean()
       .sort({ order: -1 });
-    return res.status(200).json({ exams });
+
+    return res.status(200).json({ exams, count });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
     return res.status(500).json({ message: 'Error fetching answer exam list', error });

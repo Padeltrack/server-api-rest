@@ -36,9 +36,12 @@ export const getUsers = async (req: Request, res: Response) => {
     const role = req.query?.role || SelectRoleModel.Student;
     const skip = (page - 1) * limit;
 
-    const users = await UserMongoModel.find({ role }).skip(skip).limit(limit);
+    const query = { role };
 
-    return res.status(200).json({ users });
+    const count = await UserMongoModel.countDocuments(query);
+    const users = await UserMongoModel.find(query).skip(skip).limit(limit);
+
+    return res.status(200).json({ users, count });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
     return res.status(401).json({ message: 'Error getting users' });
