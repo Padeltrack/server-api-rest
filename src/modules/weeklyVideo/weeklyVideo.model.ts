@@ -24,7 +24,7 @@ const weeklyVideosSchema = new Schema<IWeeklyVideoModel>({
     ref: 'Video',
     validate: {
       validator: function (arr: any[]) {
-        return arr.length <= 10;
+        return arr.length > 10;
       },
       message: 'No puedes asignar más de 10 videos a una semana'
     }

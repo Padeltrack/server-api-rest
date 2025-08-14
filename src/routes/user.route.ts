@@ -14,26 +14,26 @@ import { SelectRoleModel } from '../modules/user/user.model';
 import { authorize } from '../middleware/roles.middleware';
 
 const userRoutes = Router();
-const pathAuth = '/user';
+const pathUser = '/user';
 
-userRoutes.get(`${pathAuth}/all`, authenticate, authorize(SelectRoleModel.SuperAdmin), getUsers);
-userRoutes.get(`${pathAuth}/me`, authenticate, getMe);
-userRoutes.get(`${pathAuth}/coach`, authenticate, authorize(SelectRoleModel.Student), getCoachOrStudentUsers);
-userRoutes.get(`${pathAuth}/student`, authenticate, authorize(SelectRoleModel.Coach), getCoachOrStudentUsers);
-userRoutes.get(`${pathAuth}/:id`, authenticate, authorize(SelectRoleModel.SuperAdmin), getUserById);
+userRoutes.get(`${pathUser}/all`, authenticate, authorize(SelectRoleModel.SuperAdmin), getUsers);
+userRoutes.get(`${pathUser}/me`, authenticate, getMe);
+userRoutes.get(`${pathUser}/coach`, authenticate, authorize(SelectRoleModel.Student), getCoachOrStudentUsers);
+userRoutes.get(`${pathUser}/student`, authenticate, authorize(SelectRoleModel.Coach), getCoachOrStudentUsers);
+userRoutes.get(`${pathUser}/:id`, authenticate, authorize(SelectRoleModel.SuperAdmin), getUserById);
 userRoutes.patch(
-  `${pathAuth}/mark/verified/:id`,
+  `${pathUser}/mark/verified/:id`,
   authenticate,
   authorize(SelectRoleModel.SuperAdmin),
   markVerifiedUser,
 );
 userRoutes.patch(
-  `${pathAuth}/mark/worked/:id`,
+  `${pathUser}/mark/worked/:id`,
   authenticate,
   authorize(SelectRoleModel.SuperAdmin),
   markWorkedUser,
 );
-userRoutes.patch(`${pathAuth}/me`, authenticate, updateMe);
-userRoutes.delete(`${pathAuth}/me`, authenticate, deleteMe);
+userRoutes.patch(`${pathUser}/me`, authenticate, updateMe);
+userRoutes.delete(`${pathUser}/me`, authenticate, deleteMe);
 
 export default userRoutes;

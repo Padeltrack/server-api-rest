@@ -13,6 +13,7 @@ import onboardingRoutes from './routes/onboarding.route';
 import examRoutes from './routes/exam.route';
 import videoRoutes from './routes/video.route';
 import orderRoutes from './routes/order.route';
+import weeklyVideoRoutes from './routes/weeklyVideo.route';
 import { errorHandler } from './middleware/errorHandler.middleware';
 import { connectToMongo } from './config/mongo.config';
 import { initializeFirebase } from './config/firebase.config';
@@ -53,6 +54,7 @@ app.use('/api', logger, [
   onboardingRoutes,
   examRoutes,
   videoRoutes,
+  weeklyVideoRoutes,
 ]);
 
 app.use(errorHandler);
