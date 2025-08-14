@@ -4,6 +4,7 @@ import { UpdateUserSchemaZod } from './user.dto';
 import { ZodError } from 'zod';
 import { PlanMongoModel } from '../plan/plan.model';
 import { OrderMongoModel } from '../order/order.model';
+import { uploadImagePhotoUser } from './user.helper';
 
 export const getMe = async (req: Request, res: Response) => {
   req.logger = req.logger.child({ service: 'users', serviceHandler: 'getMe' });
@@ -174,13 +175,19 @@ export const updateMe = async (req: Request, res: Response) => {
   req.logger.info({ status: 'start' });
 
   try {
-    const me = req.user;
-    const { birthdate, wherePlay, numberPhone } = UpdateUserSchemaZod.parse(req.body);
+    const me = { _id: "687f05ca66f67f6f76f56742" } // req.user;
+    const { birthdate, wherePlay, numberPhone, photo, displayName } = UpdateUserSchemaZod.parse(req.body);
     const fields: any = {};
 
     if (birthdate) fields['birthdate'] = birthdate;
     if (wherePlay) fields['wherePlay'] = wherePlay;
     if (numberPhone) fields['numberPhone'] = numberPhone;
+    if (displayName) fields['displayName'] = displayName;
+
+    if (photo) {
+      const photoUser = await uploadImagePhotoUser({ imageBase64: photo, idUser: me._id });
+      fields['photo'] = photoUser;
+    }
 
     if (Object.keys(fields).length) {
       await UserMongoModel.updateOne({ _id: me._id }, { $set: fields });

@@ -4,7 +4,7 @@ import { StorageFirebaseModel } from '../firebase/firebase.model';
 import { uploadFileFirebaseStorage } from '../firebase/firebase.service';
 import { IOrderModel } from './order.model';
 
-export const uploadImageBanner = async (options: {
+export const uploadImagePayment = async (options: {
   imageBase64: string;
   idOrder: IOrderModel['_id'];
 }) => {

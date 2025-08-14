@@ -5,7 +5,7 @@ import { OrderMongoModel, SelectStatusOrderModel } from './order.model';
 import { PlanMongoModel } from '../plan/plan.model';
 import { SelectRoleModel } from '../user/user.model';
 import { ZodError } from 'zod';
-import { uploadImageBanner } from './order.service';
+import { uploadImagePayment } from './order.service';
 import { WeeklyVideoMongoModel } from '../weeklyVideo/weeklyVideo.model';
 import { getVideosByWeek } from '../weeklyVideo/weeklyVideo.model.helper';
 
@@ -66,7 +66,7 @@ export const createOrder = async (req: Request, res: Response) => {
     if (isOrderPending) return res.status(400).json({ message: 'You have a pending order' });
 
     const idOrder = new ObjectId().toHexString();
-    const paymentProof = await uploadImageBanner({ imageBase64, idOrder });
+    const paymentProof = await uploadImagePayment({ imageBase64, idOrder });
 
     const order = await OrderMongoModel.create({
       _id: idOrder, 
