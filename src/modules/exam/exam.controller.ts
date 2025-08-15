@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
 import { ExamQuestionnaireMongoModel } from './exam.model';
 import { ExamAnswerMongoModel, SelectStatusAnswerModel } from './exam-answer.model';
-import { addQuestionnaireSchemaZod, ExamAnswerRegisterSchemaZod, ExamGradeRegisterSchemaZod } from './exam.dto';
+import { addQuestionnaireSchemaZod, AssignExamToCoachSchemaZod, ExamAnswerRegisterSchemaZod, ExamGradeRegisterSchemaZod } from './exam.dto';
 import { ZodError } from 'zod';
 import {
   SelectRoleModel,
@@ -62,11 +62,52 @@ export const getAnswerExamByList = async (req: Request, res: Response) => {
     }
 
     const count = await ExamAnswerMongoModel.countDocuments(where);
-    const exams = await ExamAnswerMongoModel.find(where)
-      .select('_id userId status average createdAt')
-      .populate('userId', 'displayName photo gender email role')
-      .lean()
-      .sort({ order: -1 });
+    const exams = await ExamAnswerMongoModel.aggregate([
+      { $match: where },
+      {
+        $addFields: {
+          statusOrder: {
+            $switch: {
+              branches: [
+                { case: { $in: ["$status", [SelectStatusAnswerModel.Pendiente, SelectStatusAnswerModel.Revision]] }, then: 1 },
+                { case: { $eq: ["$status", SelectStatusAnswerModel.Rechazado] }, then: 2 },
+                { case: { $eq: ["$status", SelectStatusAnswerModel.Completado] }, then: 3 }
+              ],
+              default: 4
+            }
+          }
+        }
+      },
+      { $sort: { statusOrder: 1, createdAt: -1 } },
+      {
+        $lookup: {
+          from: "users",
+          localField: "userId",
+          foreignField: "_id",
+          as: "userId"
+        }
+      },
+      { $unwind: "$userId" },
+      {
+        $lookup: {
+          from: "users",
+          localField: "assignCoachId",
+          foreignField: "_id",
+          as: "assignCoachId"
+        }
+      },
+      { $unwind: { path: "$assignCoachId", preserveNullAndEmptyArrays: true } },
+      {
+        $project: {
+          _id: 1,
+          userId: { displayName: 1, photo: 1, gender: 1, email: 1, role: 1 },
+          assignCoachId: { displayName: 1, photo: 1, gender: 1, email: 1, role: 1 },
+          status: 1,
+          average: 1,
+          createdAt: 1
+        }
+      }
+    ]);
 
     return res.status(200).json({ exams, count });
   } catch (error) {
@@ -98,6 +139,7 @@ export const getAnswerExamById = async (req: Request, res: Response) => {
 
     const getExam = await ExamAnswerMongoModel.findOne(where)
       .populate('userId', '_id displayName level photo gender email role')
+      .populate('assignCoachId', '_id displayName level photo gender email role')
       .populate('answers.questionnaireId')
       .lean()
       .sort({ order: -1 });
@@ -387,6 +429,7 @@ export const registerGradeExam = async (req: Request, res: Response) => {
   req.logger.info({ status: 'start' });
 
   try {
+    const me = req.user;
     const { examAnswerId, answers } = ExamGradeRegisterSchemaZod.parse(req.body);
 
     const getExamAnswer = await ExamAnswerMongoModel.findOne({ _id: examAnswerId });
@@ -394,6 +437,12 @@ export const registerGradeExam = async (req: Request, res: Response) => {
     if (!getExamAnswer) {
       return res.status(404).json({
         message: 'Answer not found',
+      });
+    }
+
+    if (me._id !== getExamAnswer?.assignCoachId) {
+      return res.status(403).json({
+        message: 'Forbidden',
       });
     }
 
@@ -468,6 +517,7 @@ export const registerGradeExam = async (req: Request, res: Response) => {
 
     const examAnswerUpdate = await ExamAnswerMongoModel.findOne({ _id: examAnswerId })
       .populate('userId', '_id displayName level photo gender email role')
+      .populate('assignCoachId', '_id displayName level photo gender email role')
       .populate('answers.questionnaireId')
       .lean()
       .sort({ order: -1 });
@@ -486,6 +536,55 @@ export const registerGradeExam = async (req: Request, res: Response) => {
 
     req.logger.error({ status: 'error', code: 500, error: error.message });
     return res.status(500).json({ message: 'Error fetching grade exam', error });
+  }
+};
+
+export const assignExamToCoach = async (req: Request, res: Response) => {
+  req.logger = req.logger.child({ service: 'exam', serviceHandler: 'assignExam' });
+  req.logger.info({ status: 'start' });
+
+  try {
+    const { examAnswerId, coachId } = AssignExamToCoachSchemaZod.parse(req.body);
+
+    const getExamAnswer = await ExamAnswerMongoModel
+      .findOne({ _id: examAnswerId })
+
+    if (!getExamAnswer) {
+      return res.status(404).json({
+        message: 'Exam answer not found',
+      });
+    }
+
+    if (![SelectStatusAnswerModel.Pendiente, SelectStatusAnswerModel.Revision].includes(getExamAnswer.status as any)) {
+      return res.status(400).json({
+        message: 'Exam answer is not in a valid state',
+      });
+    }
+
+    const getCoach = await UserMongoModel.findOne({ _id: coachId });
+
+    if (!getCoach) {
+      return res.status(404).json({
+        message: 'Coach not found',
+      });
+    }
+
+    await ExamAnswerMongoModel.updateOne({ _id: examAnswerId }, { $set: { assignCoachId: coachId } });
+
+    return res.status(200).json({
+      message: 'Questionnaire assigned successfully',
+      coach: getCoach
+    });
+  } catch (error) {
+    if (error instanceof ZodError) {
+      return res.status(400).json({
+        message: 'Error de validación',
+        issues: error.errors,
+      });
+    }
+
+    req.logger.error({ status: 'error', code: 500, error: error.message });
+    return res.status(500).json({ message: 'Error register answer exam', error });
   }
 };
 

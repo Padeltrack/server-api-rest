@@ -21,6 +21,7 @@ interface Answer {
 export interface ExamAnswerModel extends Document {
   readonly _id: string;
   userId: string;
+  assignCoachId?: string;
   status: StatusAnswerModel;
   answers: Answer[];
   average?: number;
@@ -62,6 +63,11 @@ const ExamAnswerSchema = new Schema<ExamAnswerModel>(
   {
     _id: { type: String, required: true },
     userId: { type: String, required: true, ref: 'User' },
+    assignCoachId: {
+      type: String,
+      required: false,
+      ref: 'User',
+    },
     status: {
       type: String,
       required: true,

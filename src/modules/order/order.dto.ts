@@ -12,6 +12,7 @@ export const updateOrderStatusSchema = z.object({
     SelectStatusOrderModel.Approved,
     SelectStatusOrderModel.Rejected,
   ]),
+  messageRejected: z.string().optional(),
 });
 
 export type CreateOrderDto = z.infer<typeof createOrderSchema>;

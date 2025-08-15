@@ -1,7 +1,10 @@
 import { getBufferBase64 } from '../../shared/util/string.util';
+import { ExamAnswerMongoModel } from '../exam/exam-answer.model';
 import { BASE_STORE_FIREBASE } from '../firebase/firebase.contants';
 import { StorageFirebaseModel } from '../firebase/firebase.model';
 import { uploadFileFirebaseStorage } from '../firebase/firebase.service';
+import { OrderMongoModel } from '../order/order.model';
+import { deleteVimeoVideo } from '../vimeo/vimeo.helper';
 import { UserModel, UserMongoModel } from './user.model';
 
 export const generateUniqueUserName = async (baseName: string) => {
@@ -33,3 +36,15 @@ export const uploadImagePhotoUser = async (options: {
   });
   return `${BASE_STORE_FIREBASE}/${StorageFirebaseModel.USER_PHOTO}%2F${fileName}?alt=media`;
 };
+
+export const removeRelationUserModel = async (options:  { userId: string }) => {
+  const { userId } = options;
+  const examAnswers = await ExamAnswerMongoModel.find({ userId });
+  examAnswers.forEach(async (examAnswer) => {
+    await ExamAnswerMongoModel.deleteOne({ _id: examAnswer._id });
+    examAnswer.answers.forEach(async (answer) => {
+      await deleteVimeoVideo({ idVideoVimeo: answer.idVideoVimeo });
+    });
+  });
+  await OrderMongoModel.deleteMany({ userId });
+}

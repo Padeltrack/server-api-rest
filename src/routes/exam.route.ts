@@ -8,6 +8,7 @@ import {
   addQuestionnaire,
   deleteQuestionnaire,
   getRegisterAnswerExam,
+  assignExamToCoach,
 } from '../modules/exam/exam.controller';
 import { authenticate } from '../middleware/auth.middleware';
 import { authorize } from '../middleware/roles.middleware';
@@ -64,6 +65,12 @@ examRoutes.post(
   authenticate,
   authorize(SelectRoleModel.Coach),
   registerGradeExam,
+);
+examRoutes.post(
+  `${pathAExam}/assign/coach`,
+  authenticate,
+  authorize(SelectRoleModel.SuperAdmin),
+  assignExamToCoach,
 );
 examRoutes.delete(
   `${pathAExam}/questionnaire/delete/:id`,

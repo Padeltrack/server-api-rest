@@ -26,6 +26,14 @@ export const ExamGradeRegisterSchemaZod = z.object({
   ),
 });
 
+export const AssignExamToCoachSchemaZod = z.object({
+  examAnswerId: z
+    .string({ required_error: 'El identificador del examen es requerido' })
+    .min(1, 'El identificador del examen es requerido'),
+  coachId: z.string({ required_error: 'El identificador del coach es requerido' }).min(1, 'El identificador del coach es requerido'),
+});
+
 export type IExamAnswerRegisterDTO = z.infer<typeof ExamAnswerRegisterSchemaZod>;
 export type IAddQuestionnaireDTO = z.infer<typeof addQuestionnaireSchemaZod>;
 export type IExamGradeRegisterDTO = z.infer<typeof ExamGradeRegisterSchemaZod>;
+export type IAssignExamToCoachDTO = z.infer<typeof AssignExamToCoachSchemaZod>;

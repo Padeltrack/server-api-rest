@@ -8,6 +8,7 @@ import {
   markWorkedUser,
   getUserById,
   getCoachOrStudentUsers,
+  deleteUser,
 } from '../modules/user/user.controller';
 import { authenticate } from '../middleware/auth.middleware';
 import { SelectRoleModel } from '../modules/user/user.model';
@@ -35,5 +36,6 @@ userRoutes.patch(
 );
 userRoutes.patch(`${pathUser}/me`, authenticate, updateMe);
 userRoutes.delete(`${pathUser}/me`, authenticate, deleteMe);
+userRoutes.delete(`${pathUser}/:id`, authenticate, authorize(SelectRoleModel.SuperAdmin), deleteUser);
 
 export default userRoutes;

@@ -4,7 +4,7 @@ import { UpdateUserSchemaZod } from './user.dto';
 import { ZodError } from 'zod';
 import { PlanMongoModel } from '../plan/plan.model';
 import { OrderMongoModel } from '../order/order.model';
-import { uploadImagePhotoUser } from './user.helper';
+import { removeRelationUserModel, uploadImagePhotoUser } from './user.helper';
 
 export const getMe = async (req: Request, res: Response) => {
   req.logger = req.logger.child({ service: 'users', serviceHandler: 'getMe' });
@@ -33,10 +33,19 @@ export const getUsers = async (req: Request, res: Response) => {
   try {
     const page = Number(req.query?.page) || 1;
     const limit = Number(req.query?.limit) || 10;
+    const search = req.query?.search || '';
     const role = req.query?.role || SelectRoleModel.Student;
     const skip = (page - 1) * limit;
 
-    const query = { role };
+    let query: any = { role };
+
+    if (search) {
+      query.$or = [
+        { displayName: { $regex: search, $options: 'i' } },
+        { userName: { $regex: search, $options: 'i' } },
+        { email: { $regex: search, $options: 'i' } },
+      ];
+    }
 
     const count = await UserMongoModel.countDocuments(query);
     const users = await UserMongoModel.find(query).skip(skip).limit(limit);
@@ -219,6 +228,26 @@ export const deleteMe = async (req: Request, res: Response) => {
     const me = req.user;
 
     await UserMongoModel.deleteOne({ _id: me._id });
+    await removeRelationUserModel({  userId: me._id });
+
+    return res.status(200).json({
+      message: 'User deleted successfully',
+    });
+  } catch (error) {
+    req.logger.error({ status: 'error', code: 500, error: error.message });
+    return res.status(401).json({ message: 'Error removing users' });
+  }
+};
+
+export const deleteUser = async (req: Request, res: Response) => {
+  req.logger = req.logger.child({ service: 'users', serviceHandler: 'deleteUser' });
+  req.logger.info({ status: 'start' });
+
+  try {
+    const userId = req.params.id;
+
+    await UserMongoModel.deleteOne({ _id: userId });
+    await removeRelationUserModel({ userId });
 
     return res.status(200).json({
       message: 'User deleted successfully',

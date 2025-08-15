@@ -20,6 +20,7 @@ export interface IOrderModel extends Document {
   status: StatusOrderModel;
   paymentProof?: string;
   currentWeek?: number;
+  messageRejected?: string | null;
   lastProgressDate?: Date;
   createdAt: Date;
   updatedAt: Date;
@@ -39,6 +40,7 @@ const orderMongoSchema = new Schema<IOrderModel>(
     paymentProof: {
       type: String,
     },
+    messageRejected: { type: String, required: false },
     currentWeek: { type: Number, required: false },
     lastProgressDate: { type: Date, required: false },
   },

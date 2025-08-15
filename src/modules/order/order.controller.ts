@@ -96,7 +96,7 @@ export const updateOrderStatus = async (req: Request, res: Response) => {
 
   try {
     const orderId = req.params.id;
-    const { status } = updateOrderStatusSchema.parse(req.body);
+    const { status, messageRejected } = updateOrderStatusSchema.parse(req.body);
     const fieldsUpdated: any = { status };
 
     if (status === SelectStatusOrderModel.Approved) {
@@ -105,6 +105,7 @@ export const updateOrderStatus = async (req: Request, res: Response) => {
     } else if (status === SelectStatusOrderModel.Rejected) {
       fieldsUpdated.currentWeek = undefined;
       fieldsUpdated.lastProgressDate = undefined;
+      fieldsUpdated.messageRejected = messageRejected;
     }
 
     const updated = await OrderMongoModel.findByIdAndUpdate(
