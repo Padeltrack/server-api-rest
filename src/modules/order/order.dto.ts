@@ -12,7 +12,7 @@ export const updateOrderStatusSchema = z.object({
     SelectStatusOrderModel.Approved,
     SelectStatusOrderModel.Rejected,
   ]),
-  messageRejected: z.string().optional(),
+  messageRejected: z.string().max(50, "Máximo de 50 caracteres").optional(),
 });
 
 export type CreateOrderDto = z.infer<typeof createOrderSchema>;

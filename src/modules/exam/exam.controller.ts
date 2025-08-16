@@ -232,7 +232,7 @@ export const getRegisterAnswerExam = async (req: Request, res: Response) => {
       }),
     );
 
-    return res.status(200).json({ answers: answersLinkVideo });
+    return res.status(200).json({ answers: answersLinkVideo, status: currentExam.status });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
     return res.status(500).json({ message: 'Error fetching answer exam by id', error });

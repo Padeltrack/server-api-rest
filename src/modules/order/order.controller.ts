@@ -99,13 +99,28 @@ export const updateOrderStatus = async (req: Request, res: Response) => {
     const { status, messageRejected } = updateOrderStatusSchema.parse(req.body);
     const fieldsUpdated: any = { status };
 
+    const getOrder = await OrderMongoModel.findOne({ _id: orderId });
+    if (!getOrder) {
+      return res.status(404).json({
+        message: 'Order not found'
+      });
+    }
+
     if (status === SelectStatusOrderModel.Approved) {
+      if (getOrder.status === SelectStatusOrderModel.Rejected) {
+        fieldsUpdated.messageRejected = null;
+      }
+
       fieldsUpdated.currentWeek = 1;
       fieldsUpdated.lastProgressDate = new Date();
     } else if (status === SelectStatusOrderModel.Rejected) {
+      if (messageRejected && messageRejected?.length > 50) {
+        return res.status(400).json({ message: 'El mensaje de rechazo no puede tener mas de 50 caracteres' });
+      }
+
+      fieldsUpdated.messageRejected = messageRejected;
       fieldsUpdated.currentWeek = undefined;
       fieldsUpdated.lastProgressDate = undefined;
-      fieldsUpdated.messageRejected = messageRejected;
     }
 
     const updated = await OrderMongoModel.findByIdAndUpdate(
