@@ -8,7 +8,8 @@ export const BankRegisterSchemaZod = z.object({
       SelectTypeAccountBankModel.CHECKING,
     ]),
   numberAccount: z.number(),
-  nameAccount: z.string().min(2).max(100)
+  nameAccount: z.string().min(2).max(100),
+  dniAccount: z.string().min(2).max(100),
 });
 
 export const BankUpdateSchemaZod = z.object({
@@ -18,7 +19,8 @@ export const BankUpdateSchemaZod = z.object({
       SelectTypeAccountBankModel.CHECKING,
     ]).optional(),
   numberAccount: z.number().optional(),
-  nameAccount: z.string().min(2).max(100).optional()
+  nameAccount: z.string().min(2).max(100).optional(),
+  dniAccount: z.string().min(2).max(100).optional(),
 });
 
 export type IBankRegisterDTO = z.infer<typeof BankRegisterSchemaZod>;

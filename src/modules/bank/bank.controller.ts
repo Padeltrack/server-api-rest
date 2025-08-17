@@ -23,7 +23,7 @@ export const createBank = async (req: Request, res: Response) => {
   req.logger.info({ status: 'start' });
 
   try {
-    const { name, typeAccount, numberAccount, nameAccount } = BankRegisterSchemaZod.parse(req.body);
+    const { name, typeAccount, numberAccount, nameAccount, dniAccount } = BankRegisterSchemaZod.parse(req.body);
 
     const bank = await BankMongoModel.create({
         _id: new ObjectId().toHexString(),
@@ -31,6 +31,7 @@ export const createBank = async (req: Request, res: Response) => {
         typeAccount,
         numberAccount,
         nameAccount,
+        dniAccount,
     });
 
     return res.status(200).json({ bank });

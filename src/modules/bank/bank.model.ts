@@ -13,6 +13,7 @@ export interface BankModel extends Document {
   typeAccount: TypeAccountModel;
   numberAccount: number;
   nameAccount: string;
+  dniAccount: string;
 }
 
 const BankSchema = new Schema<BankModel>({
@@ -21,6 +22,9 @@ const BankSchema = new Schema<BankModel>({
   typeAccount: { type: String, required: true, enum: Object.values(SelectTypeAccountBankModel) },
   numberAccount: { type: Number, required: true },
   nameAccount: { type: String, required: true },
+  dniAccount: { type: String, required: true },
+},{
+  timestamps: true
 });
 
 export const BankMongoModel = model<BankModel>(
