@@ -105,7 +105,9 @@ export const getUserById = async (req: Request, res: Response) => {
       });
     }
 
-    const user = await UserMongoModel.findOne({ _id }).populate('onboarding.answers.questionId', 'question').lean();
+    const user = await UserMongoModel.findOne({ _id })
+      .populate('onboarding.answers.questionId', 'question')
+      .lean();
 
     return res.status(200).json({ user });
   } catch (error) {
@@ -187,14 +189,16 @@ export const updateMe = async (req: Request, res: Response) => {
   req.logger.info({ status: 'start' });
 
   try {
-    const me =  req.user;
-    const { birthdate, wherePlay, numberPhone, photo, displayName } = UpdateUserSchemaZod.parse(req.body);
+    const me = req.user;
+    const { birthdate, wherePlay, numberPhone, category, photo, displayName } =
+      UpdateUserSchemaZod.parse(req.body);
     const fields: any = {};
 
     if (birthdate) fields['birthdate'] = birthdate;
     if (wherePlay) fields['wherePlay'] = wherePlay;
     if (numberPhone) fields['numberPhone'] = numberPhone;
     if (displayName) fields['displayName'] = displayName;
+    if (category) fields['category'] = category;
 
     if (photo) {
       const photoUser = await uploadImagePhotoUser({ imageBase64: photo, idUser: me._id });
@@ -228,7 +232,7 @@ export const deleteMe = async (req: Request, res: Response) => {
     const me = req.user;
 
     await UserMongoModel.deleteOne({ _id: me._id });
-    await removeRelationUserModel({  userId: me._id });
+    await removeRelationUserModel({ userId: me._id });
 
     return res.status(200).json({
       message: 'User deleted successfully',

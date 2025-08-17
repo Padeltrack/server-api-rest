@@ -32,17 +32,21 @@ export const updateQuestionOnboarding = async (req: Request, res: Response) => {
 
     if (!id) {
       return res.status(400).json({
-        message: 'Id is required'
+        message: 'Id is required',
       });
     }
 
     if (!options.length) {
       return res.status(400).json({
-        message: 'Options is required'
+        message: 'Options is required',
       });
     }
 
-    const questionUpdated = await OnboardingQuestionMongoModel.findByIdAndUpdate(id, { question, options }, { new: true });
+    const questionUpdated = await OnboardingQuestionMongoModel.findByIdAndUpdate(
+      id,
+      { question, options },
+      { new: true },
+    );
     return res.status(200).json({ question: questionUpdated });
   } catch (error) {
     if (error instanceof ZodError) {
@@ -69,13 +73,13 @@ export const deleteQuestionOnboarding = async (req: Request, res: Response) => {
 
     if (!id) {
       return res.status(400).json({
-        message: 'Id is required'
+        message: 'Id is required',
       });
     }
 
     await OnboardingQuestionMongoModel.deleteOne({ _id: id });
     return res.status(200).json({
-      message: 'Question deleted successfully'
+      message: 'Question deleted successfully',
     });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });

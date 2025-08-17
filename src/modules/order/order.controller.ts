@@ -24,7 +24,12 @@ export const getOrders = async (req: Request, res: Response) => {
     if (me.role === SelectRoleModel.Student) query['userId'] = me._id;
 
     const count = await OrderMongoModel.countDocuments({});
-    const orders = await OrderMongoModel.find().populate('planId').populate('userId').skip(skip).limit(limit).sort({ createdAt: -1 });
+    const orders = await OrderMongoModel.find()
+      .populate('planId')
+      .populate('userId')
+      .skip(skip)
+      .limit(limit)
+      .sort({ createdAt: -1 });
 
     return res.status(200).json({ orders, count });
   } catch (error) {
@@ -42,7 +47,9 @@ export const getOrdersById = async (req: Request, res: Response) => {
 
     if (!orderId) return res.status(400).json({ message: 'Order id is required' });
 
-    const order = await OrderMongoModel.findOne({ _id: orderId }).populate('planId').populate('userId');
+    const order = await OrderMongoModel.findOne({ _id: orderId })
+      .populate('planId')
+      .populate('userId');
 
     return res.status(200).json({ order });
   } catch (error) {
@@ -57,24 +64,30 @@ export const createOrder = async (req: Request, res: Response) => {
 
   try {
     const me = req.user;
-    const userId =  me._id;
+    const userId = me._id;
     const { planId, imageBase64 } = createOrderSchema.parse(req.body);
 
     const isPlan = await PlanMongoModel.countDocuments({ _id: planId, active: true });
     if (!isPlan) return res.status(400).json({ message: 'Plan not found' });
 
-    const isOrderPending = await OrderMongoModel.countDocuments({ userId, $or: [{ status: SelectStatusOrderModel.Pending }, { status: SelectStatusOrderModel.Approved }] });
+    const isOrderPending = await OrderMongoModel.countDocuments({
+      userId,
+      $or: [
+        { status: SelectStatusOrderModel.Pending },
+        { status: SelectStatusOrderModel.Approved },
+      ],
+    });
     if (isOrderPending) return res.status(400).json({ message: 'You have a pending order' });
 
     const idOrder = new ObjectId().toHexString();
     const paymentProof = await uploadImagePayment({ imageBase64, idOrder });
 
     const order = await OrderMongoModel.create({
-      _id: idOrder, 
+      _id: idOrder,
       status: SelectStatusOrderModel.Pending,
       userId,
       planId,
-      paymentProof
+      paymentProof,
     });
 
     return res.status(200).json({ order });
@@ -102,7 +115,7 @@ export const updateOrderStatus = async (req: Request, res: Response) => {
     const getOrder = await OrderMongoModel.findOne({ _id: orderId });
     if (!getOrder) {
       return res.status(404).json({
-        message: 'Order not found'
+        message: 'Order not found',
       });
     }
 
@@ -115,7 +128,9 @@ export const updateOrderStatus = async (req: Request, res: Response) => {
       fieldsUpdated.lastProgressDate = new Date();
     } else if (status === SelectStatusOrderModel.Rejected) {
       if (messageRejected && messageRejected?.length > 50) {
-        return res.status(400).json({ message: 'El mensaje de rechazo no puede tener mas de 50 caracteres' });
+        return res
+          .status(400)
+          .json({ message: 'El mensaje de rechazo no puede tener mas de 50 caracteres' });
       }
 
       fieldsUpdated.messageRejected = messageRejected;
@@ -123,11 +138,9 @@ export const updateOrderStatus = async (req: Request, res: Response) => {
       fieldsUpdated.lastProgressDate = undefined;
     }
 
-    const updated = await OrderMongoModel.findByIdAndUpdate(
-      { _id: orderId },
-      fieldsUpdated,
-      { new: true },
-    );
+    const updated = await OrderMongoModel.findByIdAndUpdate({ _id: orderId }, fieldsUpdated, {
+      new: true,
+    });
     if (!updated) return res.status(404).json({ message: 'Order not found' });
 
     if (fieldsUpdated.status === SelectStatusOrderModel.Approved) {

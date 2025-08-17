@@ -19,8 +19,18 @@ const pathUser = '/user';
 
 userRoutes.get(`${pathUser}/all`, authenticate, authorize(SelectRoleModel.SuperAdmin), getUsers);
 userRoutes.get(`${pathUser}/me`, authenticate, getMe);
-userRoutes.get(`${pathUser}/coach`, authenticate, authorize(SelectRoleModel.Student), getCoachOrStudentUsers);
-userRoutes.get(`${pathUser}/student`, authenticate, authorize(SelectRoleModel.Coach), getCoachOrStudentUsers);
+userRoutes.get(
+  `${pathUser}/coach`,
+  authenticate,
+  authorize(SelectRoleModel.Student),
+  getCoachOrStudentUsers,
+);
+userRoutes.get(
+  `${pathUser}/student`,
+  authenticate,
+  authorize(SelectRoleModel.Coach),
+  getCoachOrStudentUsers,
+);
 userRoutes.get(`${pathUser}/:id`, authenticate, authorize(SelectRoleModel.SuperAdmin), getUserById);
 userRoutes.patch(
   `${pathUser}/mark/verified/:id`,
@@ -36,6 +46,11 @@ userRoutes.patch(
 );
 userRoutes.patch(`${pathUser}/me`, authenticate, updateMe);
 userRoutes.delete(`${pathUser}/me`, authenticate, deleteMe);
-userRoutes.delete(`${pathUser}/:id`, authenticate, authorize(SelectRoleModel.SuperAdmin), deleteUser);
+userRoutes.delete(
+  `${pathUser}/:id`,
+  authenticate,
+  authorize(SelectRoleModel.SuperAdmin),
+  deleteUser,
+);
 
 export default userRoutes;

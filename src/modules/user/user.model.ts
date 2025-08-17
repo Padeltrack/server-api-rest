@@ -24,6 +24,19 @@ export const SelectGenderUserModel = {
 
 export type GenderUserModel = (typeof SelectGenderUserModel)[keyof typeof SelectGenderUserModel];
 
+export const SelectCategoryUserModel = {
+  PRIMERA_CATEGORIA: 'Primera categoría',
+  SEGUNDA_CATEGORIA: 'Segunda categoría',
+  TERCERA_CATEGORIA: 'Tercera categoría',
+  CUARTA_CATEGORIA: 'Cuarta categoría',
+  QUINTA_CATEGORIA: 'Quinta categoría',
+  SEXTA_CATEGORIA: 'Sexta categoría',
+  SEPTIMA_CATEGORIA: 'Séptima categoría',
+} as const;
+
+export type CategoryUserModel =
+  (typeof SelectCategoryUserModel)[keyof typeof SelectCategoryUserModel];
+
 export interface UserOnboardingAnswerModel {
   questionId: string;
   answer: string;
@@ -47,6 +60,7 @@ export interface UserModel extends Document {
   verified?: boolean;
   worked?: boolean;
   level: UserLevelModel | null;
+  category: CategoryUserModel | null;
   mfaSecret?: string | null;
   onboarding: UserOnboardingModel | null;
 }
@@ -108,6 +122,12 @@ const UserMongoSchema = new Schema<UserModel>(
     worked: {
       type: Boolean,
       required: false,
+    },
+    category: {
+      type: String,
+      required: false,
+      enum: Object.values(SelectCategoryUserModel),
+      default: null,
     },
     role: {
       type: String,

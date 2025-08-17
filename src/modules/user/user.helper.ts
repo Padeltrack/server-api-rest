@@ -37,14 +37,14 @@ export const uploadImagePhotoUser = async (options: {
   return `${BASE_STORE_FIREBASE}/${StorageFirebaseModel.USER_PHOTO}%2F${fileName}?alt=media`;
 };
 
-export const removeRelationUserModel = async (options:  { userId: string }) => {
+export const removeRelationUserModel = async (options: { userId: string }) => {
   const { userId } = options;
   const examAnswers = await ExamAnswerMongoModel.find({ userId });
-  examAnswers.forEach(async (examAnswer) => {
+  examAnswers.forEach(async examAnswer => {
     await ExamAnswerMongoModel.deleteOne({ _id: examAnswer._id });
-    examAnswer.answers.forEach(async (answer) => {
+    examAnswer.answers.forEach(async answer => {
       await deleteVimeoVideo({ idVideoVimeo: answer.idVideoVimeo });
     });
   });
   await OrderMongoModel.deleteMany({ userId });
-}
+};

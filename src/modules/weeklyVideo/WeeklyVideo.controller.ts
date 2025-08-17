@@ -7,7 +7,10 @@ export const getWeeklyVideos = async (req: Request, res: Response) => {
 
   try {
     const order = req.order;
-    const weeklyVideo = await WeeklyVideoMongoModel.findOne({ orderId: order._id, week: order.currentWeek });
+    const weeklyVideo = await WeeklyVideoMongoModel.findOne({
+      orderId: order._id,
+      week: order.currentWeek,
+    });
 
     return res.status(200).json({ weeklyVideo });
   } catch (error) {

@@ -30,4 +30,4 @@ export const getTextBeforeAtEmail = (email: string) => {
   if (typeof email !== 'string') return null;
   const [before] = email.split('@');
   return before;
-}
+};

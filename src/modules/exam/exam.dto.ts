@@ -8,10 +8,10 @@ export const ExamAnswerRegisterSchemaZod = z.object({
 });
 
 export const addQuestionnaireSchemaZod = z.object({
-  title: z
-    .string({ required_error: 'El titulo es requerido' })
-    .min(1, 'El titulo es requerido'),
-  description: z.string({ required_error: 'La descripción es requerida' }).min(1, 'La descripción es requerida'),
+  title: z.string({ required_error: 'El titulo es requerido' }).min(1, 'El titulo es requerido'),
+  description: z
+    .string({ required_error: 'La descripción es requerida' })
+    .min(1, 'La descripción es requerida'),
 });
 
 export const ExamGradeRegisterSchemaZod = z.object({
@@ -30,7 +30,9 @@ export const AssignExamToCoachSchemaZod = z.object({
   examAnswerId: z
     .string({ required_error: 'El identificador del examen es requerido' })
     .min(1, 'El identificador del examen es requerido'),
-  coachId: z.string({ required_error: 'El identificador del coach es requerido' }).min(1, 'El identificador del coach es requerido'),
+  coachId: z
+    .string({ required_error: 'El identificador del coach es requerido' })
+    .min(1, 'El identificador del coach es requerido'),
 });
 
 export type IExamAnswerRegisterDTO = z.infer<typeof ExamAnswerRegisterSchemaZod>;

@@ -50,7 +50,9 @@ export const updatePlan = async (req: Request, res: Response) => {
     if (Array.isArray(benefits)) fields['benefits'] = benefits;
 
     if (!id) {
-      return res.status(400).json({ message: 'Plan id is required' });
+      return res.status(400).json({
+        message: 'Plan id is required',
+      });
     }
 
     const plan = await PlanMongoModel.findOneAndUpdate({ _id: id }, fields, { new: true });

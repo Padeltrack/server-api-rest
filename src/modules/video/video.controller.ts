@@ -2,7 +2,12 @@ import { Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
 import { VideoMongoModel } from './video.model';
 import { CreateVideoSchemaZod } from './video.dto';
-import { deleteVimeoVideo, getUrlTokenExtractVimeoVideoById, getVimeoVideoById, uploadVideoToVimeo } from '../vimeo/vimeo.helper';
+import {
+  deleteVimeoVideo,
+  getUrlTokenExtractVimeoVideoById,
+  getVimeoVideoById,
+  uploadVideoToVimeo,
+} from '../vimeo/vimeo.helper';
 import { planVideoFolder } from '../vimeo/viemo.constant';
 
 export const getVideos = async (req: Request, res: Response) => {
@@ -19,15 +24,17 @@ export const getVideos = async (req: Request, res: Response) => {
       videos.map(async (video: any) => {
         if (video?.idVideoVimeo) {
           const getVideoVimeo = await getVimeoVideoById({ id: video.idVideoVimeo });
-          const { thumbnail, linkVideo } = getUrlTokenExtractVimeoVideoById({ videoVimeo: getVideoVimeo });
+          const { thumbnail, linkVideo } = getUrlTokenExtractVimeoVideoById({
+            videoVimeo: getVideoVimeo,
+          });
           return {
             ...video._doc,
             thumbnail,
-            linkVideo
-          }
+            linkVideo,
+          };
         }
         return video._doc;
-      })
+      }),
     );
 
     const count = await VideoMongoModel.countDocuments({});
@@ -54,7 +61,9 @@ export const getVideoById = async (req: Request, res: Response) => {
 
     if (video?.idVideoVimeo) {
       const getVideoVimeo = await getVimeoVideoById({ id: video.idVideoVimeo });
-      const { thumbnail, linkVideo } = getUrlTokenExtractVimeoVideoById({ videoVimeo: getVideoVimeo });
+      const { thumbnail, linkVideo } = getUrlTokenExtractVimeoVideoById({
+        videoVimeo: getVideoVimeo,
+      });
       video._doc.thumbnail = thumbnail;
       video._doc.linkVideo = linkVideo;
     }
@@ -75,18 +84,18 @@ export const addVideo = async (req: Request, res: Response) => {
 
     if (!videoData.plan.length) {
       return res.status(400).json({
-        message: 'Video plan is required'
+        message: 'Video plan is required',
       });
     }
 
     if (!videoData.semanas.length) {
       return res.status(400).json({
-        message: 'Video semanas is required'
+        message: 'Video semanas is required',
       });
     }
 
     const filePath = req.file?.path;
-    
+
     if (!filePath) {
       return res.status(400).json({ message: 'No file uploaded' });
     }
@@ -107,7 +116,7 @@ export const addVideo = async (req: Request, res: Response) => {
     await VideoMongoModel.create({
       _id: new ObjectId().toHexString(),
       ...videoData,
-      idVideoVimeo: result.uri.split('/').pop()
+      idVideoVimeo: result.uri.split('/').pop(),
     });
 
     return res.status(200).json({
@@ -157,7 +166,10 @@ export const updateFileVideo = async (req: Request, res: Response) => {
       isPrivate: true,
     });
 
-    await VideoMongoModel.updateOne({ _id: videoId }, { idVideoVimeo: result.uri.split('/').pop() });
+    await VideoMongoModel.updateOne(
+      { _id: videoId },
+      { idVideoVimeo: result.uri.split('/').pop() },
+    );
 
     return res.status(200).json({
       message: 'Video updated successfully',

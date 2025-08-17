@@ -1,5 +1,10 @@
 import { Router } from 'express';
-import { getVideos, getVideoById, addVideo, updateFileVideo } from '../modules/video/video.controller';
+import {
+  getVideos,
+  getVideoById,
+  addVideo,
+  updateFileVideo,
+} from '../modules/video/video.controller';
 import { authenticate } from '../middleware/auth.middleware';
 import { SelectRoleModel } from '../modules/user/user.model';
 import { authorize } from '../middleware/roles.middleware';

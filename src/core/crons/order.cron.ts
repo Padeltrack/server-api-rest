@@ -10,39 +10,45 @@ function daysBetween(fecha1: Date, fecha2: Date) {
 }
 
 const cronOrderProgressWeek = async () => {
-    LoggerColor.log('⏳ Ejecutando cron de progreso de videos...');
-    try {
-        const progresos = await OrderMongoModel.find({ status: SelectStatusOrderModel.Approved, currentWeek: { $exists: true }, lastProgressDate: { $exists: true } });
+  LoggerColor.log('⏳ Ejecutando cron de progreso de videos...');
+  try {
+    const progresos = await OrderMongoModel.find({
+      status: SelectStatusOrderModel.Approved,
+      currentWeek: { $exists: true },
+      lastProgressDate: { $exists: true },
+    });
 
-        for (const progress of progresos) {
-            if (progress?.currentWeek && progress?.lastProgressDate) {
-                const days = daysBetween(progress.lastProgressDate, new Date());
+    for (const progress of progresos) {
+      if (progress?.currentWeek && progress?.lastProgressDate) {
+        const days = daysBetween(progress.lastProgressDate, new Date());
 
-                if (days >= 7) {
-                    const semanasAvance = Math.floor(days / 7);
-                    progress.currentWeek += semanasAvance;
-                    progress.lastProgressDate = new Date();
-                    await progress.save();
+        if (days >= 7) {
+          const semanasAvance = Math.floor(days / 7);
+          progress.currentWeek += semanasAvance;
+          progress.lastProgressDate = new Date();
+          await progress.save();
 
-                    const week = progress.currentWeek;
-                    await WeeklyVideoMongoModel.create({
-                        _id: new ObjectId().toHexString(),
-                        orderId: progress._id,
-                        week,
-                        videos: await getVideosByWeek({ week }),
-                    });
+          const week = progress.currentWeek;
+          await WeeklyVideoMongoModel.create({
+            _id: new ObjectId().toHexString(),
+            orderId: progress._id,
+            week,
+            videos: await getVideosByWeek({ week }),
+          });
 
-                    LoggerColor.bold().log(`📅 Usuario ${progress.userId} avanzó ${semanasAvance} semanas → Semana actual: ${progress.currentWeek}`);
-                }
-            }
+          LoggerColor.bold().log(
+            `📅 Usuario ${progress.userId} avanzó ${semanasAvance} semanas → Semana actual: ${progress.currentWeek}`,
+          );
         }
-    } catch (err) {
-        LoggerColor.error('❌ Error en cron de videos:', err);
+      }
     }
-}
+  } catch (err) {
+    LoggerColor.error('❌ Error en cron de videos:', err);
+  }
+};
 
 export const cronOrder = () => {
-    cron.schedule('0 0 * * *', () => {
-        cronOrderProgressWeek();
-    });
-}
+  cron.schedule('0 0 * * *', () => {
+    cronOrderProgressWeek();
+  });
+};

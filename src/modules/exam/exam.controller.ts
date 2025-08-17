@@ -2,7 +2,12 @@ import { Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
 import { ExamQuestionnaireMongoModel } from './exam.model';
 import { ExamAnswerMongoModel, SelectStatusAnswerModel } from './exam-answer.model';
-import { addQuestionnaireSchemaZod, AssignExamToCoachSchemaZod, ExamAnswerRegisterSchemaZod, ExamGradeRegisterSchemaZod } from './exam.dto';
+import {
+  addQuestionnaireSchemaZod,
+  AssignExamToCoachSchemaZod,
+  ExamAnswerRegisterSchemaZod,
+  ExamGradeRegisterSchemaZod,
+} from './exam.dto';
 import { ZodError } from 'zod';
 import {
   SelectRoleModel,
@@ -69,34 +74,42 @@ export const getAnswerExamByList = async (req: Request, res: Response) => {
           statusOrder: {
             $switch: {
               branches: [
-                { case: { $in: ["$status", [SelectStatusAnswerModel.Pendiente, SelectStatusAnswerModel.Revision]] }, then: 1 },
-                { case: { $eq: ["$status", SelectStatusAnswerModel.Rechazado] }, then: 2 },
-                { case: { $eq: ["$status", SelectStatusAnswerModel.Completado] }, then: 3 }
+                {
+                  case: {
+                    $in: [
+                      '$status',
+                      [SelectStatusAnswerModel.Pendiente, SelectStatusAnswerModel.Revision],
+                    ],
+                  },
+                  then: 1,
+                },
+                { case: { $eq: ['$status', SelectStatusAnswerModel.Rechazado] }, then: 2 },
+                { case: { $eq: ['$status', SelectStatusAnswerModel.Completado] }, then: 3 },
               ],
-              default: 4
-            }
-          }
-        }
+              default: 4,
+            },
+          },
+        },
       },
       { $sort: { statusOrder: 1, createdAt: -1 } },
       {
         $lookup: {
-          from: "users",
-          localField: "userId",
-          foreignField: "_id",
-          as: "userId"
-        }
+          from: 'users',
+          localField: 'userId',
+          foreignField: '_id',
+          as: 'userId',
+        },
       },
-      { $unwind: "$userId" },
+      { $unwind: '$userId' },
       {
         $lookup: {
-          from: "users",
-          localField: "assignCoachId",
-          foreignField: "_id",
-          as: "assignCoachId"
-        }
+          from: 'users',
+          localField: 'assignCoachId',
+          foreignField: '_id',
+          as: 'assignCoachId',
+        },
       },
-      { $unwind: { path: "$assignCoachId", preserveNullAndEmptyArrays: true } },
+      { $unwind: { path: '$assignCoachId', preserveNullAndEmptyArrays: true } },
       {
         $project: {
           _id: 1,
@@ -104,9 +117,9 @@ export const getAnswerExamByList = async (req: Request, res: Response) => {
           assignCoachId: { displayName: 1, photo: 1, gender: 1, email: 1, role: 1 },
           status: 1,
           average: 1,
-          createdAt: 1
-        }
-      }
+          createdAt: 1,
+        },
+      },
     ]);
 
     return res.status(200).json({ exams, count });
@@ -200,8 +213,10 @@ export const getRegisterAnswerExam = async (req: Request, res: Response) => {
 
   try {
     const me = req.user;
-    
-    const currentExam = await ExamAnswerMongoModel.findOne({ userId: me._id }).sort({ createdAt: -1 });
+
+    const currentExam = await ExamAnswerMongoModel.findOne({ userId: me._id }).sort({
+      createdAt: -1,
+    });
 
     if (!currentExam) {
       return res.status(200).json({
@@ -393,8 +408,7 @@ export const addQuestionnaire = async (req: Request, res: Response) => {
 
     const idVideoVimeo = result.uri.split('/').pop();
 
-    const lastItem = await ExamQuestionnaireMongoModel
-      .findOne()
+    const lastItem = await ExamQuestionnaireMongoModel.findOne()
       .sort({ order: -1 })
       .select('order');
 
@@ -546,8 +560,7 @@ export const assignExamToCoach = async (req: Request, res: Response) => {
   try {
     const { examAnswerId, coachId } = AssignExamToCoachSchemaZod.parse(req.body);
 
-    const getExamAnswer = await ExamAnswerMongoModel
-      .findOne({ _id: examAnswerId })
+    const getExamAnswer = await ExamAnswerMongoModel.findOne({ _id: examAnswerId });
 
     if (!getExamAnswer) {
       return res.status(404).json({
@@ -555,7 +568,11 @@ export const assignExamToCoach = async (req: Request, res: Response) => {
       });
     }
 
-    if (![SelectStatusAnswerModel.Pendiente, SelectStatusAnswerModel.Revision].includes(getExamAnswer.status as any)) {
+    if (
+      ![SelectStatusAnswerModel.Pendiente, SelectStatusAnswerModel.Revision].includes(
+        getExamAnswer.status as any,
+      )
+    ) {
       return res.status(400).json({
         message: 'Exam answer is not in a valid state',
       });
@@ -569,11 +586,14 @@ export const assignExamToCoach = async (req: Request, res: Response) => {
       });
     }
 
-    await ExamAnswerMongoModel.updateOne({ _id: examAnswerId }, { $set: { assignCoachId: coachId } });
+    await ExamAnswerMongoModel.updateOne(
+      { _id: examAnswerId },
+      { $set: { assignCoachId: coachId } },
+    );
 
     return res.status(200).json({
       message: 'Questionnaire assigned successfully',
-      coach: getCoach
+      coach: getCoach,
     });
   } catch (error) {
     if (error instanceof ZodError) {
@@ -595,8 +615,7 @@ export const deleteQuestionnaire = async (req: Request, res: Response) => {
   try {
     const idQuestionnaire = req.params.id;
 
-    const getQuestionnaire = await ExamQuestionnaireMongoModel
-      .findOne({ _id: idQuestionnaire })
+    const getQuestionnaire = await ExamQuestionnaireMongoModel.findOne({ _id: idQuestionnaire });
 
     if (!getQuestionnaire) {
       return res.status(404).json({
