@@ -13,6 +13,7 @@ import onboardingRoutes from './routes/onboarding.route';
 import examRoutes from './routes/exam.route';
 import videoRoutes from './routes/video.route';
 import orderRoutes from './routes/order.route';
+import bankRoutes from './routes/bank.route';
 import weeklyVideoRoutes from './routes/weeklyVideo.route';
 import { errorHandler } from './middleware/errorHandler.middleware';
 import { connectToMongo } from './config/mongo.config';
@@ -55,6 +56,7 @@ app.use('/api', logger, [
   examRoutes,
   videoRoutes,
   weeklyVideoRoutes,
+  bankRoutes,
 ]);
 
 app.use(errorHandler);

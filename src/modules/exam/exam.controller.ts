@@ -226,10 +226,17 @@ export const getRegisterAnswerExam = async (req: Request, res: Response) => {
       });
     }
 
-    if (currentExam.status !== SelectStatusAnswerModel.Pendiente) {
+    if (currentExam.status === SelectStatusAnswerModel.Completado) {
       return res.status(400).json({
         message: 'You have already completed the exam',
         isComplete: true,
+      });
+    }
+
+    if (currentExam.status === SelectStatusAnswerModel.Rechazado) {
+      return res.status(400).json({
+        message: 'You have already rejected the exam',
+        isComplete: false,
       });
     }
 

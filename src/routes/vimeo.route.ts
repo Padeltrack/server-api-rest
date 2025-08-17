@@ -7,6 +7,7 @@ import {
   getFoldersVimeo,
   getItemsFolderByIdVimeo,
   getFolderByIdVimeo,
+  updateVideoToFolderVimeo,
 } from '../modules/vimeo/vimeo.controller';
 import { authenticate } from '../middleware/auth.middleware';
 import { authorize } from '../middleware/roles.middleware';
@@ -42,6 +43,12 @@ router.post(
   authorize(SelectRoleModel.SuperAdmin),
   uploadVideo.single('upload_video'),
   uploadVideoToFolderVimeo,
+);
+router.patch(
+  `${basePath}/folder/video/:id`,
+  authenticate,
+  authorize(SelectRoleModel.SuperAdmin),
+  updateVideoToFolderVimeo,
 );
 router.delete(
   `${basePath}/folder/video/:id`,

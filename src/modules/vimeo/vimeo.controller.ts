@@ -3,10 +3,11 @@ import { vimeoClient } from '../../config/vimeo.config';
 import {
   deleteVimeoVideo,
   getInfoPublicExtractVimeoVideoById,
+  updateVideoToVimeo,
   uploadVideoToVimeo,
 } from './vimeo.helper';
 import { ObjectId } from 'mongodb';
-import { uploadVideoToFolderVimeoSchemaZod } from './vimeo.dto';
+import { updateVideoToFolderVimeoSchemaZod, uploadVideoToFolderVimeoSchemaZod } from './vimeo.dto';
 import { ZodError } from 'zod';
 import { VideoMongoModel } from '../video/video.model';
 import { freeFolder } from './viemo.constant';
@@ -211,6 +212,32 @@ export const getItemsFolderByIdVimeo = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const updateVideoToFolderVimeo = async (req: Request, res: Response) => {
+  req.logger = req.logger.child({ service: 'vimeo', serviceHandler: 'updateVideoToFolderVimeo' });
+  req.logger.info({ status: 'start' });
+
+  try {
+    const idVideoVimeo = req.params.id as string;
+    const { name, description } = updateVideoToFolderVimeoSchemaZod.parse(req.body);
+
+    if (!idVideoVimeo) {
+      return res.status(400).json({
+        message: 'Video id is required',
+      });
+    }
+
+    await updateVideoToVimeo({ idVideoVimeo, name, description });
+
+    res.status(200).json({
+      message: 'Video updated successfully',
+    });
+  } catch (error) {
+    req.logger.error({ status: 'error', code: 500, error: error.message });
+    res.status(500).json({ message: 'Server error', error: error });
+  }
+};
+
 
 export const removeVideoToFolderVimeo = async (req: Request, res: Response) => {
   req.logger = req.logger.child({ service: 'vimeo', serviceHandler: 'removeVideoToFolderVimeo' });

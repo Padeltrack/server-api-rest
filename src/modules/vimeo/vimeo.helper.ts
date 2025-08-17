@@ -84,6 +84,28 @@ export const uploadVideoToVimeo = (options: {
   });
 };
 
+export const updateVideoToVimeo = (options: { idVideoVimeo: string; name?: string; description?: string }): Promise<void> => {
+  const { idVideoVimeo, name, description } = options;
+  return new Promise((resolve, reject) => {
+    const query: any = {};
+    if (name) query['name'] = name;
+    if (description) query['description'] = description;
+
+    vimeoClient.request({
+      method: 'PATCH',
+      path: `/videos/${idVideoVimeo}`,
+      query
+    }, (error) => {
+      if (error) {
+        console.error('Error updating video:', error);
+        return reject(error);
+      }
+
+      resolve();
+    });
+  });
+}
+
 export const deleteVimeoVideo = (options: { idVideoVimeo: string }): Promise<void> => {
   const { idVideoVimeo } = options;
   return new Promise((resolve, reject) => {
