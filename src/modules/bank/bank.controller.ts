@@ -25,6 +25,13 @@ export const createBank = async (req: Request, res: Response) => {
   try {
     const { name, typeAccount, numberAccount, nameAccount, dniAccount } = BankRegisterSchemaZod.parse(req.body);
 
+    const getBank = await BankMongoModel.findOne({ numberAccount });
+    if (getBank) {
+        return res.status(400).json({
+            message: 'Bank already exists',
+        });
+    }
+
     const bank = await BankMongoModel.create({
         _id: new ObjectId().toHexString(),
         name,
@@ -54,7 +61,7 @@ export const updateBank = async (req: Request, res: Response) => {
 
   try {
     const _id = req.params.id;
-    const { name, typeAccount, numberAccount, nameAccount } = BankUpdateSchemaZod.parse(req.body);
+    const { name, typeAccount, numberAccount, nameAccount, dniAccount } = BankUpdateSchemaZod.parse(req.body);
 
     if (!_id) {
         return res.status(404).json({
@@ -68,6 +75,7 @@ export const updateBank = async (req: Request, res: Response) => {
     if (typeAccount) fields.typeAccount = typeAccount;
     if (numberAccount) fields.numberAccount = numberAccount;
     if (nameAccount) fields.nameAccount = nameAccount;
+    if (dniAccount) fields.dniAccount = dniAccount;
 
     const bank = await BankMongoModel.findOneAndUpdate(
       { _id: req.params.id },
