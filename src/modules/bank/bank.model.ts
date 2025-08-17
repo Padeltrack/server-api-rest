@@ -11,7 +11,7 @@ export interface BankModel extends Document {
   readonly _id: string;
   name: string;
   typeAccount: TypeAccountModel;
-  numberAccount: number;
+  numberAccount: string;
   nameAccount: string;
   dniAccount: string;
 }
@@ -20,7 +20,7 @@ const BankSchema = new Schema<BankModel>({
   _id: { type: String, required: true },
   name: { type: String, required: true },
   typeAccount: { type: String, required: true, enum: Object.values(SelectTypeAccountBankModel) },
-  numberAccount: { type: Number, required: true },
+  numberAccount: { type: String, required: true },
   nameAccount: { type: String, required: true },
   dniAccount: { type: String, required: true },
 },{

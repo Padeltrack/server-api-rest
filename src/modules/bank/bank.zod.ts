@@ -7,7 +7,7 @@ export const BankRegisterSchemaZod = z.object({
       SelectTypeAccountBankModel.SAVINGS,
       SelectTypeAccountBankModel.CHECKING,
     ]),
-  numberAccount: z.number(),
+  numberAccount: z.string(),
   nameAccount: z.string().min(2).max(100),
   dniAccount: z.string().min(2).max(100),
 });
@@ -18,7 +18,7 @@ export const BankUpdateSchemaZod = z.object({
       SelectTypeAccountBankModel.SAVINGS,
       SelectTypeAccountBankModel.CHECKING,
     ]).optional(),
-  numberAccount: z.number().optional(),
+  numberAccount: z.string().optional(),
   nameAccount: z.string().min(2).max(100).optional(),
   dniAccount: z.string().min(2).max(100).optional(),
 });
