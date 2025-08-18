@@ -5,6 +5,7 @@ export interface IPlanModel extends Document {
   name: string;
   description: string;
   price: number;
+  isCoach: boolean;
   active: boolean;
   benefits: string[];
 }
@@ -15,6 +16,7 @@ const planMongoSchema = new Schema<IPlanModel>(
     name: { type: String, required: true },
     description: { type: String },
     price: { type: Number, required: true },
+    isCoach: { type: Boolean, required: true, default: false },
     active: { type: Boolean, default: true },
     benefits: { type: [String], required: false },
   },

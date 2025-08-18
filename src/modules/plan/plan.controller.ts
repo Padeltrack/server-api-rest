@@ -8,7 +8,20 @@ export const getPlans = async (req: Request, res: Response) => {
   req.logger.info({ status: 'start' });
 
   try {
-    const plans = await PlanMongoModel.find().sort({ createdAt: -1 });
+    const plans = await PlanMongoModel.find({ isCoach: false }).sort({ createdAt: -1 });
+    return res.status(200).json({ plans });
+  } catch (error) {
+    req.logger.error({ status: 'error', code: 500, error: error.message });
+    return res.status(500).json({ message: 'Error fetching plans', error });
+  }
+};
+
+export const getCoachPlans = async (req: Request, res: Response) => {
+  req.logger = req.logger.child({ service: 'plans', serviceHandler: 'getCoachPlans' });
+  req.logger.info({ status: 'start' });
+
+  try {
+    const plans = await PlanMongoModel.find({ isCoach: true }).sort({ createdAt: -1 });
     return res.status(200).json({ plans });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });

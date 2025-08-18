@@ -14,6 +14,7 @@ import examRoutes from './routes/exam.route';
 import videoRoutes from './routes/video.route';
 import orderRoutes from './routes/order.route';
 import bankRoutes from './routes/bank.route';
+import studentCoachesRoutes from './routes/studentCoaches.route';
 import weeklyVideoRoutes from './routes/weeklyVideo.route';
 import { errorHandler } from './middleware/errorHandler.middleware';
 import { connectToMongo } from './config/mongo.config';
@@ -57,6 +58,7 @@ app.use('/api', logger, [
   videoRoutes,
   weeklyVideoRoutes,
   bankRoutes,
+  studentCoachesRoutes,
 ]);
 
 app.use(errorHandler);

@@ -57,6 +57,7 @@ export const getAnswerExamByList = async (req: Request, res: Response) => {
 
     const where: any = {};
     if (me.role === SelectRoleModel.Coach) {
+      where['assignCoachId'] = me._id;
       where['status'] = {
         $in: [
           SelectStatusAnswerModel.Revision,
