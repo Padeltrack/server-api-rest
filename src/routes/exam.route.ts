@@ -9,6 +9,7 @@ import {
   deleteQuestionnaire,
   getRegisterAnswerExam,
   assignExamToCoach,
+  finalizeAnswerExam,
 } from '../modules/exam/exam.controller';
 import { authenticate } from '../middleware/auth.middleware';
 import { authorize } from '../middleware/roles.middleware';
@@ -59,6 +60,13 @@ examRoutes.post(
   activeOrder,
   uploadVideo.single('upload_video'),
   registerAnswerExam,
+);
+examRoutes.post(
+  `${pathAExam}/finalize/answer`,
+  authenticate,
+  authorize(SelectRoleModel.Student),
+  activeOrder,
+  finalizeAnswerExam,
 );
 examRoutes.post(
   `${pathAExam}/register/grade`,

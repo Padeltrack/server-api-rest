@@ -7,6 +7,12 @@ export const ExamAnswerRegisterSchemaZod = z.object({
   answerText: z.string().optional(),
 });
 
+export const ExamAnswerFinalizeSchemaZod = z.object({
+  questionnaireId: z
+    .string({ required_error: 'El identificador de la pregunta es requerido' })
+    .min(1, 'El identificador de la pregunta es requerido'),
+});
+
 export const addQuestionnaireSchemaZod = z.object({
   title: z.string({ required_error: 'El titulo es requerido' }).min(1, 'El titulo es requerido'),
   description: z

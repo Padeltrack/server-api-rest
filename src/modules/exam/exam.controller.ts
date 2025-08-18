@@ -5,6 +5,7 @@ import { ExamAnswerMongoModel, SelectStatusAnswerModel } from './exam-answer.mod
 import {
   addQuestionnaireSchemaZod,
   AssignExamToCoachSchemaZod,
+  ExamAnswerFinalizeSchemaZod,
   ExamAnswerRegisterSchemaZod,
   ExamGradeRegisterSchemaZod,
 } from './exam.dto';
@@ -355,15 +356,73 @@ export const registerAnswerExam = async (req: Request, res: Response) => {
     const questionsExamCount = await ExamQuestionnaireMongoModel.countDocuments({});
     const countAnswers = currentExam?.answers?.length || 0;
     if (questionsExamCount === countAnswers + 1) {
-      await ExamAnswerMongoModel.updateOne(
-        { _id: currentExam._id },
-        { $set: { status: SelectStatusAnswerModel.Revision } },
-      );
       isComplete = true;
     }
 
     return res.status(200).json({
       message: 'Answer registered successfully',
+      isComplete,
+    });
+  } catch (error) {
+    if (error instanceof ZodError) {
+      return res.status(400).json({
+        message: 'Error de validación',
+        issues: error.errors,
+      });
+    }
+
+    req.logger.error({ status: 'error', code: 500, error: error.message });
+    return res.status(500).json({ message: 'Error register answer exam', error });
+  }
+}
+
+export const finalizeAnswerExam = async (req: Request, res: Response) => {
+  req.logger = req.logger.child({ service: 'exam', serviceHandler: 'finalizeAnswerExam' });
+  req.logger.info({ status: 'start' });
+
+  try {
+    const me = req.user;
+    const userId = me._id;
+
+    if (me.level) {
+      return res.status(401).json({
+        message: 'You have already completed the exam',
+      });
+    }
+    let isComplete = false;
+    const currentExam = await ExamAnswerMongoModel.findOne({ userId }).sort({ createdAt: -1 });
+
+    if (!currentExam) {
+      return res.status(404).json({
+        message: 'Exam not found'
+      });
+    }
+
+    if (currentExam.status !== SelectStatusAnswerModel.Pendiente) {
+      return res.status(400).json({
+        message: 'You have already completed the exam',
+        isComplete: true,
+      });
+    }
+
+    const questionsExamCount = await ExamQuestionnaireMongoModel.countDocuments({});
+    const countAnswers = currentExam?.answers?.length || 0;
+
+    if (questionsExamCount === countAnswers + 1) {
+      await ExamAnswerMongoModel.updateOne(
+        { _id: currentExam._id },
+        { $set: { status: SelectStatusAnswerModel.Revision } },
+      );
+      isComplete = true;
+    } else {
+      return res.status(400).json({
+        message: 'You have not completed the exam',
+        isComplete: false,
+      });
+    }
+
+    return res.status(200).json({
+      message: 'Answer finalized successfully',
       isComplete,
     });
   } catch (error) {
