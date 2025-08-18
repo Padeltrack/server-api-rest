@@ -9,6 +9,13 @@ export const getWeeklyVideos = async (req: Request, res: Response) => {
 
   try {
     const order = req.order;
+
+    if (!order) {
+      return res.status(404).json({
+        message: 'Order not found'
+      });
+    }
+
     const weeklyVideo: any = await WeeklyVideoMongoModel.findOne({
       orderId: order._id,
       week: order.currentWeek,

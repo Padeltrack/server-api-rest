@@ -407,7 +407,7 @@ export const finalizeAnswerExam = async (req: Request, res: Response) => {
     const questionsExamCount = await ExamQuestionnaireMongoModel.countDocuments({});
     const countAnswers = currentExam?.answers?.length || 0;
 
-    if (questionsExamCount === countAnswers + 1) {
+    if (questionsExamCount === countAnswers) {
       await ExamAnswerMongoModel.updateOne(
         { _id: currentExam._id },
         { $set: { status: SelectStatusAnswerModel.Revision } },

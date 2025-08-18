@@ -21,6 +21,7 @@ export interface IOrderModel extends Document {
   paymentProof?: string;
   currentWeek?: number;
   messageRejected?: string | null;
+  isCoach: boolean;
   lastProgressDate?: Date;
   createdAt: Date;
   updatedAt: Date;
@@ -41,6 +42,7 @@ const orderMongoSchema = new Schema<IOrderModel>(
       type: String,
     },
     messageRejected: { type: String, required: false },
+    isCoach: { type: Boolean, required: true, default: false },
     currentWeek: { type: Number, required: false },
     lastProgressDate: { type: Date, required: false },
   },

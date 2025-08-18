@@ -17,14 +17,27 @@ export const getOrders = async (req: Request, res: Response) => {
     const me = req.user;
     const page = Number(req.query?.page) || 1;
     const limit = Number(req.query?.limit) || 10;
+    const isCoach = req.query?.isCoach || false;
     const skip = (page - 1) * limit;
 
     const query: any = {};
 
-    if (me.role === SelectRoleModel.Student) query['userId'] = me._id;
+    if (me.role === SelectRoleModel.SuperAdmin) {
+      if (isCoach) query['isCoach'] = isCoach === 'true';
+    }
 
-    const count = await OrderMongoModel.countDocuments({});
-    const orders = await OrderMongoModel.find()
+    if (me.role === SelectRoleModel.Coach) {
+      query['userId'] = me._id;
+      query['isCoach'] = true;
+    }
+
+    if (me.role === SelectRoleModel.Student) {
+      query['userId'] = me._id;
+      query['isCoach'] = false;
+    }
+
+    const count = await OrderMongoModel.countDocuments(query);
+    const orders = await OrderMongoModel.find(query)
       .populate('planId')
       .populate('userId')
       .skip(skip)
@@ -88,6 +101,7 @@ export const createOrder = async (req: Request, res: Response) => {
       userId,
       planId,
       paymentProof,
+      isCoach: me.role === SelectRoleModel.Coach,
     });
 
     return res.status(200).json({ order });

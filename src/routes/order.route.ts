@@ -24,7 +24,7 @@ router.get(
   authorize(SelectRoleModel.SuperAdmin, SelectRoleModel.Student),
   getOrdersById,
 );
-router.post(basePath, authenticate, authorize(SelectRoleModel.Student), createOrder);
+router.post(basePath, authenticate, authorize(SelectRoleModel.Student, SelectRoleModel.Coach), createOrder);
 router.patch(
   `${basePath}/:id`,
   authenticate,
