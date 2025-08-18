@@ -3,7 +3,7 @@ import { ObjectId } from 'mongodb';
 import { createOrderSchema, updateOrderStatusSchema } from './order.dto';
 import { OrderMongoModel, SelectStatusOrderModel } from './order.model';
 import { PlanMongoModel } from '../plan/plan.model';
-import { SelectRoleModel } from '../user/user.model';
+import { SelectRoleModel, UserMongoModel } from '../user/user.model';
 import { ZodError } from 'zod';
 import { uploadImagePayment } from './order.service';
 import { WeeklyVideoMongoModel } from '../weeklyVideo/weeklyVideo.model';
@@ -133,11 +133,19 @@ export const updateOrderStatus = async (req: Request, res: Response) => {
       });
     }
 
+    const getUser = await UserMongoModel.findOne({ _id: getOrder.userId });
+    if (!getUser) {
+      return res.status(404).json({
+        message: 'User not found',
+      });
+    }
+
     if (status === SelectStatusOrderModel.Approved) {
       if (getOrder.status === SelectStatusOrderModel.Rejected) {
         fieldsUpdated.messageRejected = null;
       }
 
+      fieldsUpdated.approvedOrderDate = new Date();
       fieldsUpdated.currentWeek = 1;
       fieldsUpdated.lastProgressDate = new Date();
     } else if (status === SelectStatusOrderModel.Rejected) {
@@ -148,6 +156,7 @@ export const updateOrderStatus = async (req: Request, res: Response) => {
       }
 
       fieldsUpdated.messageRejected = messageRejected;
+      fieldsUpdated.approvedOrderDate = undefined;
       fieldsUpdated.currentWeek = undefined;
       fieldsUpdated.lastProgressDate = undefined;
     }
@@ -157,7 +166,9 @@ export const updateOrderStatus = async (req: Request, res: Response) => {
     });
     if (!updated) return res.status(404).json({ message: 'Order not found' });
 
-    if (fieldsUpdated.status === SelectStatusOrderModel.Approved) {
+    const isApproved = fieldsUpdated.status === SelectStatusOrderModel.Approved;
+    const isStudent = getUser.role === SelectRoleModel.Student;
+    if (isApproved && isStudent) {
       const week = fieldsUpdated.currentWeek;
       await WeeklyVideoMongoModel.create({
         _id: new ObjectId().toHexString(),

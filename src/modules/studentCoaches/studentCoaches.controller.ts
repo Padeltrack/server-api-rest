@@ -12,12 +12,30 @@ export const getMyCoaches = async (req: Request, res: Response) => {
     const me = req.user;
     const page = Number(req.query?.page) || 1;
     const limit = Number(req.query?.limit) || 10;
+    const search = req.query?.search || '';
     const skip = (page - 1) * limit;
 
     const query = { studentId: me._id };
+    const matchCoach: any = {};
+
+    if (search) {
+      matchCoach.$or = [
+        { displayName: { $regex: search, $options: 'i' } },
+        { userName: { $regex: search, $options: 'i' } },
+        { email: { $regex: search, $options: 'i' } },
+      ];
+    }
 
     const count = await StudentCoachesMongoModel.countDocuments(query);
-    const coaches = await StudentCoachesMongoModel.find(query).populate('coachId').skip(skip).limit(limit).sort({ createdAt: -1 });
+    const coaches = await StudentCoachesMongoModel.find(query)
+      .populate({
+        path: 'coachId',
+        match: matchCoach,
+      })
+      .skip(skip)
+      .limit(limit)
+      .sort({ createdAt: -1 });
+
     return res.status(200).json({ coaches, count });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
@@ -26,7 +44,10 @@ export const getMyCoaches = async (req: Request, res: Response) => {
 };
 
 export const getCoachesByStudent = async (req: Request, res: Response) => {
-  req.logger = req.logger.child({ service: 'studentCoaches', serviceHandler: 'getCoachesByStudent' });
+  req.logger = req.logger.child({
+    service: 'studentCoaches',
+    serviceHandler: 'getCoachesByStudent',
+  });
   req.logger.info({ status: 'start' });
 
   try {
@@ -37,14 +58,18 @@ export const getCoachesByStudent = async (req: Request, res: Response) => {
 
     if (!studentId) {
       return res.status(400).json({
-        message: 'Student ID is required'
+        message: 'Student ID is required',
       });
     }
 
     const query = { studentId };
 
     const count = await StudentCoachesMongoModel.countDocuments(query);
-    const coaches = await StudentCoachesMongoModel.find(query).populate('coachId').skip(skip).limit(limit).sort({ createdAt: -1 });
+    const coaches = await StudentCoachesMongoModel.find(query)
+      .populate('coachId')
+      .skip(skip)
+      .limit(limit)
+      .sort({ createdAt: -1 });
     return res.status(200).json({ coaches, count });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
@@ -60,30 +85,41 @@ export const assignCoach = async (req: Request, res: Response) => {
     const me = req.user;
     const { coachId } = studentCoachesAssignSchemaZod.parse(req.body);
 
-    const getCoach = await UserMongoModel.countDocuments({ _id: coachId, role: SelectRoleModel.Coach });
+    const getCoach = await UserMongoModel.countDocuments({
+      _id: coachId,
+      role: SelectRoleModel.Coach,
+    });
     if (!getCoach) {
-        return res.status(404).json({
-            message: 'Coach not found or not a coach'
-        });
+      return res.status(404).json({
+        message: 'Coach not found or not a coach',
+      });
     }
 
-    const existingAssignment = await StudentCoachesMongoModel.countDocuments({ studentId: me._id, coachId });
+    const existingAssignment = await StudentCoachesMongoModel.countDocuments({
+      studentId: me._id,
+      coachId,
+    });
 
     if (existingAssignment) {
-        return res.status(400).json({
-            message: 'Coach is already assigned to this student'
-        });
-    }
+      await StudentCoachesMongoModel.deleteOne({
+        studentId: me._id,
+        coachId,
+      });
 
-    await StudentCoachesMongoModel.create({
+      return res.status(200).json({
+        message: 'Coach unassigned successfully',
+      });
+    } else {
+      await StudentCoachesMongoModel.create({
         _id: new ObjectId().toHexString(),
         studentId: me._id,
-        coachId
-    });
+        coachId,
+      });
 
-    return res.status(201).json({
+      return res.status(200).json({
         message: 'Coach assigned successfully',
-    });
+      });
+    }
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
     return res.status(500).json({ message: 'Error assigning coach', error });
@@ -98,18 +134,21 @@ export const removeAssignCoach = async (req: Request, res: Response) => {
     const me = req.user;
     const assignCoach = req.params.id;
 
-    const existingAssignment = await StudentCoachesMongoModel.countDocuments({ studentId: me._id, _id: assignCoach });
+    const existingAssignment = await StudentCoachesMongoModel.countDocuments({
+      studentId: me._id,
+      _id: assignCoach,
+    });
 
     if (!existingAssignment) {
-        return res.status(404).json({
-            message: 'Coach assignment not found'
-        });
+      return res.status(404).json({
+        message: 'Coach assignment not found',
+      });
     }
 
     await StudentCoachesMongoModel.deleteOne({ studentId: me._id, _id: assignCoach });
 
     return res.status(200).json({
-        message: 'Coach assignment removed successfully'
+      message: 'Coach assignment removed successfully',
     });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });

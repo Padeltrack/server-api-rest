@@ -18,4 +18,7 @@ const StudentCoachesMongoSchema = new Schema<StudentCoachesModel>(
   },
 );
 
-export const StudentCoachesMongoModel = mongoose.model<StudentCoachesModel>('StudentCoaches', StudentCoachesMongoSchema);
+export const StudentCoachesMongoModel = mongoose.model<StudentCoachesModel>(
+  'StudentCoaches',
+  StudentCoachesMongoSchema,
+);

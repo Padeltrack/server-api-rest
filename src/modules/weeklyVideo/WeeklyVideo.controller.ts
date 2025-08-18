@@ -12,7 +12,7 @@ export const getWeeklyVideos = async (req: Request, res: Response) => {
 
     if (!order) {
       return res.status(404).json({
-        message: 'Order not found'
+        message: 'Order not found',
       });
     }
 
@@ -20,6 +20,12 @@ export const getWeeklyVideos = async (req: Request, res: Response) => {
       orderId: order._id,
       week: order.currentWeek,
     });
+
+    if (!weeklyVideo) {
+      return res.status(404).json({
+        message: 'Weekly video not found',
+      });
+    }
 
     const weeklyVideoData = await Promise.all(
       weeklyVideo.videos.map(async (videoId: string) => {
@@ -39,7 +45,7 @@ export const getWeeklyVideos = async (req: Request, res: Response) => {
         }
 
         return null;
-      })
+      }),
     );
 
     weeklyVideo._doc.videos = weeklyVideoData.filter(video => video !== null);

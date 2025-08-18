@@ -2,6 +2,7 @@ import { Schema, model, Document } from 'mongoose';
 
 export enum SelectStatusOrderModel {
   Completed = 'Completed',
+  Expired = 'Expired',
   Pending = 'Pending',
   Approved = 'Approved',
   Rejected = 'Rejected',
@@ -9,6 +10,7 @@ export enum SelectStatusOrderModel {
 
 export type StatusOrderModel =
   | SelectStatusOrderModel.Completed
+  | SelectStatusOrderModel.Expired
   | SelectStatusOrderModel.Approved
   | SelectStatusOrderModel.Pending
   | SelectStatusOrderModel.Rejected;
@@ -22,6 +24,8 @@ export interface IOrderModel extends Document {
   currentWeek?: number;
   messageRejected?: string | null;
   isCoach: boolean;
+  completedOrderDate?: Date;
+  approvedOrderDate?: Date;
   lastProgressDate?: Date;
   createdAt: Date;
   updatedAt: Date;
@@ -43,6 +47,8 @@ const orderMongoSchema = new Schema<IOrderModel>(
     },
     messageRejected: { type: String, required: false },
     isCoach: { type: Boolean, required: true, default: false },
+    completedOrderDate: { type: Date, required: false },
+    approvedOrderDate: { type: Date, required: false },
     currentWeek: { type: Number, required: false },
     lastProgressDate: { type: Date, required: false },
   },

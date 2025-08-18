@@ -23,31 +23,32 @@ export const createBank = async (req: Request, res: Response) => {
   req.logger.info({ status: 'start' });
 
   try {
-    const { name, typeAccount, numberAccount, nameAccount, dniAccount } = BankRegisterSchemaZod.parse(req.body);
+    const { name, typeAccount, numberAccount, nameAccount, dniAccount } =
+      BankRegisterSchemaZod.parse(req.body);
 
     const getBank = await BankMongoModel.findOne({ numberAccount });
     if (getBank) {
-        return res.status(400).json({
-            message: 'Bank already exists',
-        });
+      return res.status(400).json({
+        message: 'Bank already exists',
+      });
     }
 
     const bank = await BankMongoModel.create({
-        _id: new ObjectId().toHexString(),
-        name,
-        typeAccount,
-        numberAccount,
-        nameAccount,
-        dniAccount,
+      _id: new ObjectId().toHexString(),
+      name,
+      typeAccount,
+      numberAccount,
+      nameAccount,
+      dniAccount,
     });
 
     return res.status(200).json({ bank });
   } catch (error) {
     if (error instanceof ZodError) {
-        return res.status(400).json({
+      return res.status(400).json({
         message: 'Error de validación',
         issues: error.errors,
-        });
+      });
     }
 
     req.logger.error({ status: 'error', code: 500, error: error.message });
@@ -61,12 +62,14 @@ export const updateBank = async (req: Request, res: Response) => {
 
   try {
     const _id = req.params.id;
-    const { name, typeAccount, numberAccount, nameAccount, dniAccount } = BankUpdateSchemaZod.parse(req.body);
+    const { name, typeAccount, numberAccount, nameAccount, dniAccount } = BankUpdateSchemaZod.parse(
+      req.body,
+    );
 
     if (!_id) {
-        return res.status(404).json({
-            message: 'Not found id bank',
-        });
+      return res.status(404).json({
+        message: 'Not found id bank',
+      });
     }
 
     const fields: any = {};
@@ -77,19 +80,17 @@ export const updateBank = async (req: Request, res: Response) => {
     if (nameAccount) fields.nameAccount = nameAccount;
     if (dniAccount) fields.dniAccount = dniAccount;
 
-    const bank = await BankMongoModel.findOneAndUpdate(
-      { _id: req.params.id },
-      fields,
-      { new: true }
-    );
+    const bank = await BankMongoModel.findOneAndUpdate({ _id: req.params.id }, fields, {
+      new: true,
+    });
 
     return res.status(200).json({ bank });
   } catch (error) {
     if (error instanceof ZodError) {
-        return res.status(400).json({
+      return res.status(400).json({
         message: 'Error de validación',
         issues: error.errors,
-        });
+      });
     }
 
     req.logger.error({ status: 'error', code: 500, error: error.message });
@@ -105,15 +106,15 @@ export const deleteBank = async (req: Request, res: Response) => {
     const { id } = req.params;
 
     if (!id) {
-        return res.status(404).json({
-            message: 'Not found id bank',
-        });
+      return res.status(404).json({
+        message: 'Not found id bank',
+      });
     }
-    
+
     await BankMongoModel.deleteOne({ _id: id });
 
     return res.status(200).json({
-        message: 'Bank deleted successfully',
+      message: 'Bank deleted successfully',
     });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });

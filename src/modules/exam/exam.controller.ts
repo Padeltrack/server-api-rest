@@ -373,7 +373,7 @@ export const registerAnswerExam = async (req: Request, res: Response) => {
     req.logger.error({ status: 'error', code: 500, error: error.message });
     return res.status(500).json({ message: 'Error register answer exam', error });
   }
-}
+};
 
 export const finalizeAnswerExam = async (req: Request, res: Response) => {
   req.logger = req.logger.child({ service: 'exam', serviceHandler: 'finalizeAnswerExam' });
@@ -393,7 +393,7 @@ export const finalizeAnswerExam = async (req: Request, res: Response) => {
 
     if (!currentExam) {
       return res.status(404).json({
-        message: 'Exam not found'
+        message: 'Exam not found',
       });
     }
 

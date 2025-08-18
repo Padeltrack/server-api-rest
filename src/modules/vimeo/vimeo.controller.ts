@@ -238,7 +238,6 @@ export const updateVideoToFolderVimeo = async (req: Request, res: Response) => {
   }
 };
 
-
 export const removeVideoToFolderVimeo = async (req: Request, res: Response) => {
   req.logger = req.logger.child({ service: 'vimeo', serviceHandler: 'removeVideoToFolderVimeo' });
   req.logger.info({ status: 'start' });
