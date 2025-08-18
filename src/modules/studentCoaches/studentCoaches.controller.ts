@@ -9,12 +9,43 @@ export const getMyCoaches = async (req: Request, res: Response) => {
   req.logger.info({ status: 'start' });
 
   try {
+    const me = req.user;
     const page = Number(req.query?.page) || 1;
     const limit = Number(req.query?.limit) || 10;
     const skip = (page - 1) * limit;
 
-    const coaches = await StudentCoachesMongoModel.find({ studentId: req.user._id }).populate('coachId').skip(skip).limit(limit).sort({ createdAt: -1 });
-    return res.status(200).json({ coaches });
+    const query = { studentId: me._id };
+
+    const count = await StudentCoachesMongoModel.countDocuments(query);
+    const coaches = await StudentCoachesMongoModel.find(query).populate('coachId').skip(skip).limit(limit).sort({ createdAt: -1 });
+    return res.status(200).json({ coaches, count });
+  } catch (error) {
+    req.logger.error({ status: 'error', code: 500, error: error.message });
+    return res.status(500).json({ message: 'Error fetching coaches', error });
+  }
+};
+
+export const getCoachesByStudent = async (req: Request, res: Response) => {
+  req.logger = req.logger.child({ service: 'studentCoaches', serviceHandler: 'getCoachesByStudent' });
+  req.logger.info({ status: 'start' });
+
+  try {
+    const studentId = req.params?.studentId;
+    const page = Number(req.query?.page) || 1;
+    const limit = Number(req.query?.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    if (!studentId) {
+      return res.status(400).json({
+        message: 'Student ID is required'
+      });
+    }
+
+    const query = { studentId };
+
+    const count = await StudentCoachesMongoModel.countDocuments(query);
+    const coaches = await StudentCoachesMongoModel.find(query).populate('coachId').skip(skip).limit(limit).sort({ createdAt: -1 });
+    return res.status(200).json({ coaches, count });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
     return res.status(500).json({ message: 'Error fetching coaches', error });
