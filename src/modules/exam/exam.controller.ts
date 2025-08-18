@@ -5,7 +5,6 @@ import { ExamAnswerMongoModel, SelectStatusAnswerModel } from './exam-answer.mod
 import {
   addQuestionnaireSchemaZod,
   AssignExamToCoachSchemaZod,
-  ExamAnswerFinalizeSchemaZod,
   ExamAnswerRegisterSchemaZod,
   ExamGradeRegisterSchemaZod,
 } from './exam.dto';
