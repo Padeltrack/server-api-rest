@@ -117,8 +117,8 @@ export const addVideo = async (req: Request, res: Response) => {
     await VideoMongoModel.create({
       _id: new ObjectId().toHexString(),
       ...videoData,
-      plan: videoData.plan.split(',').map((plan) => plan.trim()),
-      semanas: videoData.semanas.split(',').map((sem) => Number(sem.trim())),
+      plan: videoData.plan.split(',').map(plan => plan.trim()),
+      semanas: videoData.semanas.split(',').map(sem => Number(sem.trim())),
       idVideoVimeo: result.uri.split('/').pop(),
     });
 
@@ -194,14 +194,14 @@ export const updateVideo = async (req: Request, res: Response) => {
 
     if (!videoId) {
       return res.status(400).json({
-        message: 'Video id is required'
+        message: 'Video id is required',
       });
     }
 
     const getVideo = await VideoMongoModel.findOne({ _id: videoId });
     if (!getVideo) {
       return res.status(404).json({
-        message: 'Video not found'
+        message: 'Video not found',
       });
     }
 
@@ -214,13 +214,15 @@ export const updateVideo = async (req: Request, res: Response) => {
 
     const video = await VideoMongoModel.findOneAndUpdate(
       { _id: videoId },
-      { 
-        $set: { ...videoData }
-      }, { new: true });
+      {
+        $set: { ...videoData },
+      },
+      { new: true },
+    );
 
     return res.status(200).json({
       message: 'Video updated successfully',
-      video
+      video,
     });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
@@ -237,14 +239,14 @@ export const deleteVideo = async (req: Request, res: Response) => {
 
     if (!videoId) {
       return res.status(400).json({
-        message: 'Video id is required'
+        message: 'Video id is required',
       });
     }
 
     const getVideo = await VideoMongoModel.findOne({ _id: videoId });
     if (!getVideo) {
       return res.status(404).json({
-        message: 'Video not found'
+        message: 'Video not found',
       });
     }
 

@@ -36,9 +36,9 @@ export const createMatch = async (req: Request, res: Response) => {
     const dataMatch = createMatchSchemaZod.parse(req.body);
 
     const match = await MatchMongoModel.create({
-        _id: new ObjectId().toHexString(),
-        ...dataMatch,
-        coachId: me._id,
+      _id: new ObjectId().toHexString(),
+      ...dataMatch,
+      coachId: me._id,
     });
 
     return res.status(201).json({ match });

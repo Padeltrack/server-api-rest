@@ -54,7 +54,7 @@ export const getMyAssignments = async (req: Request, res: Response) => {
         idAssignment: user._id,
         ...user._doc,
         ...dataUser._doc,
-      }
+      };
     });
 
     return res.status(200).json({ users: formatted, count });
