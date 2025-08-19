@@ -46,12 +46,16 @@ export const getMyAssignments = async (req: Request, res: Response) => {
       .limit(limit)
       .sort({ createdAt: -1 });
 
-    const formatted = users.map((user: any) => ({
-      ...user._doc,
-      user: typeof user.coachId === 'object' ? user.coachId : user.studentId,
-      coachId: typeof user.coachId === 'object' ? user.coachId._id : user.coachId,
-      studentId: typeof user.studentId === 'object' ? user.studentId._id : user.studentId,
-    }));
+    const formatted = users.map((user: any) => {
+      const dataUser = typeof user.coachId === 'object' ? user.coachId : user.studentId;
+      user.coachId = null;
+      user.studentId = null;
+      return {
+        idAssignment: user._id,
+        ...user._doc,
+        ...dataUser._doc,
+      }
+    });
 
     return res.status(200).json({ users: formatted, count });
   } catch (error) {

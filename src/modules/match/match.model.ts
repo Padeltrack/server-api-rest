@@ -6,6 +6,8 @@ export interface WinnersMatchModel {
     zone: number;
     shotType: string;
     comment?: string | null;
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 export enum SelectErrorTypeModel {
@@ -52,16 +54,20 @@ export interface ErrMatchModel {
     shotType: ShotTypeModel;
     errorType: ErrorTypeModel;
     comment?: string | null;
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 export interface MatchModel extends Document {
   readonly _id: string;
-  date: Date;
   winners: WinnersMatchModel[];
   err: ErrMatchModel[];
   totalTime: number;
   place: string;
   tournamentName: string;
+  coachId: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 const WinnersMatchSchema = new Schema<WinnersMatchModel>({
@@ -90,6 +96,7 @@ const MatchSchema = new Schema<MatchModel>({
   err: { type: [ErrMatchSchema], required: true },
   totalTime: { type: Number, required: true },
   place: { type: String, required: true },
+  coachId: { type: String, required: true },
   tournamentName: { type: String, required: true },
 }, {
   timestamps: true,
