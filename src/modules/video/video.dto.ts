@@ -95,8 +95,8 @@ export const CreateVideoSchemaZod = z.object({
       required_error: 'Las recomendaciones son requeridas',
     })
     .optional(),
-  plan: z.array(z.string(), { required_error: 'Los planes son requeridos' }),
-  semanas: z.array(z.number().positive(), { required_error: 'Las semanas son requeridas' }),
+  plan: z.string({ required_error: 'Los planes son requeridos' }),
+  semanas: z.string({ required_error: 'Las semanas son requeridas' }),
 });
 
 export type CreateVideoDTO = z.infer<typeof CreateVideoSchemaZod>;

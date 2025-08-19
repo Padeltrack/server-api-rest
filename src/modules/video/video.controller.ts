@@ -116,6 +116,8 @@ export const addVideo = async (req: Request, res: Response) => {
     await VideoMongoModel.create({
       _id: new ObjectId().toHexString(),
       ...videoData,
+      plan: videoData.plan.split(',').map((plan) => plan.trim()),
+      semanas: videoData.semanas.split(',').map((sem) => Number(sem.trim())),
       idVideoVimeo: result.uri.split('/').pop(),
     });
 

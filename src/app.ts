@@ -16,6 +16,7 @@ import orderRoutes from './routes/order.route';
 import bankRoutes from './routes/bank.route';
 import studentCoachesRoutes from './routes/studentCoaches.route';
 import weeklyVideoRoutes from './routes/weeklyVideo.route';
+import matchRoutes from './routes/match.route';
 import { errorHandler } from './middleware/errorHandler.middleware';
 import { connectToMongo } from './config/mongo.config';
 import { initializeFirebase } from './config/firebase.config';
@@ -59,6 +60,7 @@ app.use('/api', logger, [
   weeklyVideoRoutes,
   bankRoutes,
   studentCoachesRoutes,
+  matchRoutes,
 ]);
 
 app.use(errorHandler);

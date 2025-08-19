@@ -39,6 +39,7 @@ export const uploadImagePhotoUser = async (options: {
 
 export const removeRelationUserModel = async (options: { userId: string }) => {
   const { userId } = options;
+  await OrderMongoModel.deleteMany({ userId });
   const examAnswers = await ExamAnswerMongoModel.find({ userId });
   examAnswers.forEach(async examAnswer => {
     await ExamAnswerMongoModel.deleteOne({ _id: examAnswer._id });
@@ -46,5 +47,4 @@ export const removeRelationUserModel = async (options: { userId: string }) => {
       await deleteVimeoVideo({ idVideoVimeo: answer.idVideoVimeo });
     });
   });
-  await OrderMongoModel.deleteMany({ userId });
 };

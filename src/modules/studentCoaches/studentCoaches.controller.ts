@@ -4,39 +4,56 @@ import { StudentCoachesMongoModel } from './studentCoaches.model';
 import { SelectRoleModel, UserMongoModel } from '../user/user.model';
 import { studentCoachesAssignSchemaZod } from './studentCoaches.zod';
 
-export const getMyCoaches = async (req: Request, res: Response) => {
+export const getMyAssignments = async (req: Request, res: Response) => {
   req.logger = req.logger.child({ service: 'studentCoaches', serviceHandler: 'getMyCoaches' });
   req.logger.info({ status: 'start' });
 
   try {
-    const me = req.user;
+    const me: any = { _id: "687f064066f67f6f76f56747", role: SelectRoleModel.Student} // req.user;
     const page = Number(req.query?.page) || 1;
     const limit = Number(req.query?.limit) || 10;
     const search = req.query?.search || '';
     const skip = (page - 1) * limit;
 
-    const query = { studentId: me._id };
-    const matchCoach: any = {};
+    const query: any = {};
+    const match: any = {};
+    const populate: any = {};
 
     if (search) {
-      matchCoach.$or = [
+      match.$or = [
         { displayName: { $regex: search, $options: 'i' } },
         { userName: { $regex: search, $options: 'i' } },
         { email: { $regex: search, $options: 'i' } },
       ];
     }
 
+    if (me.role === SelectRoleModel.Student) {
+      query.studentId = me._id;
+      populate.path = 'coachId';
+      populate.match = match;
+    }
+
+    if (me.role === SelectRoleModel.Coach) {
+      query.coachId = me._id;
+      populate.path = 'studentId';
+      populate.match = match;
+    }
+
     const count = await StudentCoachesMongoModel.countDocuments(query);
-    const coaches = await StudentCoachesMongoModel.find(query)
-      .populate({
-        path: 'coachId',
-        match: matchCoach,
-      })
+    const users = await StudentCoachesMongoModel.find(query)
+      .populate(populate)
       .skip(skip)
       .limit(limit)
       .sort({ createdAt: -1 });
 
-    return res.status(200).json({ coaches, count });
+    const formatted = users.map((user: any) => ({
+      ...user._doc,
+      user: typeof user.coachId === 'object' ? user.coachId : user.studentId,
+      coachId: typeof user.coachId === 'object' ? user.coachId._id : user.coachId,
+      studentId: typeof user.studentId === 'object' ? user.studentId._id : user.studentId,
+    }));
+
+    return res.status(200).json({ users: formatted, count });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
     return res.status(500).json({ message: 'Error fetching coaches', error });

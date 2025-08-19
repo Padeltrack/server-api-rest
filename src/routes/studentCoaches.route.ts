@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import {
-  getMyCoaches,
+  getMyAssignments,
   assignCoach,
   removeAssignCoach,
   getCoachesByStudent,
@@ -15,8 +15,8 @@ const pathStudentCoaches = '/studentCoaches';
 studentCoachesRoutes.get(
   `${pathStudentCoaches}/assign/me`,
   authenticate,
-  authorize(SelectRoleModel.Student),
-  getMyCoaches,
+  authorize(SelectRoleModel.SuperAdmin, SelectRoleModel.Student, SelectRoleModel.Coach),
+  getMyAssignments,
 );
 studentCoachesRoutes.get(
   `${pathStudentCoaches}/assign/:studentId`,
