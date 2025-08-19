@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import {
+    createMatch,
   getMatches
 } from '../modules/match/match.controller';
 import { authenticate } from '../middleware/auth.middleware';
@@ -10,5 +11,6 @@ const matchRoutes = Router();
 const pathMatch = '/match';
 
 matchRoutes.get(`${pathMatch}/all`, authenticate, authorize(SelectRoleModel.SuperAdmin, SelectRoleModel.Coach), getMatches);
+matchRoutes.post(`${pathMatch}`, authenticate, authorize(SelectRoleModel.Coach, SelectRoleModel.SuperAdmin), createMatch);
 
 export default matchRoutes;

@@ -1,14 +1,24 @@
 import { Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
 import { MatchMongoModel } from './match.model';
+import { createMatchSchemaZod } from './match.zod';
+import { SelectRoleModel } from '../user/user.model';
 
 export const getMatches = async (req: Request, res: Response) => {
   req.logger = req.logger.child({ service: 'match', serviceHandler: 'getMatches' });
   req.logger.info({ status: 'start' });
 
   try {
-    const count = await MatchMongoModel.countDocuments();
-    const matches = await MatchMongoModel.find().sort({ createdAt: -1 });
+    const me = req.user;
+
+    const query: any = {};
+
+    if (me.role === SelectRoleModel.Coach) {
+      query.coachId = me._id;
+    }
+
+    const count = await MatchMongoModel.countDocuments(query);
+    const matches = await MatchMongoModel.find(query).sort({ createdAt: -1 });
 
     return res.status(200).json({ matches, count });
   } catch (error) {
@@ -23,13 +33,12 @@ export const createMatch = async (req: Request, res: Response) => {
 
   try {
     const me = req.user;
-    const ff = {}
-    console.log('ff ', ff);
+    const dataMatch = createMatchSchemaZod.parse(req.body);
 
     const match = await MatchMongoModel.create({
         _id: new ObjectId().toHexString(),
-      ...req.body,
-      coachId: me._id,
+        ...dataMatch,
+        coachId: me._id,
     });
 
     return res.status(201).json({ match });

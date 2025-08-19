@@ -1,14 +1,5 @@
 import { Schema, model, Document } from 'mongoose';
-
-export interface WinnersMatchModel {
-    readonly _id: string;
-    date: Date;
-    zone: number;
-    shotType: string;
-    comment?: string | null;
-    createdAt: Date;
-    updatedAt: Date;
-}
+import { ObjectId } from 'mongodb';
 
 export enum SelectErrorTypeModel {
     technical = "Técnico",
@@ -46,9 +37,17 @@ export enum SelectShotTypeModel {
 export type ShotTypeModel =
   (typeof SelectShotTypeModel)[keyof typeof SelectShotTypeModel];
 
+export interface WinnersMatchModel {
+    readonly _id: string;
+    zone: ZoneModel;
+    shotType: ShotTypeModel;
+    comment?: string | null;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
 export interface ErrMatchModel {
     readonly _id: string;
-    date: Date;
     mainErrorType: MainErrorTypeModel;
     zone: ZoneModel;
     shotType: ShotTypeModel;
@@ -71,16 +70,16 @@ export interface MatchModel extends Document {
 }
 
 const WinnersMatchSchema = new Schema<WinnersMatchModel>({
-  _id: { type: String, required: true },
-  zone: { type: Number, required: true },
-  shotType: { type: String, required: true },
+  _id: { type: String, required: true, default: new ObjectId().toHexString() },
+  zone: { type: String, required: true, enum: Object.values(SelectZoneModel) },
+  shotType: { type: String, required: true, enum: Object.values(SelectShotTypeModel) },
   comment: { type: String, required: false }
 }, {
-    timestamps: true
+    timestamps: true,
 });
 
 const ErrMatchSchema = new Schema<ErrMatchModel>({
-  _id: { type: String, required: true },
+  _id: { type: String, required: true, default: new ObjectId().toHexString() },
   mainErrorType: { type: String, required: true, enum: Object.values(SelectMainErrorTypeModel) },
   zone: { type: String, required: true, enum: Object.values(SelectZoneModel) },
   shotType: { type: String, required: true, enum: Object.values(SelectShotTypeModel) },
