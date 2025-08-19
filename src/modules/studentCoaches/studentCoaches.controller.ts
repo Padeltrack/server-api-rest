@@ -9,7 +9,7 @@ export const getMyAssignments = async (req: Request, res: Response) => {
   req.logger.info({ status: 'start' });
 
   try {
-    const me: any = { _id: "687f064066f67f6f76f56747", role: SelectRoleModel.Student} // req.user;
+    const me = req.user;
     const page = Number(req.query?.page) || 1;
     const limit = Number(req.query?.limit) || 10;
     const search = req.query?.search || '';
