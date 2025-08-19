@@ -99,4 +99,68 @@ export const CreateVideoSchemaZod = z.object({
   semanas: z.string({ required_error: 'Las semanas son requeridas' }),
 });
 
+export const UpdateVideoSchemaZod = z.object({
+  nombre: z.string().optional(),
+  descripcion: z
+    .string()
+    .optional(),
+  nivelFisico: z
+    .string()
+    .optional(),
+  objetivos: z
+    .string()
+    .optional(),
+  momentoDeUso: z
+    .string()
+    .optional(),
+  contraccion: z
+    .string()
+    .optional(),
+  tipoEstimulo: z
+    .string()
+    .optional(),
+  zonaCuerpo: z
+    .string()
+    .optional(),
+  musculos: z
+    .string()
+    .optional(),
+  sistemaControl: z
+    .string()
+    .optional(),
+  series: z
+    .string()
+    .optional(),
+  repeticiones: z
+    .string()
+    .optional(),
+  areaContenido: z
+    .string()
+    .optional(),
+  zonaPista: z
+    .string()
+    .optional(),
+  nivelJuego: z
+    .string()
+    .optional(),
+  espacio: z
+    .string()
+    .optional(),
+  material: z
+    .string()
+    .optional(),
+  tipoGolpe: z
+    .string()
+    .optional(),
+  observacion: z
+    .string()
+    .optional(),
+  recomendaciones: z
+    .string()
+    .optional(),
+  plan: z.array(z.string()).optional(),
+  semanas: z.array(z.number()).optional(),
+});
+
 export type CreateVideoDTO = z.infer<typeof CreateVideoSchemaZod>;
+export type UpdateVideoDTO = z.infer<typeof UpdateVideoSchemaZod>;

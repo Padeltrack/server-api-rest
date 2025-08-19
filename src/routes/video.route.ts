@@ -4,6 +4,8 @@ import {
   getVideoById,
   addVideo,
   updateFileVideo,
+  deleteVideo,
+  updateVideo,
 } from '../modules/video/video.controller';
 import { authenticate } from '../middleware/auth.middleware';
 import { SelectRoleModel } from '../modules/user/user.model';
@@ -28,11 +30,23 @@ videoRoutes.post(
   addVideo,
 );
 videoRoutes.patch(
+  `${pathVideo}/:id`,
+  authenticate,
+  authorize(SelectRoleModel.SuperAdmin),
+  updateVideo,
+);
+videoRoutes.patch(
   `${pathVideo}/file/:id`,
   authenticate,
   authorize(SelectRoleModel.SuperAdmin),
   uploadVideo.single('upload_video'),
   updateFileVideo,
+);
+videoRoutes.delete(
+  `${pathVideo}/:id`,
+  authenticate,
+  authorize(SelectRoleModel.SuperAdmin),
+  deleteVideo,
 );
 
 export default videoRoutes;

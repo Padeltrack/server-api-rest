@@ -1,11 +1,12 @@
 import { Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
 import { VideoMongoModel } from './video.model';
-import { CreateVideoSchemaZod } from './video.dto';
+import { CreateVideoSchemaZod, UpdateVideoSchemaZod } from './video.dto';
 import {
   deleteVimeoVideo,
   getUrlTokenExtractVimeoVideoById,
   getVimeoVideoById,
+  updateVideoToVimeo,
   uploadVideoToVimeo,
 } from '../vimeo/vimeo.helper';
 import { planVideoFolder } from '../vimeo/viemo.constant';
@@ -179,5 +180,85 @@ export const updateFileVideo = async (req: Request, res: Response) => {
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
     return res.status(401).json({ message: 'Error adding video' });
+  }
+};
+
+export const updateVideo = async (req: Request, res: Response) => {
+  req.logger = req.logger.child({ service: 'videos', serviceHandler: 'updateVideo' });
+  req.logger.info({ status: 'start' });
+
+  try {
+    const videoId = req.params.id;
+    const videoData = UpdateVideoSchemaZod.parse(req.body);
+    const { nombre, descripcion } = videoData;
+
+    if (!videoId) {
+      return res.status(400).json({
+        message: 'Video id is required'
+      });
+    }
+
+    const getVideo = await VideoMongoModel.findOne({ _id: videoId });
+    if (!getVideo) {
+      return res.status(404).json({
+        message: 'Video not found'
+      });
+    }
+
+    const idVideoVimeo = getVideo?.idVideoVimeo;
+    const isChangeName = nombre !== getVideo?.nombre || descripcion !== getVideo?.descripcion;
+    const isChangeNull = !nombre && !descripcion;
+    if (idVideoVimeo && isChangeName && !isChangeNull) {
+      await updateVideoToVimeo({ idVideoVimeo, name: nombre, description: descripcion });
+    }
+
+    const video = await VideoMongoModel.findOneAndUpdate(
+      { _id: videoId },
+      { 
+        $set: { ...videoData }
+      }, { new: true });
+
+    return res.status(200).json({
+      message: 'Video updated successfully',
+      video
+    });
+  } catch (error) {
+    req.logger.error({ status: 'error', code: 500, error: error.message });
+    return res.status(401).json({ message: 'Error updating video' });
+  }
+};
+
+export const deleteVideo = async (req: Request, res: Response) => {
+  req.logger = req.logger.child({ service: 'videos', serviceHandler: 'deleteVideo' });
+  req.logger.info({ status: 'start' });
+
+  try {
+    const videoId = req.params.id;
+
+    if (!videoId) {
+      return res.status(400).json({
+        message: 'Video id is required'
+      });
+    }
+
+    const getVideo = await VideoMongoModel.findOne({ _id: videoId });
+    if (!getVideo) {
+      return res.status(404).json({
+        message: 'Video not found'
+      });
+    }
+
+    if (getVideo?.idVideoVimeo) {
+      await deleteVimeoVideo({ idVideoVimeo: getVideo.idVideoVimeo });
+    }
+
+    await VideoMongoModel.deleteOne({ _id: videoId });
+
+    return res.status(200).json({
+      message: 'Video deleted successfully',
+    });
+  } catch (error) {
+    req.logger.error({ status: 'error', code: 500, error: error.message });
+    return res.status(401).json({ message: 'Error deleting video' });
   }
 };
