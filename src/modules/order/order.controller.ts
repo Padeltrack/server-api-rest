@@ -76,7 +76,7 @@ export const createOrder = async (req: Request, res: Response) => {
   req.logger.info({ status: 'start' });
 
   try {
-    const me = { _id: '68a02b4382d1ec6252e07988', role: SelectRoleModel.Coach }; // req.user;
+    const me = req.user;
     const userId = me._id;
     const isCoach = me.role === SelectRoleModel.Coach;
     const { planId, imageBase64 } = createOrderSchema.parse(req.body);
