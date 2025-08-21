@@ -5,6 +5,7 @@ import { ZodError } from 'zod';
 import { PlanMongoModel } from '../plan/plan.model';
 import { OrderMongoModel, SelectStatusOrderModel } from '../order/order.model';
 import { removeRelationUserModel, uploadImagePhotoUser } from './user.helper';
+import { StudentCoachesMongoModel } from '../studentCoaches/studentCoaches.model';
 
 export const getMe = async (req: Request, res: Response) => {
   req.logger = req.logger.child({ service: 'users', serviceHandler: 'getMe' });
@@ -257,9 +258,16 @@ export const deleteMe = async (req: Request, res: Response) => {
 
   try {
     const me = req.user;
+    const isCoach = me.role === SelectRoleModel.Coach;
 
     await UserMongoModel.deleteOne({ _id: me._id });
     await removeRelationUserModel({ userId: me._id });
+
+    if (isCoach) {
+      await StudentCoachesMongoModel.deleteMany({ coachId: me._id });
+    } else {
+      await StudentCoachesMongoModel.deleteMany({ studentId: me._id });
+    }
 
     return res.status(200).json({
       message: 'User deleted successfully',
@@ -277,8 +285,23 @@ export const deleteUser = async (req: Request, res: Response) => {
   try {
     const userId = req.params.id;
 
+    const getUser = await UserMongoModel.findOne({ _id: userId });
+    if (!getUser) {
+      return res.status(404).json({
+        message: 'User not found',
+      });
+    }
+
+    const isCoach = getUser.role === SelectRoleModel.Coach;
+
     await UserMongoModel.deleteOne({ _id: userId });
     await removeRelationUserModel({ userId });
+
+    if (isCoach) {
+      await StudentCoachesMongoModel.deleteMany({ coachId: getUser._id });
+    } else {
+      await StudentCoachesMongoModel.deleteMany({ studentId: getUser._id });
+    }
 
     return res.status(200).json({
       message: 'User deleted successfully',

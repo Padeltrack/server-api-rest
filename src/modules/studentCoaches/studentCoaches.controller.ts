@@ -52,8 +52,8 @@ export const getMyAssignments = async (req: Request, res: Response) => {
       user.studentId = null;
       return {
         idAssignment: user._id,
-        ...user._doc,
-        ...dataUser._doc,
+        ...user?._doc,
+        ...dataUser?._doc,
       };
     });
 
