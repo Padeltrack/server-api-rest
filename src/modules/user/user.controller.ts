@@ -11,7 +11,7 @@ export const getMe = async (req: Request, res: Response) => {
   req.logger.info({ status: 'start' });
 
   try {
-    const user: any = { _id: "68a02b4382d1ec6252e07988", role: SelectRoleModel.Coach } // req.user;
+    const user = req.user;
     const isCoach = user.role === SelectRoleModel.Coach;
     const orders = [];
     const plans = [];
