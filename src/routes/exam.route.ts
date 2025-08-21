@@ -23,7 +23,7 @@ const pathAExam = '/exam';
 examRoutes.get(
   `${pathAExam}/questionnaire/list`,
   authenticate,
-  authorize(SelectRoleModel.Student, SelectRoleModel.SuperAdmin),
+  authorize(SelectRoleModel.Student, SelectRoleModel.SuperAdmin, SelectRoleModel.Coach),
   activeOrder,
   getQuestionnaireExam,
 );
@@ -42,7 +42,7 @@ examRoutes.get(
 examRoutes.get(
   `${pathAExam}/register/answer`,
   authenticate,
-  authorize(SelectRoleModel.Student),
+  authorize(SelectRoleModel.Student, SelectRoleModel.Coach),
   activeOrder,
   getRegisterAnswerExam,
 );
@@ -56,7 +56,7 @@ examRoutes.post(
 examRoutes.post(
   `${pathAExam}/register/answer`,
   authenticate,
-  authorize(SelectRoleModel.Student),
+  authorize(SelectRoleModel.Student, SelectRoleModel.Coach),
   activeOrder,
   uploadVideo.single('upload_video'),
   registerAnswerExam,
@@ -64,7 +64,7 @@ examRoutes.post(
 examRoutes.post(
   `${pathAExam}/finalize/answer`,
   authenticate,
-  authorize(SelectRoleModel.Student),
+  authorize(SelectRoleModel.Student,SelectRoleModel.Coach ),
   activeOrder,
   finalizeAnswerExam,
 );
