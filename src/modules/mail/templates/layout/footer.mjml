@@ -1,0 +1,71 @@
+<mj-section background-color="#ffffff">
+  <mj-column>
+    <mj-text font-size="18px" color="#333333" align="center">
+      Síguenos
+    </mj-text>
+    <mj-social icon-size="30px" mode="horizontal" align="center">
+      <mj-social-element name="facebook" href="https://www.facebook.com/meniuzapp" />
+      <mj-social-element name="instagram" href="https://www.instagram.com/meniuzapp" />
+      <mj-social-element name="twitter" href="https://twitter.com/meniuzapp" />
+    </mj-social>
+  </mj-column>
+</mj-section>
+
+<mj-section background-color="#ffffff" padding="0px 15px 15px">
+  <mj-column>
+    <mj-text font-size="16px" color="#333333" align="center" padding-bottom="20px">
+      ¿Aún no tienes nuestra app? <strong>¡Descárgala ahora!</strong>
+    </mj-text>
+  </mj-column>
+</mj-section>
+
+<mj-section background-color="#ffffff">
+  <mj-group>
+    <mj-column>
+      <mj-image
+        href="https://apps.apple.com/ec/app/meniuz/id1563662812?l=en"
+        src="https://firebasestorage.googleapis.com/v0/b/meniuz.appspot.com/o/web%2FApp%20Store.png?alt=media"
+        alt="Descargar en App Store"
+        width="100px"
+        align="center"
+        padding="0px"
+      />
+    </mj-column>
+
+    <mj-column>
+      <mj-image
+        href="https://play.google.com/store/apps/details?id=com.kevinhomorales.meniuzkotlin&hl=es-419"
+        src="https://firebasestorage.googleapis.com/v0/b/meniuz.appspot.com/o/web%2FPlay%20Store.png?alt=media"
+        alt="Disponible en Google Play"
+        width="100px"
+        align="center"
+        padding="0px"
+      />
+    </mj-column>
+
+    <mj-column>
+      <mj-image
+        href="https://appgallery.huawei.com/app/C104330241"
+        src="https://firebasestorage.googleapis.com/v0/b/meniuz.appspot.com/o/web%2FHUAWEI.png?alt=media"
+        alt="Disponible en AppGallery"
+        width="100px"
+        align="center"
+        padding="0px"
+      />
+    </mj-column>
+  </mj-group>
+</mj-section>
+
+<mj-section background-color="#fff" padding="20px">
+  <mj-column>
+    <mj-text font-size="18px" font-weight="bold" color="#333333" padding-bottom="10px">
+      Padel Track App
+    </mj-text>
+    <mj-text font-size="14px" color="#555555" line-height="22px">
+      Padel Track <strong>Entrena con programas 100% personalizados, diseñados por entrenadores reales que adaptan cada sesión a tu nivel y objetivos.</strong>.
+    </mj-text>
+    <mj-text font-size="13px" color="#999999" padding-top="15px">
+      Santo Domingo de los Tsáchilas - Ecuador
+    </mj-text>
+  </mj-column>
+</mj-section>

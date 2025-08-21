@@ -1,0 +1,15 @@
+<mj-section background-color="#f8f9fa" padding="10px 0">
+  <mj-column width="100%">
+    <mj-image
+      src="https://via.placeholder.com/150x50.png?text=Mi+Logo"
+      alt="Logo"
+      align="center"
+      width="150px"
+    />
+
+    <mj-text align="center" font-size="12px" color="#666666" padding-top="5px">
+      <a href="https://tusitio.com" style="color:#007BFF; text-decoration:none;">Descarga la app</a> | 
+      <a href="https://tusitio.com/soporte" style="color:#007BFF; text-decoration:none;">Soporte</a>
+    </mj-text>
+  </mj-column>
+</mj-section>

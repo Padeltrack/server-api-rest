@@ -3,7 +3,7 @@ import { RoleModel, SelectRoleModel, UserMongoModel } from './user.model';
 import { UpdateUserSchemaZod } from './user.dto';
 import { ZodError } from 'zod';
 import { PlanMongoModel } from '../plan/plan.model';
-import { OrderMongoModel } from '../order/order.model';
+import { OrderMongoModel, SelectStatusOrderModel } from '../order/order.model';
 import { removeRelationUserModel, uploadImagePhotoUser } from './user.helper';
 
 export const getMe = async (req: Request, res: Response) => {
@@ -11,15 +11,39 @@ export const getMe = async (req: Request, res: Response) => {
   req.logger.info({ status: 'start' });
 
   try {
-    const user = req.user;
-    const lastOrder = await OrderMongoModel.findOne({ userId: user._id }).sort({ createdAt: -1 });
-    let usePlan = null;
+    const user: any = { _id: "68a02b4382d1ec6252e07988", role: SelectRoleModel.Coach } // req.user;
+    const isCoach = user.role === SelectRoleModel.Coach;
+    const orders = [];
+    const plans = [];
 
-    if (lastOrder) {
-      usePlan = await PlanMongoModel.findOne({ _id: lastOrder.planId });
+    if (isCoach) {
+      const activeCoachOrders = await OrderMongoModel.find({
+          userId: user._id,
+          isCoach,
+          status: [SelectStatusOrderModel.Approved, SelectStatusOrderModel.Pending],
+        }).sort({ createdAt: -1 })
+          .lean();
+
+      if (activeCoachOrders.length) {
+        activeCoachOrders.forEach(order => orders.push(order));
+        const plansId = activeCoachOrders.map(order => order.planId);
+        const getPlans = await PlanMongoModel.find({
+          _id: { $in: plansId },
+        }).lean();
+
+        getPlans.forEach(plan => plans.push(plan));
+      }
+    } else {
+      const lastOrder = await OrderMongoModel.findOne({ userId: user._id, isCoach }).sort({ createdAt: -1 });
+      orders.push(lastOrder);
+
+      if (lastOrder) {
+        const getPlan = await PlanMongoModel.findOne({ _id: lastOrder.planId, isCoach });
+        plans.push(getPlan);
+      }
     }
 
-    return res.status(200).json({ user, usePlan, lastOrder });
+    return res.status(200).json({ user, plans, orders });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
     return res.status(401).json({ message: 'Unauthorized' });

@@ -11,12 +11,33 @@ import { validateOnboardingAnswers } from '../onboarding/onboarding.helper';
 import { selectAuthStrategy } from './strategies';
 import { HOST_ADMINS } from '../../shared/util/url.util';
 import { getTextBeforeAtEmail } from '../../shared/util/string.util';
+/*import { generateEmail } from '../mail/loadTemplate.mail';
+import { MailDataRequired } from '@sendgrid/mail';
+import { sendEMail } from '../mail/sendTemplate.mail';*/
 
 export const registerUserWithGoogle = async (req: Request, res: Response) => {
   req.logger = req.logger.child({ service: 'auth', serviceHandler: 'registerUserWithGoogle' });
   req.logger.info({ status: 'start' });
 
   try {
+    /*const welcomeEmail = await generateEmail({
+      template: 'welcome',
+      variables: { name: 'Anonimo' },
+    });
+
+    const msg: MailDataRequired = {
+      from: `${process.env.ROOT_EMAIL}`,
+      to: 'goyeselcoca@gmail.com',
+      subject: 'Bienvenido a Padel Track',
+      text: '-',
+      html: welcomeEmail,
+    };
+
+    sendEMail({ data: msg });
+    return res.status(400).json({
+      message: 'Email is required',
+    });*/
+
     const {
       idToken,
       birthdate,
@@ -58,8 +79,8 @@ export const registerUserWithGoogle = async (req: Request, res: Response) => {
 
     const user = await UserMongoModel.create({
       _id: new ObjectId().toHexString(),
-      displayName: displayName || getTextBeforeAtEmail(email),
-      userName: await generateUniqueUserName(displayName || getTextBeforeAtEmail(email)),
+      displayName: displayName || getTextBeforeAtEmail(email || ''),
+      userName: await generateUniqueUserName(displayName || getTextBeforeAtEmail(email || '')),
       email,
       gender,
       photo: picture,

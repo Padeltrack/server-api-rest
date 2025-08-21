@@ -16,7 +16,7 @@ matchRoutes.get(
 matchRoutes.post(
   `${pathMatch}`,
   authenticate,
-  authorize(SelectRoleModel.Coach, SelectRoleModel.SuperAdmin),
+  authorize(SelectRoleModel.Coach),
   createMatch,
 );
 
