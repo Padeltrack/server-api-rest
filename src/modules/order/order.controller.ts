@@ -76,21 +76,72 @@ export const createOrder = async (req: Request, res: Response) => {
   req.logger.info({ status: 'start' });
 
   try {
-    const me = req.user;
+    const me = { _id: '68a02b4382d1ec6252e07988', role: SelectRoleModel.Coach }; // req.user;
     const userId = me._id;
+    const isCoach = me.role === SelectRoleModel.Coach;
     const { planId, imageBase64 } = createOrderSchema.parse(req.body);
 
-    const isPlan = await PlanMongoModel.countDocuments({ _id: planId, active: true });
-    if (!isPlan) return res.status(400).json({ message: 'Plan not found' });
+    const getPlan = await PlanMongoModel.findOne({ _id: planId, active: true });
+    if (!getPlan) {
+      return res.status(400).json({
+        message: 'Plan not found',
+      });
+    }
 
-    const isOrderPending = await OrderMongoModel.countDocuments({
-      userId,
-      $or: [
-        { status: SelectStatusOrderModel.Pending },
-        { status: SelectStatusOrderModel.Approved },
-      ],
-    });
-    if (isOrderPending) return res.status(400).json({ message: 'You have a pending order' });
+    if (getPlan.isCoach && !isCoach) {
+      return res.status(400).json({
+        message: 'You are not a coach',
+      });
+    }
+
+    if (isCoach) {
+      const isOrderCoachPending = await OrderMongoModel.aggregate([
+        {
+          $match: {
+            userId,
+            $or: [
+              { status: SelectStatusOrderModel.Pending },
+              { status: SelectStatusOrderModel.Approved },
+            ],
+          },
+        },
+        {
+          $lookup: {
+            from: 'plans',
+            localField: 'planId',
+            foreignField: '_id',
+            as: 'plan',
+          },
+        },
+        { $unwind: '$plan' },
+        {
+          $match: {
+            'plan.isCoach': getPlan.isCoach,
+          },
+        },
+      ]);
+
+      if (isOrderCoachPending.length) {
+        return res.status(400).json({
+          message: 'You have a pending order',
+        });
+      }
+    } else {
+      const isOrderPending = await OrderMongoModel.countDocuments({
+        userId,
+        isCoach: false,
+        $or: [
+          { status: SelectStatusOrderModel.Pending },
+          { status: SelectStatusOrderModel.Approved },
+        ],
+      });
+
+      if (isOrderPending) {
+        return res.status(400).json({
+          message: 'You have a pending order',
+        });
+      }
+    }
 
     const idOrder = new ObjectId().toHexString();
     const paymentProof = await uploadImagePayment({ imageBase64, idOrder });

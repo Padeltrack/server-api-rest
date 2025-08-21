@@ -27,7 +27,7 @@ router.get(
 router.post(
   basePath,
   authenticate,
-  authorize(SelectRoleModel.Student, SelectRoleModel.Coach),
+  authorize(SelectRoleModel.Student, SelectRoleModel.Coach, SelectRoleModel.SuperAdmin),
   createOrder,
 );
 router.patch(

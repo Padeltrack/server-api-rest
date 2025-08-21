@@ -26,6 +26,8 @@ export const sendEMail = (options: { data: MailDataRequired | MailDataRequired[]
       LoggerColor.bold().bgColor('blue').info('Email enviado con éxito');
     })
     .catch(error => {
-      LoggerColor.bold().bgColor('red').error("Error Send Email: " + error.message);
+      LoggerColor.bold()
+        .bgColor('red')
+        .error('Error Send Email: ' + error.message);
     });
 };

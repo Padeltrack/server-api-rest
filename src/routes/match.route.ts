@@ -13,11 +13,6 @@ matchRoutes.get(
   authorize(SelectRoleModel.SuperAdmin, SelectRoleModel.Coach),
   getMatches,
 );
-matchRoutes.post(
-  `${pathMatch}`,
-  authenticate,
-  authorize(SelectRoleModel.Coach),
-  createMatch,
-);
+matchRoutes.post(`${pathMatch}`, authenticate, authorize(SelectRoleModel.Coach), createMatch);
 
 export default matchRoutes;

@@ -18,11 +18,12 @@ export const getMe = async (req: Request, res: Response) => {
 
     if (isCoach) {
       const activeCoachOrders = await OrderMongoModel.find({
-          userId: user._id,
-          isCoach,
-          status: [SelectStatusOrderModel.Approved, SelectStatusOrderModel.Pending],
-        }).sort({ createdAt: -1 })
-          .lean();
+        userId: user._id,
+        isCoach,
+        status: [SelectStatusOrderModel.Approved, SelectStatusOrderModel.Pending],
+      })
+        .sort({ createdAt: -1 })
+        .lean();
 
       if (activeCoachOrders.length) {
         activeCoachOrders.forEach(order => orders.push(order));
@@ -34,7 +35,9 @@ export const getMe = async (req: Request, res: Response) => {
         getPlans.forEach(plan => plans.push(plan));
       }
     } else {
-      const lastOrder = await OrderMongoModel.findOne({ userId: user._id, isCoach }).sort({ createdAt: -1 });
+      const lastOrder = await OrderMongoModel.findOne({ userId: user._id, isCoach }).sort({
+        createdAt: -1,
+      });
       orders.push(lastOrder);
 
       if (lastOrder) {
