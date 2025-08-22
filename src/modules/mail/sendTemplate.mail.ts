@@ -1,9 +1,7 @@
-import sgMail, { MailDataRequired } from '@sendgrid/mail';
+import nodemailer from "nodemailer";
 import LoggerColor from 'node-color-log';
 
-export const sendEMail = (options: { data: MailDataRequired | MailDataRequired[] }) => {
-  console.log('key ', process.env.SENDGRID_API_KEY);
-  sgMail.setApiKey(`${process.env.SENDGRID_API_KEY}`);
+export const sendEMail = (options: { data: any }) => {
   const name = 'Padel Track';
 
   if (Array.isArray(options.data)) {
@@ -20,14 +18,24 @@ export const sendEMail = (options: { data: MailDataRequired | MailDataRequired[]
     };
   }
 
-  sgMail
-    .send(options.data)
-    .then(() => {
-      LoggerColor.bold().bgColor('blue').info('Email enviado con éxito');
-    })
-    .catch(error => {
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: `${process.env.NODE_MAILER_ROOT_EMAIL}`,
+      pass: `${process.env.NODE_MAILER_ROOT_PASS}`,
+    },
+    tls: {
+      rejectUnauthorized: false,
+    },
+  });
+
+  transporter.sendMail(options.data, (error, info) => {
+    if (error) {
       LoggerColor.bold()
         .bgColor('red')
         .error('Error Send Email: ' + error.message);
-    });
+      return;
+    }
+    LoggerColor.bold().bgColor('blue').info('Email enviado con éxito ' + info.response);
+  });
 };

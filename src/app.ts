@@ -23,6 +23,7 @@ import { initializeFirebase } from './config/firebase.config';
 import { logger } from './middleware/logger.middleware';
 import { HOST_PERMITS } from './shared/util/url.util';
 import { cronApp } from './core/crons';
+import { serverImagesStaticAssets } from './middleware/imagesCache.middleware';
 
 const { swaggerDocument } = require('./swagger');
 const swaggerUi = require('swagger-ui-express');
@@ -45,6 +46,7 @@ app.use(
 );
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
+app.use(serverImagesStaticAssets());
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 

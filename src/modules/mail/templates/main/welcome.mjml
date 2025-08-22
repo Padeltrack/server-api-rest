@@ -1,7 +1,6 @@
 <mjml>
-  <mj-include path="./src/modules/mail/template/layout/header/general.header.mjml" />
-
   <mj-body background-color="#f4f4f4">
+    <mj-include path="./src/modules/mail/templates/layout/header/general.header.mjml" />
 
     <mj-section background-color="#ffffff" padding="20px" border-radius="8px">
       <mj-column width="100%">
@@ -28,6 +27,6 @@
       </mj-column>
     </mj-section>
 
-    <mj-include path="./src/modules/mail/template/layout/footer.mjml" />
+    <mj-include path="./src/modules/mail/templates/layout/footer.mjml" />
   </mj-body>
 </mjml>
