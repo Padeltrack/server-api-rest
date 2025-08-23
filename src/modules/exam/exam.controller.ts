@@ -22,6 +22,9 @@ import {
   uploadVideoToVimeo,
 } from '../vimeo/vimeo.helper';
 import { examAnswerStudentFolder, examFolder } from '../vimeo/viemo.constant';
+import { sendEMail } from '../mail/sendTemplate.mail';
+import { HOST_CLIENT_ADMIN_PROD } from '../../shared/util/url.util';
+import { generateEmail } from '../mail/loadTemplate.mail';
 
 export const getQuestionnaireExam = async (req: Request, res: Response) => {
   req.logger = req.logger.child({ service: 'exam', serviceHandler: 'getQuestionnaireExam' });
@@ -613,10 +616,16 @@ export const assignExamToCoach = async (req: Request, res: Response) => {
     const { examAnswerId, coachId } = AssignExamToCoachSchemaZod.parse(req.body);
 
     const getExamAnswer = await ExamAnswerMongoModel.findOne({ _id: examAnswerId });
-
     if (!getExamAnswer) {
       return res.status(404).json({
         message: 'Exam answer not found',
+      });
+    }
+
+    const getUser = await UserMongoModel.findOne({ _id: getExamAnswer.userId });
+    if (!getUser) {
+      return res.status(404).json({
+        message: 'User not found',
       });
     }
 
@@ -631,7 +640,6 @@ export const assignExamToCoach = async (req: Request, res: Response) => {
     }
 
     const getCoach = await UserMongoModel.findOne({ _id: coachId });
-
     if (!getCoach) {
       return res.status(404).json({
         message: 'Coach not found',
@@ -642,6 +650,27 @@ export const assignExamToCoach = async (req: Request, res: Response) => {
       { _id: examAnswerId },
       { $set: { assignCoachId: coachId } },
     );
+
+    const assignExamEmail = await generateEmail({
+      template: 'assignCoachExam',
+      variables: {
+        professorName: getCoach.displayName,
+        studentName: getUser.displayName,
+        subject: "Preparación física",
+        status: 'En Revision',
+        reviewLink: `${HOST_CLIENT_ADMIN_PROD}/exams/${examAnswerId}`,
+      },
+    });
+
+    const msg = {
+      from: `${process.env.NODE_MAILER_ROOT_EMAIL}`,
+      to: getCoach.email,
+      subject: 'Asignación de examen, Padel Track',
+      text: '-',
+      html: assignExamEmail,
+    };
+
+    sendEMail({ data: msg });
 
     return res.status(200).json({
       message: 'Questionnaire assigned successfully',

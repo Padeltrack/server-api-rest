@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
+import handlebars from "handlebars";
 
 import mjml2html from 'mjml';
 
@@ -11,13 +12,12 @@ export const loadTemplate = async (templateName: string, variables: Record<strin
     throw new Error(`El archivo ${templateName}.mjml no existe.`);
   }
 
-  let mjmlContent = await fs.promises.readFile(templatePath, 'utf8');
+  const mjmlContent = await fs.promises.readFile(templatePath, 'utf8');
 
-  Object.entries(variables).forEach(([key, value]) => {
-    mjmlContent = mjmlContent.replace(new RegExp(`{{${key}}}`, 'g'), value);
-  });
+  const template = handlebars.compile(mjmlContent);
+  const compiledMjml = template(variables);
 
-  const { html, errors } = mjml2html(mjmlContent);
+  const { html, errors } = mjml2html(compiledMjml);
 
   if (errors.length) {
     if (errors[0] instanceof Error) {

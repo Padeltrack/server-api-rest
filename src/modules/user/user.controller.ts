@@ -6,6 +6,8 @@ import { PlanMongoModel } from '../plan/plan.model';
 import { OrderMongoModel, SelectStatusOrderModel } from '../order/order.model';
 import { removeRelationUserModel, uploadImagePhotoUser } from './user.helper';
 import { StudentCoachesMongoModel } from '../studentCoaches/studentCoaches.model';
+import { sendEMail } from '../mail/sendTemplate.mail';
+import { generateEmail } from '../mail/loadTemplate.mail';
 
 export const getMe = async (req: Request, res: Response) => {
   req.logger = req.logger.child({ service: 'users', serviceHandler: 'getMe' });
@@ -269,6 +271,28 @@ export const deleteMe = async (req: Request, res: Response) => {
       await StudentCoachesMongoModel.deleteMany({ studentId: me._id });
     }
 
+    const deleteAccountEmail = await generateEmail({
+      template: 'deleteAccount',
+      variables: {
+        displayName: me.displayName,
+        email: me.email,
+        supportEmail: 'padeltrackhub@gmail.com',
+        helpCenterUrl: "https://padeltrack.app",
+        companyName: "Padel Track",
+        deletionDate: new Date().toLocaleString(),
+      },
+    });
+
+    const msg = {
+      from: `${process.env.NODE_MAILER_ROOT_EMAIL}`,
+      to: me.email,
+      subject: 'Lamentamos que te vallas de Padel Track',
+      text: '-',
+      html: deleteAccountEmail,
+    };
+
+    sendEMail({ data: msg });
+
     return res.status(200).json({
       message: 'User deleted successfully',
     });
@@ -302,6 +326,28 @@ export const deleteUser = async (req: Request, res: Response) => {
     } else {
       await StudentCoachesMongoModel.deleteMany({ studentId: getUser._id });
     }
+
+    const deleteAccountEmail = await generateEmail({
+      template: 'deleteAccount',
+      variables: {
+        displayName: getUser.displayName,
+        email: getUser.email,
+        supportEmail: 'padeltrackhub@gmail.com',
+        helpCenterUrl: "https://padeltrack.app",
+        companyName: "Padel Track",
+        deletionDate: new Date().toLocaleString(),
+      },
+    });
+
+    const msg = {
+      from: `${process.env.NODE_MAILER_ROOT_EMAIL}`,
+      to: getUser.email,
+      subject: 'Lamentamos que te vallas de Padel Track',
+      text: '-',
+      html: deleteAccountEmail,
+    };
+
+    sendEMail({ data: msg });
 
     return res.status(200).json({
       message: 'User deleted successfully',

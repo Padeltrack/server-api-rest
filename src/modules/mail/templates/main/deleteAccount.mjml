@@ -1,0 +1,80 @@
+<mjml>
+  <mj-body background-color="#f4f4f4">
+    <mj-include path="./src/modules/mail/templates/layout/header/general.header.mjml" />
+
+    <mj-section background-color="#ffffff" padding="24px 0">
+      <mj-column>
+        <mj-text font-size="20px" font-weight="700" line-height="130%">
+          Tu cuenta ha sido eliminada
+        </mj-text>
+        <mj-text font-size="14px" line-height="160%">
+          Hola {{displayName}},<br /><br />
+          Te confirmamos que hemos procesado la solicitud de
+          <strong>eliminación de tu cuenta</strong> en {{companyName}} el día
+          <strong>{{deletionDate}}</strong
+          >.
+        </mj-text>
+
+        <mj-text font-size="14px" line-height="160%"> ¿Qué significa esto? </mj-text>
+        <mj-text font-size="14px" line-height="180%">
+          • Ya no podrás iniciar sesión con tus credenciales.<br />
+          • Se desactivaron tus suscripciones y accesos asociados.<br />
+          • Tus datos personales se eliminarán de manera segura.
+        </mj-text>
+
+        <!--{{#if dataExportUrl}}
+        <mj-text font-size="14px" line-height="160%">
+          Si aún no descargaste una copia de tus datos, puedes hacerlo aquí:
+        </mj-text>
+        <mj-button href="{{dataExportUrl}}" font-size="14px" padding="8px 16px">
+          Descargar mis datos
+        </mj-button>
+        {{/if}}
+
+        {{#if feedbackUrl}}
+        <mj-divider border-color="#E5E7EB" padding-top="16px" padding-bottom="16px" />
+        <mj-text font-size="14px" line-height="160%">
+          ¿Nos cuentas tu experiencia? Tu opinión nos ayuda a mejorar.
+        </mj-text>
+        <mj-button href="{{feedbackUrl}}" font-size="14px" padding="8px 16px">
+          Enviar comentarios
+        </mj-button>
+        {{/if}}
+
+        {{#if reactivateUrl}}
+        <mj-divider border-color="#E5E7EB" padding-top="16px" padding-bottom="16px" />
+        <mj-text font-size="14px" line-height="160%">
+          Si cambias de opinión, puedes solicitar la reactivación de tu cuenta mientras el proceso
+          de eliminación aún no es irreversible.
+        </mj-text>
+        <mj-button href="{{reactivateUrl}}" font-size="14px" padding="8px 16px">
+          Solicitar reactivación
+        </mj-button>
+        {{/if}}-->
+
+        <mj-divider border-color="#E5E7EB" padding-top="16px" padding-bottom="16px" />
+
+        <mj-text font-size="12px" line-height="170%" color="#6B7280">
+          Si tienes dudas, responde a este correo o contáctanos en
+          <a href="mailto:{{supportEmail}}" style="color: #111827; text-decoration: underline">{{supportEmail}}</a
+          >{{#if helpCenterUrl}} o visita nuestro
+          <a href="{{helpCenterUrl}}" style="color: #111827; text-decoration: underline"
+            >Centro de Ayuda</a
+          >{{/if}}.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <mj-section background-color="#F9FAFB" padding="12px 0">
+      <mj-column>
+        <mj-text font-size="11px" line-height="160%" color="#6B7280">
+          Este mensaje se envió a <strong>{{email}}</strong> porque estaba asociado a una
+          cuenta en {{companyName}}. Si no solicitaste esta acción, comunícate inmediatamente con
+          nuestro equipo de soporte.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <mj-include path="./src/modules/mail/templates/layout/footer.mjml" />
+  </mj-body>
+</mjml>

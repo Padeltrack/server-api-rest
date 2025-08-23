@@ -4,12 +4,17 @@
       src="https://production-padel-track-production.up.railway.app/public/images/logo-padel-track.png"
       alt="Logo"
       align="center"
-      width="150px"
+      width="350px"
     />
 
     <mj-text align="center" font-size="12px" color="#666666" padding-top="5px">
-      <a href="https://tusitio.com" style="color:#007BFF; text-decoration:none;">Descarga la app</a> | 
-      <a href="https://tusitio.com/soporte" style="color:#007BFF; text-decoration:none;">Soporte</a>
+      <a href="https://tusitio.com" style="color: #007bff; text-decoration: none"
+        >Descarga la app</a
+      >
+      |
+      <a href="https://tusitio.com/soporte" style="color: #007bff; text-decoration: none"
+        >Soporte</a
+      >
     </mj-text>
   </mj-column>
 </mj-section>

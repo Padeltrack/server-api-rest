@@ -19,6 +19,7 @@
     "dotenv": "^17.0.1",
     "express": "4.21.2",
     "firebase-admin": "^13.4.0",
+    "handlebars": "^4.7.8",
     "jsonwebtoken": "^9.0.2",
     "mime": "3.0.0",
     "mjml": "^4.15.3",

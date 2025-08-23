@@ -4,16 +4,22 @@
 
     <mj-section background-color="#ffffff" padding="20px" border-radius="8px">
       <mj-column width="100%">
-
-        <mj-text font-size="22px" font-weight="bold" align="center" color="#333333" padding-bottom="10px">
+        <mj-text
+          font-size="22px"
+          font-weight="bold"
+          align="center"
+          color="#333333"
+          padding-bottom="10px"
+        >
           ¡Bienvenido a Padel Track 🎉!
         </mj-text>
 
         <mj-text align="center" color="#555555" font-size="16px" line-height="24px">
-          Hola <b>{{name}}</b>,<br/><br/>
-          Gracias por registrarte en nuestra plataforma.  
-          Estamos muy felices de tenerte con nosotros.  
-          Desde ahora podrás acceder a todas nuestras funcionalidades y aprovechar lo mejor de nuestros servicios.
+          Hola <b>{{name}}</b
+          >,<br /><br />
+          Gracias por registrarte en nuestra plataforma. Estamos muy felices de tenerte con
+          nosotros. Desde ahora podrás acceder a todas nuestras funcionalidades y aprovechar lo
+          mejor de nuestros servicios.
         </mj-text>
 
         <mj-button href="https://tusitio.com/login" font-size="16px" padding="20px">
@@ -21,9 +27,11 @@
         </mj-button>
 
         <mj-text align="center" color="#999999" font-size="12px" padding-top="15px">
-          Si tienes preguntas, puedes contactarte con nuestro <a href="https://tusitio.com/soporte" style="color:#007BFF; text-decoration:none;">Centro de Ayuda</a>.
+          Si tienes preguntas, puedes contactarte con nuestro
+          <a href="https://tusitio.com/soporte" style="color: #007bff; text-decoration: none"
+            >Centro de Ayuda</a
+          >.
         </mj-text>
-
       </mj-column>
     </mj-section>
 

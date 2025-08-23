@@ -19,24 +19,29 @@ export const registerUserWithGoogle = async (req: Request, res: Response) => {
   req.logger.info({ status: 'start' });
 
   try {
-    const welcomeEmail = await generateEmail({
-      template: 'welcome',
-      variables: { name: 'Anonimo' },
-    });
+    /*const deleteAccountEmail = await generateEmail({
+          template: 'assignCoachExam',
+          variables: {
+            professorName: 'Andres Coello',
+            studentName: 'Goyesel Coello',
+            subject: "Preparación física",
+            status: 'En Revision',
+            reviewLink: `${HOST_CLIENT_ADMIN_PROD}/exams/6889364a543218345e35133e`,
+          },
+        });
 
-    const msg = {
-      from: `${process.env.NODE_MAILER_ROOT_EMAIL}`,
-      to: 'goyeselcoca@gmail.com',
-      subject: 'Bienvenido a Padel Track',
-      text: '-',
-      html: welcomeEmail,
-    };
-
-    sendEMail({ data: msg });
-    return res.status(400).json({
-      message: 'Email is required',
-    });
-
+        const msgg = {
+          from: `${process.env.NODE_MAILER_ROOT_EMAIL}`,
+          to: 'goyeselcoca@gmail.com',
+          subject: 'Asignación de examen, Padel Track',
+          text: '-',
+          html: deleteAccountEmail,
+        };
+    
+        sendEMail({ data: msgg });
+        return res.status(200).json({
+          message: 'User registered successfully',
+        });*/
     const {
       idToken,
       birthdate,
@@ -90,6 +95,21 @@ export const registerUserWithGoogle = async (req: Request, res: Response) => {
         completedAt: new Date(),
       },
     });
+
+    const welcomeEmail = await generateEmail({
+      template: 'welcome',
+      variables: { name: user.displayName },
+    });
+
+    const msg = {
+      from: `${process.env.NODE_MAILER_ROOT_EMAIL}`,
+      to: email,
+      subject: 'Bienvenido a Padel Track',
+      text: '-',
+      html: welcomeEmail,
+    };
+
+    sendEMail({ data: msg });
 
     const me = {
       user: user,

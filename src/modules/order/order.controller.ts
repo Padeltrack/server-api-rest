@@ -8,6 +8,8 @@ import { ZodError } from 'zod';
 import { uploadImagePayment } from './order.service';
 import { WeeklyVideoMongoModel } from '../weeklyVideo/weeklyVideo.model';
 import { getVideosByWeek } from '../weeklyVideo/weeklyVideo.model.helper';
+import { generateEmail } from '../mail/loadTemplate.mail';
+import { sendEMail } from '../mail/sendTemplate.mail';
 
 export const getOrders = async (req: Request, res: Response) => {
   req.logger = req.logger.child({ service: 'order', serviceHandler: 'getOrders' });
@@ -155,6 +157,36 @@ export const createOrder = async (req: Request, res: Response) => {
       isCoach: me.role === SelectRoleModel.Coach,
     });
 
+    const newOrderEmail = await generateEmail({
+      template: 'newOrder',
+      variables: {
+        displayName: me.displayName,
+        orderNumber: '123456',
+        email: me.email,
+        supportEmail: 'padeltrackhub@gmail.com',
+        companyName: "Padel Track",
+        orderDate: new Date().toLocaleString(),
+        orderTotal: `${getPlan.price}`,
+        orderItems: [
+          {
+            name: `${getPlan.name}`,
+            quantity: '1',
+            price: `${getPlan.price}`,
+          }
+        ] as any
+      },
+    });
+
+    const msg = {
+      from: `${process.env.NODE_MAILER_ROOT_EMAIL}`,
+      to: me.email,
+      subject: 'Recibimos tu orden de Padel Track',
+      text: '-',
+      html: newOrderEmail,
+    };
+
+    sendEMail({ data: msg });
+
     return res.status(200).json({ order });
   } catch (error) {
     if (error instanceof ZodError) {
@@ -181,6 +213,13 @@ export const updateOrderStatus = async (req: Request, res: Response) => {
     if (!getOrder) {
       return res.status(404).json({
         message: 'Order not found',
+      });
+    }
+
+    const getPlan = await PlanMongoModel.findOne({ _id: getOrder.planId });
+    if (!getPlan) {
+      return res.status(404).json({
+        message: 'Plan not found',
       });
     }
 
@@ -219,7 +258,9 @@ export const updateOrderStatus = async (req: Request, res: Response) => {
 
     const isApproved = fieldsUpdated.status === SelectStatusOrderModel.Approved;
     const isStudent = getUser.role === SelectRoleModel.Student;
-    if (isApproved && isStudent) {
+    const isPlanNotCoach = getPlan.isCoach === false;
+
+    if (isApproved && isStudent && isPlanNotCoach) {
       const week = fieldsUpdated.currentWeek;
       await WeeklyVideoMongoModel.create({
         _id: new ObjectId().toHexString(),
@@ -228,6 +269,37 @@ export const updateOrderStatus = async (req: Request, res: Response) => {
         videos: await getVideosByWeek({ week }),
       });
     }
+
+    const statusOrderEmail = await generateEmail({
+      template: isApproved ? 'orderApproved' : 'orderReject',
+      variables: {
+        displayName: getUser.displayName,
+        orderNumber: '123456',
+        rejectionReason: fieldsUpdated?.messageRejected || "",
+        email: getUser.email,
+        supportEmail: 'padeltrackhub@gmail.com',
+        companyName: "Padel Track",
+        orderDate: new Date().toLocaleString(),
+        orderTotal: `${getPlan.price}`,
+        orderItems: [
+          {
+            name: `${getPlan.name}`,
+            quantity: '1',
+            price: `${getPlan.price}`,
+          }
+        ] as any
+      },
+    });
+
+    const msgg = {
+      from: `${process.env.NODE_MAILER_ROOT_EMAIL}`,
+      to: getUser.email,
+      subject: isApproved ? 'Tu orden fue aprobada en Padel Track' : 'Tu orden fue rechazada en Padel Track',
+      text: '-',
+      html: statusOrderEmail,
+    };
+
+    sendEMail({ data: msgg });
 
     return res.status(200).json({ order: updated });
   } catch (error) {

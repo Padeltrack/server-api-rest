@@ -1,8 +1,6 @@
 <mj-section background-color="#ffffff">
   <mj-column>
-    <mj-text font-size="18px" color="#333333" align="center">
-      Síguenos
-    </mj-text>
+    <mj-text font-size="18px" color="#333333" align="center"> Síguenos </mj-text>
     <mj-social icon-size="30px" mode="horizontal" align="center">
       <mj-social-element name="facebook" href="https://www.facebook.com/meniuzapp" />
       <mj-social-element name="instagram" href="https://www.instagram.com/meniuzapp" />
@@ -62,7 +60,11 @@
       Padel Track App
     </mj-text>
     <mj-text font-size="14px" color="#555555" line-height="22px">
-      Padel Track <strong>Entrena con programas 100% personalizados, diseñados por entrenadores reales que adaptan cada sesión a tu nivel y objetivos.</strong>.
+      Padel Track
+      <strong
+        >Entrena con programas 100% personalizados, diseñados por entrenadores reales que adaptan
+        cada sesión a tu nivel y objetivos.</strong
+      >.
     </mj-text>
     <mj-text font-size="13px" color="#999999" padding-top="15px">
       Santo Domingo de los Tsáchilas - Ecuador

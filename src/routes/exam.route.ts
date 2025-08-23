@@ -64,7 +64,7 @@ examRoutes.post(
 examRoutes.post(
   `${pathAExam}/finalize/answer`,
   authenticate,
-  authorize(SelectRoleModel.Student,SelectRoleModel.Coach ),
+  authorize(SelectRoleModel.Student, SelectRoleModel.Coach),
   activeOrder,
   finalizeAnswerExam,
 );

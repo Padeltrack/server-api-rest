@@ -1,4 +1,4 @@
-import nodemailer from "nodemailer";
+import nodemailer from 'nodemailer';
 import LoggerColor from 'node-color-log';
 
 export const sendEMail = (options: { data: any }) => {
@@ -19,7 +19,7 @@ export const sendEMail = (options: { data: any }) => {
   }
 
   const transporter = nodemailer.createTransport({
-    service: "gmail",
+    service: 'gmail',
     auth: {
       user: `${process.env.NODE_MAILER_ROOT_EMAIL}`,
       pass: `${process.env.NODE_MAILER_ROOT_PASS}`,
@@ -36,6 +36,8 @@ export const sendEMail = (options: { data: any }) => {
         .error('Error Send Email: ' + error.message);
       return;
     }
-    LoggerColor.bold().bgColor('blue').info('Email enviado con éxito ' + info.response);
+    LoggerColor.bold()
+      .bgColor('blue')
+      .info('Email enviado con éxito ' + info.response);
   });
 };

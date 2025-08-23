@@ -1,5 +1,5 @@
 {
     "ignore": [".git", "node_modules/**/node_modules", "**/*.d.ts"],
-    "watch": ["src/**/*.ts", "src/**/*.json"],
+    "watch": ["src/**/*.ts", "src/**/*.mjml", "src/**/*.json"],
     "ext": "ts,js,json"
 }
