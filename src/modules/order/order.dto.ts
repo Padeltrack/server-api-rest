@@ -11,6 +11,7 @@ export const updateOrderStatusSchema = z.object({
     SelectStatusOrderModel.Pending,
     SelectStatusOrderModel.Approved,
     SelectStatusOrderModel.Rejected,
+    SelectStatusOrderModel.Cancelled,
   ]),
   messageRejected: z.string().max(50, 'Máximo de 50 caracteres').optional(),
 });

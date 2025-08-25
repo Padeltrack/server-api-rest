@@ -1,4 +1,5 @@
 import { Schema, model, Document } from 'mongoose';
+import { CounterMongoModel } from '../counter/counter.model';
 
 export enum SelectStatusOrderModel {
   Completed = 'Completed',
@@ -6,6 +7,7 @@ export enum SelectStatusOrderModel {
   Pending = 'Pending',
   Approved = 'Approved',
   Rejected = 'Rejected',
+  Cancelled = 'Cancelled',
 }
 
 export type StatusOrderModel =
@@ -13,10 +15,12 @@ export type StatusOrderModel =
   | SelectStatusOrderModel.Expired
   | SelectStatusOrderModel.Approved
   | SelectStatusOrderModel.Pending
-  | SelectStatusOrderModel.Rejected;
+  | SelectStatusOrderModel.Rejected
+  | SelectStatusOrderModel.Cancelled;
 
 export interface IOrderModel extends Document {
   readonly _id: string;
+  orderNumber: string;
   userId: string;
   planId: string;
   status: StatusOrderModel;
@@ -26,6 +30,7 @@ export interface IOrderModel extends Document {
   isCoach: boolean;
   completedOrderDate?: Date;
   approvedOrderDate?: Date;
+  cancellationDate?: Date;
   lastProgressDate?: Date;
   createdAt: Date;
   updatedAt: Date;
@@ -34,6 +39,7 @@ export interface IOrderModel extends Document {
 const orderMongoSchema = new Schema<IOrderModel>(
   {
     _id: { type: String, required: true },
+    orderNumber: { type: String, unique: true },
     userId: { type: String, required: true, ref: 'User' },
     planId: { type: String, required: true, ref: 'Plan' },
     status: {
@@ -49,6 +55,7 @@ const orderMongoSchema = new Schema<IOrderModel>(
     isCoach: { type: Boolean, required: true, default: false },
     completedOrderDate: { type: Date, required: false },
     approvedOrderDate: { type: Date, required: false },
+    cancellationDate: { type: Date, required: false },
     currentWeek: { type: Number, required: false },
     lastProgressDate: { type: Date, required: false },
   },
@@ -57,5 +64,19 @@ const orderMongoSchema = new Schema<IOrderModel>(
     collection: 'orders',
   },
 );
+
+orderMongoSchema.pre('save', async function (next) {
+  if (this.isNew) {
+    const counter = await CounterMongoModel.findByIdAndUpdate(
+      { _id: 'orderNumber' },
+      { $inc: { seq: 1 } },
+      { new: true, upsert: true },
+    );
+
+    const paddedNumber = counter.seq.toString().padStart(6, '0');
+    this.orderNumber = `ORDER${paddedNumber}`;
+  }
+  next();
+});
 
 export const OrderMongoModel = model<IOrderModel>('Order', orderMongoSchema);

@@ -277,8 +277,8 @@ export const deleteMe = async (req: Request, res: Response) => {
         displayName: me.displayName,
         email: me.email,
         supportEmail: 'padeltrackhub@gmail.com',
-        helpCenterUrl: "https://padeltrack.app",
-        companyName: "Padel Track",
+        helpCenterUrl: 'https://padeltrack.app',
+        companyName: 'Padel Track',
         deletionDate: new Date().toLocaleString(),
       },
     });
@@ -333,8 +333,8 @@ export const deleteUser = async (req: Request, res: Response) => {
         displayName: getUser.displayName,
         email: getUser.email,
         supportEmail: 'padeltrackhub@gmail.com',
-        helpCenterUrl: "https://padeltrack.app",
-        companyName: "Padel Track",
+        helpCenterUrl: 'https://padeltrack.app',
+        companyName: 'Padel Track',
         deletionDate: new Date().toLocaleString(),
       },
     });

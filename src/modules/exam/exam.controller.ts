@@ -573,6 +573,7 @@ export const registerGradeExam = async (req: Request, res: Response) => {
     } else if (average >= 8) {
       levelUser = SelectUserLevelModel.Avanzado;
     }
+
     await UserMongoModel.updateOne(
       {
         _id: getUser._id,
@@ -583,6 +584,24 @@ export const registerGradeExam = async (req: Request, res: Response) => {
         },
       },
     );
+
+    const examGradeEmail = await generateEmail({
+      template: 'examGradeStudent',
+      variables: {
+        average: average.toFixed(2),
+        studentName: getUser.displayName,
+      },
+    });
+
+    const msg = {
+      from: `${process.env.NODE_MAILER_ROOT_EMAIL}`,
+      to: getUser.email,
+      subject: 'Calificación de examen, Padel Track',
+      text: '-',
+      html: examGradeEmail,
+    };
+
+    sendEMail({ data: msg });
 
     const examAnswerUpdate = await ExamAnswerMongoModel.findOne({ _id: examAnswerId })
       .populate('userId', '_id displayName level photo gender email role')
@@ -656,7 +675,7 @@ export const assignExamToCoach = async (req: Request, res: Response) => {
       variables: {
         professorName: getCoach.displayName,
         studentName: getUser.displayName,
-        subject: "Preparación física",
+        subject: 'Preparación física',
         status: 'En Revision',
         reviewLink: `${HOST_CLIENT_ADMIN_PROD}/exams/${examAnswerId}`,
       },

@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import handlebars from "handlebars";
+import handlebars from 'handlebars';
 
 import mjml2html from 'mjml';
 

@@ -55,8 +55,8 @@
             <mj-divider border-color="#E5E7EB" padding-top="16px" padding-bottom="16px" />
 
             <mj-text font-size="12px" line-height="170%" color="#6B7280">
-            Si tienes dudas sobre tu orden, contáctanos en 
-            <a href="mailto:{{supportEmail}}" style="color:#111827; text-decoration:underline;">{{supportEmail}}</a>.
+                Si tienes dudas sobre tu orden, contáctanos en 
+                <a href="mailto:{{supportEmail}}" style="color:#111827; text-decoration:underline;">{{supportEmail}}</a>.
             </mj-text>
         </mj-column>
     </mj-section>

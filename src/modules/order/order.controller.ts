@@ -20,13 +20,26 @@ export const getOrders = async (req: Request, res: Response) => {
     const page = Number(req.query?.page) || 1;
     const limit = Number(req.query?.limit) || 10;
     const isCoach = req.query?.isCoach || false;
+    const status = req.query?.status || '';
+    const search = req.query?.search || '';
     const skip = (page - 1) * limit;
 
     const query: any = {};
+    const match: any = {};
 
     if (me.role === SelectRoleModel.SuperAdmin) {
       if (isCoach) query['isCoach'] = isCoach === 'true';
+      if (search) {
+        match.$or = [
+          { displayName: { $regex: search, $options: 'i' } },
+          { userName: { $regex: search, $options: 'i' } },
+          { email: { $regex: search, $options: 'i' } },
+        ];
+        // query['$or'] = [{ 'orderNumber': { $regex: search, $options: 'i' } }, match];
+      }
     }
+
+    if (status) query['status'] = status;
 
     if (me.role === SelectRoleModel.Coach) {
       query['userId'] = me._id;
@@ -41,7 +54,7 @@ export const getOrders = async (req: Request, res: Response) => {
     const count = await OrderMongoModel.countDocuments(query);
     const orders = await OrderMongoModel.find(query)
       .populate('planId')
-      .populate('userId')
+      .populate({ path: 'userId', match })
       .skip(skip)
       .limit(limit)
       .sort({ createdAt: -1 });
@@ -161,10 +174,10 @@ export const createOrder = async (req: Request, res: Response) => {
       template: 'newOrder',
       variables: {
         displayName: me.displayName,
-        orderNumber: '123456',
+        orderNumber: order.orderNumber,
         email: me.email,
         supportEmail: 'padeltrackhub@gmail.com',
-        companyName: "Padel Track",
+        companyName: 'Padel Track',
         orderDate: new Date().toLocaleString(),
         orderTotal: `${getPlan.price}`,
         orderItems: [
@@ -172,8 +185,8 @@ export const createOrder = async (req: Request, res: Response) => {
             name: `${getPlan.name}`,
             quantity: '1',
             price: `${getPlan.price}`,
-          }
-        ] as any
+          },
+        ] as any,
       },
     });
 
@@ -216,6 +229,21 @@ export const updateOrderStatus = async (req: Request, res: Response) => {
       });
     }
 
+    if (status === getOrder.status) {
+      return res.status(400).json({
+        message: 'Status already updated',
+      });
+    }
+
+    if (
+      status === SelectStatusOrderModel.Cancelled &&
+      getOrder.status !== SelectStatusOrderModel.Approved
+    ) {
+      return res.status(400).json({
+        message: 'Order not approved',
+      });
+    }
+
     const getPlan = await PlanMongoModel.findOne({ _id: getOrder.planId });
     if (!getPlan) {
       return res.status(404).json({
@@ -230,6 +258,21 @@ export const updateOrderStatus = async (req: Request, res: Response) => {
       });
     }
 
+    const isStatusForMessageRejected = [
+      SelectStatusOrderModel.Rejected,
+      SelectStatusOrderModel.Cancelled,
+    ].includes(getOrder.status);
+    if (isStatusForMessageRejected && !messageRejected) {
+      return res.status(400).json({
+        message: 'El mensaje de rechazo es requerido',
+      });
+    }
+    if (isStatusForMessageRejected && (messageRejected ?? '').length > 50) {
+      return res
+        .status(400)
+        .json({ message: 'El mensaje de rechazo no puede tener mas de 50 caracteres' });
+    }
+
     if (status === SelectStatusOrderModel.Approved) {
       if (getOrder.status === SelectStatusOrderModel.Rejected) {
         fieldsUpdated.messageRejected = null;
@@ -239,16 +282,13 @@ export const updateOrderStatus = async (req: Request, res: Response) => {
       fieldsUpdated.currentWeek = 1;
       fieldsUpdated.lastProgressDate = new Date();
     } else if (status === SelectStatusOrderModel.Rejected) {
-      if (messageRejected && messageRejected?.length > 50) {
-        return res
-          .status(400)
-          .json({ message: 'El mensaje de rechazo no puede tener mas de 50 caracteres' });
-      }
-
       fieldsUpdated.messageRejected = messageRejected;
       fieldsUpdated.approvedOrderDate = undefined;
       fieldsUpdated.currentWeek = undefined;
       fieldsUpdated.lastProgressDate = undefined;
+    } else if (status === SelectStatusOrderModel.Cancelled) {
+      fieldsUpdated.cancellationDate = new Date();
+      fieldsUpdated.messageRejected = messageRejected;
     }
 
     const updated = await OrderMongoModel.findByIdAndUpdate({ _id: orderId }, fieldsUpdated, {
@@ -257,6 +297,7 @@ export const updateOrderStatus = async (req: Request, res: Response) => {
     if (!updated) return res.status(404).json({ message: 'Order not found' });
 
     const isApproved = fieldsUpdated.status === SelectStatusOrderModel.Approved;
+    const isCancel = fieldsUpdated.status === SelectStatusOrderModel.Cancelled;
     const isStudent = getUser.role === SelectRoleModel.Student;
     const isPlanNotCoach = getPlan.isCoach === false;
 
@@ -271,35 +312,40 @@ export const updateOrderStatus = async (req: Request, res: Response) => {
     }
 
     const statusOrderEmail = await generateEmail({
-      template: isApproved ? 'orderApproved' : 'orderReject',
+      template: isCancel ? 'orderCancel' : isApproved ? 'orderApproved' : 'orderReject',
       variables: {
         displayName: getUser.displayName,
-        orderNumber: '123456',
-        rejectionReason: fieldsUpdated?.messageRejected || "",
+        orderNumber: getOrder.orderNumber,
+        orderDate: new Date(getOrder.createdAt).toLocaleString(),
+        rejectionReason: fieldsUpdated?.messageRejected || '',
         email: getUser.email,
         supportEmail: 'padeltrackhub@gmail.com',
-        companyName: "Padel Track",
-        orderDate: new Date().toLocaleString(),
+        companyName: 'Padel Track',
+        cancellationDate: new Date().toLocaleString(),
         orderTotal: `${getPlan.price}`,
         orderItems: [
           {
             name: `${getPlan.name}`,
             quantity: '1',
             price: `${getPlan.price}`,
-          }
-        ] as any
+          },
+        ] as any,
       },
     });
 
-    const msgg = {
+    const msg = {
       from: `${process.env.NODE_MAILER_ROOT_EMAIL}`,
       to: getUser.email,
-      subject: isApproved ? 'Tu orden fue aprobada en Padel Track' : 'Tu orden fue rechazada en Padel Track',
+      subject: isCancel
+        ? 'Tu orden fue cancelada en Padel Track'
+        : isApproved
+          ? 'Tu orden fue aprobada en Padel Track'
+          : 'Tu orden fue rechazada en Padel Track',
       text: '-',
       html: statusOrderEmail,
     };
 
-    sendEMail({ data: msgg });
+    sendEMail({ data: msg });
 
     return res.status(200).json({ order: updated });
   } catch (error) {
