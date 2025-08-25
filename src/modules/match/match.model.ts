@@ -101,13 +101,16 @@ const ErrMatchSchema = new Schema<ErrMatchModel>(
   },
 );
 
-const ScreenshotsSchema = new Schema({
-  _id: { type: String, required: true, default: new ObjectId().toHexString() },
-  name: { type: String, required: true },
-  image: { type: String, required: true },
-}, {
+const ScreenshotsSchema = new Schema(
+  {
+    _id: { type: String, required: true, default: new ObjectId().toHexString() },
+    name: { type: String, required: true },
+    image: { type: String, required: true },
+  },
+  {
     timestamps: false,
-});
+  },
+);
 
 const MatchSchema = new Schema<MatchModel>(
   {

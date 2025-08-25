@@ -604,16 +604,19 @@ export const registerGradeExam = async (req: Request, res: Response) => {
 
     sendEMail({ data: msg });
 
-    const examAnswerUpdate = await ExamAnswerMongoModel.findOne({ _id: examAnswerId })
+    /*const examAnswerUpdate = await ExamAnswerMongoModel.findOne({ _id: examAnswerId })
       .populate('userId', '_id displayName level photo gender email role')
       .populate('assignCoachId', '_id displayName level photo gender email role')
       .populate('answers.questionnaireId')
       .lean()
-      .sort({ order: -1 });
+      .sort({ order: -1 });*/
 
     return res.status(200).json({
       message: 'Grade registered successfully',
-      exam: examAnswerUpdate,
+      updatedAnswers,
+      levelUser,
+      average,
+      status: SelectStatusAnswerModel.Completado,
     });
   } catch (error) {
     if (error instanceof ZodError) {

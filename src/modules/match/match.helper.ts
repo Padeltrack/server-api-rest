@@ -1,8 +1,8 @@
-import { getBufferBase64 } from "../../shared/util/string.util";
-import { BASE_STORE_FIREBASE } from "../firebase/firebase.contants";
-import { StorageFirebaseModel } from "../firebase/firebase.model";
-import { uploadFileFirebaseStorage } from "../firebase/firebase.service";
-import { ScreenshotsMatchModel } from "./match.model";
+import { getBufferBase64 } from '../../shared/util/string.util';
+import { BASE_STORE_FIREBASE } from '../firebase/firebase.contants';
+import { StorageFirebaseModel } from '../firebase/firebase.model';
+import { uploadFileFirebaseStorage } from '../firebase/firebase.service';
+import { ScreenshotsMatchModel } from './match.model';
 
 export const uploadImageScreenshotMatch = async (options: {
   imageBase64: string;

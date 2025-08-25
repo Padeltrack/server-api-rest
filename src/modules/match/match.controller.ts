@@ -49,7 +49,10 @@ export const createMatch = async (req: Request, res: Response) => {
       });
     }
 
-    const playersCount = await UserMongoModel.countDocuments({ _id: { $in: playersId }, role: SelectRoleModel.Student });
+    const playersCount = await UserMongoModel.countDocuments({
+      _id: { $in: playersId },
+      role: SelectRoleModel.Student,
+    });
     if (playersCount < 2) {
       return res.status(400).json({
         message: 'Players must be different',
@@ -58,15 +61,18 @@ export const createMatch = async (req: Request, res: Response) => {
 
     const screenshotsData = await Promise.all(
       screenshots.map(async itemBase64 => {
-        const idScreenshot = new ObjectId().toHexString()
-        const urlScreenshot = await uploadImageScreenshotMatch({ imageBase64: itemBase64.image, idScreenshot });
+        const idScreenshot = new ObjectId().toHexString();
+        const urlScreenshot = await uploadImageScreenshotMatch({
+          imageBase64: itemBase64.image,
+          idScreenshot,
+        });
 
         return {
           _id: idScreenshot,
           name: itemBase64.name,
           image: urlScreenshot,
         };
-      })
+      }),
     );
 
     const match = await MatchMongoModel.create({
