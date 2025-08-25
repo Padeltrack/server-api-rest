@@ -7,6 +7,12 @@ import {
 } from './match.model';
 
 export const createMatchSchemaZod = z.object({
+  playersId: z.array(z.string()).min(2),
+  playersName: z.array(z.string()).min(2),
+  screenshots: z.array(z.object({
+    name: z.string().min(1),
+    image: z.string().min(1),
+  })).min(1),
   winners: z
     .array(
       z.object({

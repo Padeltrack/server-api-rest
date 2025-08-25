@@ -54,8 +54,17 @@ export interface ErrMatchModel {
   updatedAt: Date;
 }
 
+export interface ScreenshotsMatchModel {
+  readonly _id: string;
+  image: string;
+  name: string;
+}
+
 export interface MatchModel extends Document {
   readonly _id: string;
+  playersId: string[];
+  playersName: string[];
+  screenshots: ScreenshotsMatchModel[];
   winners: WinnersMatchModel[];
   err: ErrMatchModel[];
   totalTime: number;
@@ -92,9 +101,20 @@ const ErrMatchSchema = new Schema<ErrMatchModel>(
   },
 );
 
+const ScreenshotsSchema = new Schema({
+  _id: { type: String, required: true, default: new ObjectId().toHexString() },
+  name: { type: String, required: true },
+  image: { type: String, required: true },
+}, {
+    timestamps: false,
+});
+
 const MatchSchema = new Schema<MatchModel>(
   {
     _id: { type: String, required: true },
+    playersId: { type: [String], required: true },
+    playersName: { type: [String], required: true },
+    screenshots: { type: [ScreenshotsSchema], required: true },
     winners: { type: [WinnersMatchSchema], required: true },
     err: { type: [ErrMatchSchema], required: true },
     totalTime: { type: Number, required: true },
