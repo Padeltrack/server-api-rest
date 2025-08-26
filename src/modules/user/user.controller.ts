@@ -1,13 +1,19 @@
 import { Request, Response } from 'express';
+import { ObjectId } from 'mongodb';
 import { RoleModel, SelectRoleModel, UserMongoModel } from './user.model';
-import { UpdateUserSchemaZod } from './user.dto';
+import { CreateAdminSchemaZod, UpdateUserSchemaZod } from './user.dto';
 import { ZodError } from 'zod';
 import { PlanMongoModel } from '../plan/plan.model';
 import { OrderMongoModel, SelectStatusOrderModel } from '../order/order.model';
-import { removeRelationUserModel, uploadImagePhotoUser } from './user.helper';
+import {
+  generateUniqueUserName,
+  removeRelationUserModel,
+  uploadImagePhotoUser,
+} from './user.helper';
 import { StudentCoachesMongoModel } from '../studentCoaches/studentCoaches.model';
 import { sendEMail } from '../mail/sendTemplate.mail';
 import { generateEmail } from '../mail/loadTemplate.mail';
+import { getTextBeforeAtEmail } from '../../shared/util/string.util';
 
 export const getMe = async (req: Request, res: Response) => {
   req.logger = req.logger.child({ service: 'users', serviceHandler: 'getMe' });
@@ -172,6 +178,41 @@ export const getUserById = async (req: Request, res: Response) => {
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
     return res.status(401).json({ message: 'Error getting users' });
+  }
+};
+
+export const createAdmin = async (req: Request, res: Response) => {
+  req.logger = req.logger.child({ service: 'users', serviceHandler: 'createAdmin' });
+  req.logger.info({ status: 'start' });
+
+  try {
+    const dataAdmin = CreateAdminSchemaZod.parse(req.body);
+    const { displayName, email, gender } = dataAdmin;
+
+    const getUser = await UserMongoModel.countDocuments({ email });
+    if (getUser) {
+      return res.status(400).json({
+        message: 'User already exists',
+      });
+    }
+
+    await UserMongoModel.create({
+      _id: new ObjectId().toHexString(),
+      displayName: displayName || getTextBeforeAtEmail(email || ''),
+      userName: await generateUniqueUserName(
+        (displayName || getTextBeforeAtEmail(email || '')) ?? '',
+      ),
+      email,
+      gender,
+      role: SelectRoleModel.SuperAdmin,
+    });
+
+    return res.status(200).json({
+      message: 'User successfully created',
+    });
+  } catch (error) {
+    req.logger.error({ status: 'error', code: 500, error: error.message });
+    return res.status(401).json({ message: 'Error removing users' });
   }
 };
 

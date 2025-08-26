@@ -40,7 +40,10 @@ export const getVideos = async (req: Request, res: Response) => {
     }
 
     const count = await VideoMongoModel.countDocuments(query);
-    const videos = await VideoMongoModel.find(query).skip(skip).limit(limit).sort({ createdAt: -1 });
+    const videos = await VideoMongoModel.find(query)
+      .skip(skip)
+      .limit(limit)
+      .sort({ createdAt: -1 });
     const videosLinks = await Promise.all(
       videos.map(async (video: any) => {
         if (video?.idVideoVimeo) {

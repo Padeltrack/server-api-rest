@@ -9,6 +9,7 @@ import {
   getUserById,
   getCoachOrStudentUsers,
   deleteUser,
+  createAdmin,
 } from '../modules/user/user.controller';
 import { authenticate } from '../middleware/auth.middleware';
 import { SelectRoleModel } from '../modules/user/user.model';
@@ -32,6 +33,12 @@ userRoutes.get(
   getCoachOrStudentUsers,
 );
 userRoutes.get(`${pathUser}/:id`, authenticate, authorize(SelectRoleModel.SuperAdmin), getUserById);
+userRoutes.post(
+  `${pathUser}/admin`,
+  authenticate,
+  authorize(SelectRoleModel.SuperAdmin),
+  createAdmin,
+);
 userRoutes.patch(
   `${pathUser}/mark/verified/:id`,
   authenticate,

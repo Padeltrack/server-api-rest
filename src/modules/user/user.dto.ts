@@ -1,5 +1,15 @@
 import z from 'zod';
-import { SelectCategoryUserModel } from './user.model';
+import { SelectCategoryUserModel, SelectGenderUserModel } from './user.model';
+
+export const CreateAdminSchemaZod = z.object({
+  gender: z.enum([SelectGenderUserModel.MAN, SelectGenderUserModel.WOMAN], {
+    required_error: 'El sexo es requerido',
+  }),
+  email: z.string({ required_error: 'El email es requerido' }).email('El email es invalido'),
+  displayName: z
+    .string({ required_error: 'El nombre es requerido' })
+    .min(1, 'El nombre es requerido'),
+});
 
 export const UpdateUserSchemaZod = z.object({
   birthdate: z.string().date().optional(),
