@@ -25,8 +25,8 @@ import { HOST_PERMITS } from './shared/util/url.util';
 import { cronApp } from './core/crons';
 import { serverImagesStaticAssets } from './middleware/imagesCache.middleware';
 
-const { swaggerDocument } = require('./swagger');
-const swaggerUi = require('swagger-ui-express');
+// const { swaggerDocument } = require('./swagger');
+// const swaggerUi = require('swagger-ui-express');
 
 const uploadDir = path.join('uploads');
 if (!fs.existsSync(uploadDir)) {
@@ -48,7 +48,7 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
 app.use(serverImagesStaticAssets());
 
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+// app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use('/api', logger, [
   vimeoRoutes,

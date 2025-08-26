@@ -19,8 +19,28 @@ export const getVideos = async (req: Request, res: Response) => {
     const page = Number(req.query?.page) || 1;
     const limit = Number(req.query?.limit) || 10;
     const skip = (page - 1) * limit;
+    const search = req.query?.search || '';
 
-    const videos = await VideoMongoModel.find().skip(skip).limit(limit).sort({ createdAt: -1 });
+    const query: any = {};
+
+    if (search) {
+      query.$or = [
+        { nombre: { $regex: search, $options: 'i' } },
+        { descripcion: { $regex: search, $options: 'i' } },
+        { objetivos: { $regex: search, $options: 'i' } },
+        { momentoDeUso: { $regex: search, $options: 'i' } },
+        { contraccion: { $regex: search, $options: 'i' } },
+        { tipoEstimulo: { $regex: search, $options: 'i' } },
+        { musculos: { $regex: search, $options: 'i' } },
+        { sistemaControl: { $regex: search, $options: 'i' } },
+        { material: { $regex: search, $options: 'i' } },
+        { observacion: { $regex: search, $options: 'i' } },
+        { recomendaciones: { $regex: search, $options: 'i' } },
+      ];
+    }
+
+    const count = await VideoMongoModel.countDocuments(query);
+    const videos = await VideoMongoModel.find(query).skip(skip).limit(limit).sort({ createdAt: -1 });
     const videosLinks = await Promise.all(
       videos.map(async (video: any) => {
         if (video?.idVideoVimeo) {
@@ -37,8 +57,6 @@ export const getVideos = async (req: Request, res: Response) => {
         return video._doc;
       }),
     );
-
-    const count = await VideoMongoModel.countDocuments({});
 
     return res.status(200).json({ videos: videosLinks, count });
   } catch (error) {

@@ -64,17 +64,46 @@ export const getUsers = async (req: Request, res: Response) => {
     const page = Number(req.query?.page) || 1;
     const limit = Number(req.query?.limit) || 10;
     const search = req.query?.search || '';
+    const gender = req.query?.gender || '';
+    const level = req.query?.level || '';
+    const verified = req.query?.verified || '';
+    const worked = req.query?.worked || '';
     const role = req.query?.role || SelectRoleModel.Student;
     const skip = (page - 1) * limit;
 
     let query: any = { role };
 
+    if (verified) {
+      if (verified === 'true') query['verified'] = true;
+      else {
+        query.$or = [{ verified: false }, { verified: { $exists: false } }];
+      }
+    }
+    if (worked) {
+      if (worked === 'true') query['worked'] = true;
+      else {
+        query.$or = [{ worked: false }, { worked: { $exists: false } }];
+      }
+    }
+    if (gender) query.gender = gender;
+    if (level) query.level = level;
     if (search) {
-      query.$or = [
+      const paramsSearch = [
         { displayName: { $regex: search, $options: 'i' } },
         { userName: { $regex: search, $options: 'i' } },
         { email: { $regex: search, $options: 'i' } },
       ];
+      if (query?.$or?.length) {
+        query.$and = [
+          {
+            $or: query.$or,
+          },
+          {
+            $or: paramsSearch,
+          },
+        ];
+        delete query.$or;
+      } else query.$or = paramsSearch;
     }
 
     const count = await UserMongoModel.countDocuments(query);

@@ -57,8 +57,11 @@ export const getAnswerExamByList = async (req: Request, res: Response) => {
 
   try {
     const me = req.user;
+    const status = req.query.status || '';
 
     const where: any = {};
+
+    if (status) where['status'] = status;
     if (me.role === SelectRoleModel.Coach) {
       where['assignCoachId'] = me._id;
       where['status'] = {
@@ -603,13 +606,6 @@ export const registerGradeExam = async (req: Request, res: Response) => {
     };
 
     sendEMail({ data: msg });
-
-    /*const examAnswerUpdate = await ExamAnswerMongoModel.findOne({ _id: examAnswerId })
-      .populate('userId', '_id displayName level photo gender email role')
-      .populate('assignCoachId', '_id displayName level photo gender email role')
-      .populate('answers.questionnaireId')
-      .lean()
-      .sort({ order: -1 });*/
 
     return res.status(200).json({
       message: 'Grade registered successfully',

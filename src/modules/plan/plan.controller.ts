@@ -2,13 +2,21 @@ import { Request, Response } from 'express';
 import { PlanMongoModel } from './plan.model';
 import { createPlanSchema, updatePlanSchema } from './plan.dto';
 import { ZodError } from 'zod';
+import { HOST_ADMINS } from '../../shared/util/url.util';
 
 export const getPlans = async (req: Request, res: Response) => {
   req.logger = req.logger.child({ service: 'plans', serviceHandler: 'getPlans' });
   req.logger.info({ status: 'start' });
 
   try {
-    const plans = await PlanMongoModel.find({ isCoach: false }).sort({ createdAt: -1 });
+    const query: any = { isCoach: false };
+    const origin = req.headers['origin'] || '';
+
+    if (!HOST_ADMINS.includes(origin)) {
+      query['active'] = true;
+    }
+
+    const plans = await PlanMongoModel.find(query).sort({ createdAt: -1 });
     return res.status(200).json({ plans });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
@@ -21,7 +29,14 @@ export const getCoachPlans = async (req: Request, res: Response) => {
   req.logger.info({ status: 'start' });
 
   try {
-    const plans = await PlanMongoModel.find({ isCoach: true }).sort({ createdAt: -1 });
+    const query: any = { isCoach: true };
+    const origin = req.headers['origin'] || '';
+
+    if (!HOST_ADMINS.includes(origin)) {
+      query['active'] = true;
+    }
+
+    const plans = await PlanMongoModel.find(query).sort({ createdAt: -1 });
     return res.status(200).json({ plans });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
