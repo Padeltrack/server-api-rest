@@ -1,0 +1,1 @@
+export const ADMINS_EMAILS = process.env?.ADMINS_EMAILS?.split(',') || [] as string[];

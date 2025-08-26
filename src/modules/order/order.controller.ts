@@ -303,11 +303,13 @@ export const updateOrderStatus = async (req: Request, res: Response) => {
 
     if (isApproved && isStudent && isPlanNotCoach) {
       const week = fieldsUpdated.currentWeek;
+      const videosByWeek = await getVideosByWeek({ week });
+
       await WeeklyVideoMongoModel.create({
         _id: new ObjectId().toHexString(),
         orderId,
         week,
-        videos: await getVideosByWeek({ week }),
+        videos: videosByWeek.map((videoId) => ({ videoId, check: false })),
       });
     }
 

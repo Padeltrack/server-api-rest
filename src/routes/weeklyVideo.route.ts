@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getWeeklyVideos } from '../modules/weeklyVideo/WeeklyVideo.controller';
+import { getWeeklyVideos, markCheckMeVideo } from '../modules/weeklyVideo/WeeklyVideo.controller';
 import { authenticate } from '../middleware/auth.middleware';
 import { authorize } from '../middleware/roles.middleware';
 import { SelectRoleModel } from '../modules/user/user.model';
@@ -14,6 +14,13 @@ weeklyVideoRoutes.get(
   authorize(SelectRoleModel.Student),
   activeOrder,
   getWeeklyVideos,
+);
+weeklyVideoRoutes.patch(
+  `${pathAuth}/check/video/me`,
+  authenticate,
+  authorize(SelectRoleModel.Student),
+  activeOrder,
+  markCheckMeVideo,
 );
 
 export default weeklyVideoRoutes;

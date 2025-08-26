@@ -14,6 +14,7 @@ import { StudentCoachesMongoModel } from '../studentCoaches/studentCoaches.model
 import { sendEMail } from '../mail/sendTemplate.mail';
 import { generateEmail } from '../mail/loadTemplate.mail';
 import { getTextBeforeAtEmail } from '../../shared/util/string.util';
+import { ADMINS_EMAILS } from './user.constant';
 
 export const getMe = async (req: Request, res: Response) => {
   req.logger = req.logger.child({ service: 'users', serviceHandler: 'getMe' });
@@ -332,6 +333,12 @@ export const deleteMe = async (req: Request, res: Response) => {
     const me = req.user;
     const isCoach = me.role === SelectRoleModel.Coach;
 
+    if (ADMINS_EMAILS.includes(me.email)) {
+      return res.status(400).json({
+        message: 'You cannot delete this user',
+      });
+    }
+
     await UserMongoModel.deleteOne({ _id: me._id });
     await removeRelationUserModel({ userId: me._id });
 
@@ -383,6 +390,12 @@ export const deleteUser = async (req: Request, res: Response) => {
     if (!getUser) {
       return res.status(404).json({
         message: 'User not found',
+      });
+    }
+
+    if (ADMINS_EMAILS.includes(getUser.email)) {
+      return res.status(400).json({
+        message: 'You cannot delete this user',
       });
     }
 

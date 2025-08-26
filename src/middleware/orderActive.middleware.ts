@@ -11,17 +11,20 @@ declare module 'express-serve-static-core' {
 export const activeOrder = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const user = req.user;
-    const isStudents = user.role === SelectRoleModel.Student;
+    const isStudent = user.role === SelectRoleModel.Student;
+    const isCoach = user.role === SelectRoleModel.Coach;
     const orderActive = await OrderMongoModel.findOne({
       userId: user._id,
       status: SelectStatusOrderModel.Approved,
-    });
+      isCoach,
+    }).sort({ createdAt: -1 });
 
-    if (!orderActive && isStudents) {
+    if (!orderActive && (isStudent || isCoach)) {
       return res.status(403).json({
         message: 'Access denied',
       });
     }
+
     req.order = orderActive as IOrderModel;
     next();
   } catch (error) {
