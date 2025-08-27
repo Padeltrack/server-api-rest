@@ -309,7 +309,7 @@ export const updateOrderStatus = async (req: Request, res: Response) => {
         _id: new ObjectId().toHexString(),
         orderId,
         week,
-        videos: videosByWeek.map((videoId) => ({ videoId, check: false })),
+        videos: videosByWeek.map(videoId => ({ videoId, check: false })),
       });
     }
 

@@ -73,15 +73,17 @@ export const markCheckMeVideo = async (req: Request, res: Response) => {
       });
     }
 
-    const weeklyVideo: any = await WeeklyVideoMongoModel.findOne({
-      orderId: order._id,
-      week: order.currentWeek,
-      "videos.videoId": videoId,
-    },
-    {
-      _id: 0,
-      videos: { $elemMatch: { videoId } }
-    });
+    const weeklyVideo: any = await WeeklyVideoMongoModel.findOne(
+      {
+        orderId: order._id,
+        week: order.currentWeek,
+        'videos.videoId': videoId,
+      },
+      {
+        _id: 0,
+        videos: { $elemMatch: { videoId } },
+      },
+    );
 
     if (!weeklyVideo?.videos?.length) {
       return res.status(404).json({
@@ -93,7 +95,7 @@ export const markCheckMeVideo = async (req: Request, res: Response) => {
       {
         orderId: order._id,
         week: order.currentWeek,
-        "videos.videoId": videoId,
+        'videos.videoId': videoId,
       },
       {
         $set: {

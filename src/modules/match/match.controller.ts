@@ -11,7 +11,6 @@ export const getMatches = async (req: Request, res: Response) => {
 
   try {
     const me = req.user;
-
     const query: any = {};
 
     if (me.role === SelectRoleModel.Coach) {
@@ -19,9 +18,123 @@ export const getMatches = async (req: Request, res: Response) => {
     }
 
     const count = await MatchMongoModel.countDocuments(query);
-    const matches = await MatchMongoModel.find(query).sort({ createdAt: -1 });
+    const matches = await MatchMongoModel.aggregate([
+      { $sort: { createdAt: -1 } },
+      {
+        $project: {
+          _id: 1,
+          tournamentName: 1,
+          place: 1,
+          totalTime: 1,
+          createdAt: 1,
+          updatedAt: 1,
+          winnersCount: { $size: '$winners' },
+          errorsCount: { $size: '$err' },
+          screenshotsCount: { $size: '$screenshots' },
+          playersId: 1,
+          coachId: 1,
+        },
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'playersId',
+          foreignField: '_id',
+          as: 'players',
+        },
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'coachId',
+          foreignField: '_id',
+          as: 'coach',
+        },
+      },
+      { $unwind: '$coach' },
+      {
+        $project: {
+          _id: 1,
+          tournamentName: 1,
+          place: 1,
+          totalTime: 1,
+          createdAt: 1,
+          updatedAt: 1,
+          winnersCount: 1,
+          errorsCount: 1,
+          screenshotsCount: 1,
+          'players._id': 1,
+          'players.displayName': 1,
+          'players.photo': 1,
+          'coach._id': 1,
+          'coach.displayName': 1,
+          'coach.photo': 1,
+        },
+      },
+    ]);
 
     return res.status(200).json({ matches, count });
+  } catch (error) {
+    req.logger.error({ status: 'error', code: 500, error: error.message });
+    return res.status(500).json({ message: 'Error fetching matches', error });
+  }
+};
+
+export const getMatch = async (req: Request, res: Response) => {
+  req.logger = req.logger.child({ service: 'match', serviceHandler: 'getMatch' });
+  req.logger.info({ status: 'start' });
+
+  try {
+    const { id } = req.params;
+    const me = req.user;
+
+    const query: any = { _id: id };
+
+    if (me.role === SelectRoleModel.Coach) {
+      query.coachId = me._id;
+    }
+
+    const match = await MatchMongoModel.aggregate([
+      { $match: query },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'playersId',
+          foreignField: '_id',
+          as: 'players',
+        },
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'coachId',
+          foreignField: '_id',
+          as: 'coach',
+        },
+      },
+      { $unwind: { path: '$coach', preserveNullAndEmptyArrays: true } },
+      {
+        $project: {
+          _id: 1,
+          tournamentName: 1,
+          place: 1,
+          totalTime: 1,
+          createdAt: 1,
+          updatedAt: 1,
+          winners: 1,
+          err: 1,
+          screenshots: 1,
+          'players._id': 1,
+          'players.displayName': 1,
+          'players.photo': 1,
+          'coach._id': 1,
+          'coach.displayName': 1,
+          'coach.photo': 1,
+        },
+      },
+    ]);
+
+    return res.status(200).json({ match: match?.[0] || {} });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
     return res.status(500).json({ message: 'Error fetching matches', error });

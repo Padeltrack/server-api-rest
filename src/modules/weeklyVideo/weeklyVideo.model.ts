@@ -12,13 +12,16 @@ export interface IWeeklyVideoModel extends Document {
   videos: ItemVideoWeekly[];
 }
 
-const ItemVideoWeeklySchema = new Schema<ItemVideoWeekly>({
-  check: { type: Boolean, required: true, default: false },
-  videoId: { type: String, required: true },
-}, {
-  _id: false,
-  timestamps: false,
-});
+const ItemVideoWeeklySchema = new Schema<ItemVideoWeekly>(
+  {
+    check: { type: Boolean, required: true, default: false },
+    videoId: { type: String, required: true },
+  },
+  {
+    _id: false,
+    timestamps: false,
+  },
+);
 
 const weeklyVideosSchema = new Schema<IWeeklyVideoModel>(
   {
@@ -34,16 +37,16 @@ const weeklyVideosSchema = new Schema<IWeeklyVideoModel>(
       required: true,
     },
     videos: {
-        type: [ItemVideoWeeklySchema],
-        ref: 'Video',
-        required: true,
-        validate: {
-          validator: function (arr: any[]) {
-            return arr.length <= 10;
-          },
-          message: 'No puedes asignar más de 10 videos a una semana',
+      type: [ItemVideoWeeklySchema],
+      ref: 'Video',
+      required: true,
+      validate: {
+        validator: function (arr: any[]) {
+          return arr.length <= 10;
         },
+        message: 'No puedes asignar más de 10 videos a una semana',
       },
+    },
   },
   { timestamps: true },
 );
