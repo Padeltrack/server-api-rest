@@ -15,7 +15,7 @@ const pathStudentCoaches = '/studentCoaches';
 studentCoachesRoutes.get(
   `${pathStudentCoaches}/assign/me`,
   authenticate,
-  authorize(SelectRoleModel.SuperAdmin, SelectRoleModel.Student, SelectRoleModel.Coach),
+  authorize(SelectRoleModel.Student, SelectRoleModel.Coach),
   getMyAssignments,
 );
 studentCoachesRoutes.get(

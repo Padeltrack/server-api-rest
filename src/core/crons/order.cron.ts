@@ -34,11 +34,12 @@ const cronOrderProgressWeek = async () => {
           await progress.save();
 
           const week = progress.currentWeek;
+          const videosByWeek = await getVideosByWeek({ week });
           await WeeklyVideoMongoModel.create({
             _id: new ObjectId().toHexString(),
             orderId: progress._id,
             week,
-            videos: await getVideosByWeek({ week }),
+            videos: videosByWeek.map(videoId => ({ videoId, check: false })),
           });
 
           LoggerColor.bold().log(

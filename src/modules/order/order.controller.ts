@@ -261,7 +261,7 @@ export const updateOrderStatus = async (req: Request, res: Response) => {
     const isStatusForMessageRejected = [
       SelectStatusOrderModel.Rejected,
       SelectStatusOrderModel.Cancelled,
-    ].includes(getOrder.status);
+    ].includes(status);
     if (isStatusForMessageRejected && !messageRejected) {
       return res.status(400).json({
         message: 'El mensaje de rechazo es requerido',

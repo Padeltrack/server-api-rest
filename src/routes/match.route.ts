@@ -3,6 +3,7 @@ import { createMatch, getMatch, getMatches } from '../modules/match/match.contro
 import { authenticate } from '../middleware/auth.middleware';
 import { authorize } from '../middleware/roles.middleware';
 import { SelectRoleModel } from '../modules/user/user.model';
+import { activeOrderCoachCenter } from '../middleware/orderActive.middleware';
 
 const matchRoutes = Router();
 const pathMatch = '/match';
@@ -19,6 +20,12 @@ matchRoutes.get(
   authorize(SelectRoleModel.SuperAdmin, SelectRoleModel.Coach),
   getMatch,
 );
-matchRoutes.post(`${pathMatch}`, authenticate, authorize(SelectRoleModel.Coach), createMatch);
+matchRoutes.post(
+  `${pathMatch}`,
+  authenticate,
+  authorize(SelectRoleModel.Coach),
+  activeOrderCoachCenter,
+  createMatch,
+);
 
 export default matchRoutes;

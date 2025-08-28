@@ -2,7 +2,7 @@ import { getBufferBase64 } from '../../shared/util/string.util';
 import { ExamAnswerMongoModel } from '../exam/exam-answer.model';
 import { BASE_STORE_FIREBASE } from '../firebase/firebase.contants';
 import { StorageFirebaseModel } from '../firebase/firebase.model';
-import { uploadFileFirebaseStorage } from '../firebase/firebase.service';
+import { removeFileFirebaseStorage, uploadFileFirebaseStorage } from '../firebase/firebase.service';
 import { OrderMongoModel } from '../order/order.model';
 import { deleteVimeoVideo } from '../vimeo/vimeo.helper';
 import { UserModel, UserMongoModel } from './user.model';
@@ -47,4 +47,6 @@ export const removeRelationUserModel = async (options: { userId: string }) => {
       await deleteVimeoVideo({ idVideoVimeo: answer.idVideoVimeo });
     });
   });
+
+  await removeFileFirebaseStorage({ path: `${StorageFirebaseModel.USER_PHOTO}/${userId}` });
 };
