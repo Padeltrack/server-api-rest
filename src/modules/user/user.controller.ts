@@ -4,7 +4,7 @@ import { RoleModel, SelectRoleModel, UserMongoModel } from './user.model';
 import { CreateAdminSchemaZod, UpdateUserSchemaZod } from './user.dto';
 import { ZodError } from 'zod';
 import { PlanMongoModel } from '../plan/plan.model';
-import { OrderMongoModel, SelectStatusOrderModel } from '../order/order.model';
+import { OrderMongoModel } from '../order/order.model';
 import {
   generateUniqueUserName,
   removeRelationUserModel,
@@ -23,36 +23,60 @@ export const getMe = async (req: Request, res: Response) => {
   try {
     const user = req.user;
     const isCoach = user.role === SelectRoleModel.Coach;
-    const orders = [];
+    let orders = [];
     const plans = [];
 
     if (isCoach) {
-      const activeCoachOrders = await OrderMongoModel.find({
-        userId: user._id,
-        isCoach,
-        status: [SelectStatusOrderModel.Approved, SelectStatusOrderModel.Pending],
-      })
-        .sort({ createdAt: -1 })
-        .lean();
+      const [coachOrder] = await OrderMongoModel.aggregate([
+        { $match: { userId: user._id } },
+        {
+          $lookup: {
+            from: "plans",
+            localField: "planId",
+            foreignField: "_id",
+            as: "planId",
+          },
+        },
+        { $unwind: "$planId" },
+        { $match: { "planId.isCoach": true } },
+        { $sort: { createdAt: -1 } },
+        { $limit: 1 },
+      ]);
 
-      if (activeCoachOrders.length) {
-        activeCoachOrders.forEach(order => orders.push(order));
-        const plansId = activeCoachOrders.map(order => order.planId);
-        const getPlans = await PlanMongoModel.find({
-          _id: { $in: plansId },
-        }).lean();
+      const [normalOrder] = await OrderMongoModel.aggregate([
+        { $match: { userId: user._id } },
+        {
+          $lookup: {
+            from: "plans",
+            localField: "planId",
+            foreignField: "_id",
+            as: "planId",
+          },
+        },
+        { $unwind: "$planId" },
+        { $match: { "planId.isCoach": false } },
+        { $sort: { createdAt: -1 } },
+        { $limit: 1 },
+      ]);
 
-        getPlans.forEach(plan => plans.push(plan));
-      }
+      const cleanOrders = [coachOrder, normalOrder].filter(order => order !== null);
+
+      orders = cleanOrders.map((order: any) => {
+        if (order.planId) plans.push(order.planId);
+        return {
+          ...order,
+          planId: order.planId?._id,
+        }
+      });
     } else {
       const lastOrder = await OrderMongoModel.findOne({ userId: user._id, isCoach }).sort({
         createdAt: -1,
       });
-      orders.push(lastOrder);
+      if (lastOrder) orders.push(lastOrder);
 
       if (lastOrder) {
         const getPlan = await PlanMongoModel.findOne({ _id: lastOrder.planId, isCoach });
-        plans.push(getPlan);
+        if (getPlan) plans.push(getPlan);
       }
     }
 

@@ -648,6 +648,12 @@ export const assignExamToCoach = async (req: Request, res: Response) => {
       });
     }
 
+    if (coachId === getUser._id) {
+      return res.status(400).json({
+        message: 'You cannot assign your own exam to yourself',
+      });
+    }
+
     if (
       ![SelectStatusAnswerModel.Pendiente, SelectStatusAnswerModel.Revision].includes(
         getExamAnswer.status as any,
