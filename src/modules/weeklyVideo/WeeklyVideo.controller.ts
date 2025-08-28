@@ -9,22 +9,7 @@ export const getWeeklyVideos = async (req: Request, res: Response) => {
   req.logger.info({ status: 'start' });
 
   try {
-    const order = {
-      _id: '689b9ac93ebadb0a7f7e7b44',
-      userId: '689caff9df566824b005d3c2',
-      planId: 'plan_basic',
-      status: 'Approved',
-      paymentProof:
-        'https://firebasestorage.googleapis.com/v0/b/padeltrack-485e3.firebasestorage.app/o/proof_of_payment%2F689b9ac93ebadb0a7f7e7b44.png?alt=media',
-      createdAt: '2025-08-12T19:49:29.906Z',
-      updatedAt: '2025-08-22T01:00:02.056Z',
-      __v: 0,
-      currentWeek: 2,
-      lastProgressDate: '2025-08-22T01:00:02.054Z',
-      isCoach: false,
-      approvedOrderDate: '2025-08-18T18:06:09.699Z',
-      orderNumber: 'ORDER000001',
-    }; //req.order;
+    const order = req.order;
 
     if (!order) {
       return res.status(404).json({

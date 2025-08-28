@@ -5,6 +5,7 @@ import { StorageFirebaseModel } from '../firebase/firebase.model';
 import { removeFileFirebaseStorage, uploadFileFirebaseStorage } from '../firebase/firebase.service';
 import { OrderMongoModel } from '../order/order.model';
 import { deleteVimeoVideo } from '../vimeo/vimeo.helper';
+import { WeeklyVideoMongoModel } from '../weeklyVideo/weeklyVideo.model';
 import { UserModel, UserMongoModel } from './user.model';
 
 export const generateUniqueUserName = async (baseName: string) => {
@@ -39,7 +40,10 @@ export const uploadImagePhotoUser = async (options: {
 
 export const removeRelationUserModel = async (options: { userId: string }) => {
   const { userId } = options;
+  const odersId = await OrderMongoModel.find({ userId }).lean().select('_id');
+  const idsOrders = odersId.map(order => order._id);
   await OrderMongoModel.deleteMany({ userId });
+  await WeeklyVideoMongoModel.deleteMany({ orderId: { $in: idsOrders } });
   const examAnswers = await ExamAnswerMongoModel.find({ userId });
   examAnswers.forEach(async examAnswer => {
     await ExamAnswerMongoModel.deleteOne({ _id: examAnswer._id });
