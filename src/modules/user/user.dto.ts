@@ -28,6 +28,9 @@ export const UpdateUserSchemaZod = z.object({
       SelectCategoryUserModel.SEPTIMA_CATEGORIA,
     ])
     .optional(),
+  countryOfOrigin: z.string().optional(),
+  countryOfResidence: z.string().optional(),
+  cityOfResidence: z.string().optional(),
   gameLevel: z.string().optional(),
   dominantHand: z.string().optional(),
   matchPosition: z.string().optional(),

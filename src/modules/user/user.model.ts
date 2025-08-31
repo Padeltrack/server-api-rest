@@ -63,7 +63,9 @@ export interface UserModel extends Document {
   category: CategoryUserModel | null;
   mfaSecret?: string | null;
   onboarding: UserOnboardingModel | null;
-  // STUDENTS
+  countryOfOrigin?: string;
+  countryOfResidence?: string;
+  cityOfResidence?: string;
   gameLevel?: string;
   dominantHand?: string;
   matchPosition?: string;
@@ -161,30 +163,28 @@ const UserMongoSchema = new Schema<UserModel>(
       required: false,
     },
     onboarding: { type: UserOnboardingSchema, required: false, default: null },
-    // Game profile
-    gameLevel: { type: String }, // Selector
-    dominantHand: { type: String }, // Selector
-    matchPosition: { type: String }, // Selector
-    playStyle: { type: String }, // Selector
-    weeklyPlayFrequency: { type: Number }, // Numeric
-    injuryHistory: { type: String }, // Free text
-    classPreferences: { type: String }, // Selector
-    preferredClassSchedules: [{ type: String }], // Multi-select
-    desiredPhysicalTrainingType: { type: String }, // Selector
-    preferredGameSchedules: [{ type: String }], // Multi-select
-    otherPadelTrackInterests: [{ type: String }], // Multi-select
-
-    // Competition profile
-    preferredTournamentTypes: [{ type: String }], // Multi-select
-    preferredCompetitionDays: [{ type: String }], // Multi-select
-    competitionCategories: [{ type: String }], // Up to 3 numeric values
-    mainCompetitionMotivation: { type: String }, // Selector
-
-    // Physical preparation & well-being
-    gymPartnershipMatching: { type: Boolean }, // Yes / No
-    currentPhysicalCondition: { type: String }, // Scale or free text
-    physicalPriority: { type: String }, // Selector
-    physicalTrainingAvailability: { type: Number }, // Numeric
+    countryOfOrigin: { type: String },
+    countryOfResidence: { type: String },
+    cityOfResidence: { type: String },
+    gameLevel: { type: String },
+    dominantHand: { type: String },
+    matchPosition: { type: String },
+    playStyle: { type: String },
+    weeklyPlayFrequency: { type: Number },
+    injuryHistory: { type: String },
+    classPreferences: { type: String },
+    preferredClassSchedules: [{ type: String }],
+    desiredPhysicalTrainingType: { type: String },
+    preferredGameSchedules: [{ type: String }],
+    otherPadelTrackInterests: [{ type: String }],
+    preferredTournamentTypes: [{ type: String }],
+    preferredCompetitionDays: [{ type: String }],
+    competitionCategories: [{ type: String }],
+    mainCompetitionMotivation: { type: String },
+    gymPartnershipMatching: { type: Boolean },
+    currentPhysicalCondition: { type: String },
+    physicalPriority: { type: String },
+    physicalTrainingAvailability: { type: Number },
   },
   {
     timestamps: true,

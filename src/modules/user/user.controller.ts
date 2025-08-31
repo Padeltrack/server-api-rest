@@ -324,6 +324,9 @@ export const updateMe = async (req: Request, res: Response) => {
       category,
       photo,
       displayName,
+      countryOfOrigin,
+      countryOfResidence,
+      cityOfResidence,
       gameLevel,
       dominantHand,
       matchPosition,
@@ -351,6 +354,9 @@ export const updateMe = async (req: Request, res: Response) => {
     if (numberPhone) fields['numberPhone'] = numberPhone;
     if (displayName) fields['displayName'] = displayName;
     if (category) fields['category'] = category;
+    if (countryOfOrigin) fields['countryOfOrigin'] = countryOfOrigin;
+    if (countryOfResidence) fields['countryOfResidence'] = countryOfResidence;
+    if (cityOfResidence) fields['cityOfResidence'] = cityOfResidence;
     if (gameLevel) fields['gameLevel'] = gameLevel;
     if (dominantHand) fields['dominantHand'] = dominantHand;
     if (matchPosition) fields['matchPosition'] = matchPosition;
