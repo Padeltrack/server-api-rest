@@ -1,6 +1,6 @@
 // URLS
 const HOST_CLIENT_ADMIN_LOCAL = 'http://localhost:5173';
-export const HOST_CLIENT_ADMIN_PROD = 'https://dashboard-padel-track.vercel.app';
+export const HOST_CLIENT_ADMIN_PROD = 'https://admin.padeltrack.app';
 export const HOST_CLIENT_PUBLIC_LOCAL = '';
 export const HOST_CLIENT_PUBLIC_PROD = '';
 

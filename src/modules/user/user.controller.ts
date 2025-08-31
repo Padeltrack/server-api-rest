@@ -315,7 +315,13 @@ export const updateMe = async (req: Request, res: Response) => {
 
   try {
     const me = req.user;
-    const { birthdate, wherePlay, numberPhone, category, photo, displayName } =
+    const { birthdate, wherePlay, numberPhone, category, photo, displayName,
+      gameLevel, dominantHand, matchPosition, playStyle, weeklyPlayFrequency,
+      injuryHistory, classPreferences, preferredClassSchedules, desiredPhysicalTrainingType,
+      preferredGameSchedules, otherPadelTrackInterests, preferredTournamentTypes,
+      preferredCompetitionDays, competitionCategories, mainCompetitionMotivation,
+      gymPartnershipMatching, currentPhysicalCondition, physicalPriority, physicalTrainingAvailability
+    } =
       UpdateUserSchemaZod.parse(req.body);
     const fields: any = {};
 
@@ -324,6 +330,25 @@ export const updateMe = async (req: Request, res: Response) => {
     if (numberPhone) fields['numberPhone'] = numberPhone;
     if (displayName) fields['displayName'] = displayName;
     if (category) fields['category'] = category;
+    if (gameLevel) fields['gameLevel'] = gameLevel;
+    if (dominantHand) fields['dominantHand'] = dominantHand;
+    if (matchPosition) fields['matchPosition'] = matchPosition;
+    if (playStyle) fields['playStyle'] = playStyle;
+    if (typeof weeklyPlayFrequency === 'number') fields['weeklyPlayFrequency'] = weeklyPlayFrequency;
+    if (injuryHistory) fields['injuryHistory'] = injuryHistory;
+    if (classPreferences) fields['classPreferences'] = classPreferences;
+    if (Array.isArray(preferredClassSchedules)) fields['preferredClassSchedules'] = preferredClassSchedules;
+    if (desiredPhysicalTrainingType) fields['desiredPhysicalTrainingType'] = desiredPhysicalTrainingType;
+    if (Array.isArray(preferredGameSchedules)) fields['preferredGameSchedules'] = preferredGameSchedules;
+    if (Array.isArray(otherPadelTrackInterests)) fields['otherPadelTrackInterests'] = otherPadelTrackInterests;
+    if (Array.isArray(preferredTournamentTypes)) fields['preferredTournamentTypes'] = preferredTournamentTypes;
+    if (Array.isArray(preferredCompetitionDays)) fields['preferredCompetitionDays'] = preferredCompetitionDays;
+    if (Array.isArray(competitionCategories)) fields['competitionCategories'] = competitionCategories;
+    if (mainCompetitionMotivation) fields['mainCompetitionMotivation'] = mainCompetitionMotivation;
+    if (typeof gymPartnershipMatching === 'boolean') fields['gymPartnershipMatching'] = gymPartnershipMatching;
+    if (currentPhysicalCondition) fields['currentPhysicalCondition'] = currentPhysicalCondition;
+    if (physicalPriority) fields['physicalPriority'] = physicalPriority;
+    if (typeof physicalTrainingAvailability === 'number') fields['physicalTrainingAvailability'] = physicalTrainingAvailability;
 
     if (photo) {
       const photoUser = await uploadImagePhotoUser({ imageBase64: photo, idUser: me._id });
@@ -345,7 +370,7 @@ export const updateMe = async (req: Request, res: Response) => {
       });
     }
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(401).json({ message: 'Error removing users' });
+    return res.status(401).json({ message: 'Error updating users' });
   }
 };
 

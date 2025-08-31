@@ -68,7 +68,7 @@ export interface UserModel extends Document {
   dominantHand?:string;
   matchPosition?: string;
   playStyle?: string;
-  weeklyPlayFrequency?: string;
+  weeklyPlayFrequency?: number;
   injuryHistory?: string;
   classPreferences?: string;
   preferredClassSchedules?: string[];
@@ -177,7 +177,7 @@ const UserMongoSchema = new Schema<UserModel>(
     // Competition profile
     preferredTournamentTypes: [{ type: String }], // Multi-select
     preferredCompetitionDays: [{ type: String }], // Multi-select
-    competitionCategories: [{ type: Number }],    // Up to 3 numeric values
+    competitionCategories: [{ type: String }],    // Up to 3 numeric values
     mainCompetitionMotivation: { type: String },  // Selector
 
     // Physical preparation & well-being

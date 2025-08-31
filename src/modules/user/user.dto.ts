@@ -32,21 +32,17 @@ export const UpdateUserSchemaZod = z.object({
     dominantHand: z.string().optional(),            
     matchPosition: z.string().optional(),            
     playStyle: z.string().optional(),                
-    weeklyPlayFrequency: z.string().optional(),      // 👀 lo dejé string como pusiste
+    weeklyPlayFrequency: z.number().optional(),
     injuryHistory: z.string().optional(),            
     classPreferences: z.string().optional(),         
     preferredClassSchedules: z.array(z.string()).optional(), 
     desiredPhysicalTrainingType: z.string().optional(), 
     preferredGameSchedules: z.array(z.string()).optional(),   
     otherPadelTrackInterests: z.array(z.string()).optional(), 
-
-    // Competition profile
     preferredTournamentTypes: z.array(z.string()).optional(), 
     preferredCompetitionDays: z.array(z.string()).optional(), 
-    competitionCategories: z.array(z.string()).optional(),   // si prefieres números -> z.array(z.number())
+    competitionCategories: z.array(z.string()).optional(),
     mainCompetitionMotivation: z.string().optional(),  
-
-    // Physical preparation & well-being
     gymPartnershipMatching: z.boolean().optional(),    
     currentPhysicalCondition: z.string().optional(),   
     physicalPriority: z.string().optional(),           
