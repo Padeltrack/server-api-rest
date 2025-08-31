@@ -65,7 +65,7 @@ export interface UserModel extends Document {
   onboarding: UserOnboardingModel | null;
   // STUDENTS
   gameLevel?: string;
-  dominantHand?:string;
+  dominantHand?: string;
   matchPosition?: string;
   playStyle?: string;
   weeklyPlayFrequency?: number;
@@ -162,29 +162,29 @@ const UserMongoSchema = new Schema<UserModel>(
     },
     onboarding: { type: UserOnboardingSchema, required: false, default: null },
     // Game profile
-    gameLevel: { type: String },                // Selector
-    dominantHand: { type: String },             // Selector
-    matchPosition: { type: String },            // Selector
-    playStyle: { type: String },                // Selector
-    weeklyPlayFrequency: { type: Number },      // Numeric
-    injuryHistory: { type: String },            // Free text
-    classPreferences: { type: String },         // Selector
+    gameLevel: { type: String }, // Selector
+    dominantHand: { type: String }, // Selector
+    matchPosition: { type: String }, // Selector
+    playStyle: { type: String }, // Selector
+    weeklyPlayFrequency: { type: Number }, // Numeric
+    injuryHistory: { type: String }, // Free text
+    classPreferences: { type: String }, // Selector
     preferredClassSchedules: [{ type: String }], // Multi-select
     desiredPhysicalTrainingType: { type: String }, // Selector
-    preferredGameSchedules: [{ type: String }],   // Multi-select
+    preferredGameSchedules: [{ type: String }], // Multi-select
     otherPadelTrackInterests: [{ type: String }], // Multi-select
 
     // Competition profile
     preferredTournamentTypes: [{ type: String }], // Multi-select
     preferredCompetitionDays: [{ type: String }], // Multi-select
-    competitionCategories: [{ type: String }],    // Up to 3 numeric values
-    mainCompetitionMotivation: { type: String },  // Selector
+    competitionCategories: [{ type: String }], // Up to 3 numeric values
+    mainCompetitionMotivation: { type: String }, // Selector
 
     // Physical preparation & well-being
-    gymPartnershipMatching: { type: Boolean },    // Yes / No
-    currentPhysicalCondition: { type: String },   // Scale or free text
-    physicalPriority: { type: String },           // Selector
-    physicalTrainingAvailability: { type: Number } // Numeric
+    gymPartnershipMatching: { type: Boolean }, // Yes / No
+    currentPhysicalCondition: { type: String }, // Scale or free text
+    physicalPriority: { type: String }, // Selector
+    physicalTrainingAvailability: { type: Number }, // Numeric
   },
   {
     timestamps: true,

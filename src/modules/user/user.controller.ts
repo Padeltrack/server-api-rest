@@ -31,14 +31,14 @@ export const getMe = async (req: Request, res: Response) => {
         { $match: { userId: user._id } },
         {
           $lookup: {
-            from: "plans",
-            localField: "planId",
-            foreignField: "_id",
-            as: "planId",
+            from: 'plans',
+            localField: 'planId',
+            foreignField: '_id',
+            as: 'planId',
           },
         },
-        { $unwind: "$planId" },
-        { $match: { "planId.isCoach": true } },
+        { $unwind: '$planId' },
+        { $match: { 'planId.isCoach': true } },
         { $sort: { createdAt: -1 } },
         { $limit: 1 },
       ]);
@@ -47,26 +47,28 @@ export const getMe = async (req: Request, res: Response) => {
         { $match: { userId: user._id } },
         {
           $lookup: {
-            from: "plans",
-            localField: "planId",
-            foreignField: "_id",
-            as: "planId",
+            from: 'plans',
+            localField: 'planId',
+            foreignField: '_id',
+            as: 'planId',
           },
         },
-        { $unwind: "$planId" },
-        { $match: { "planId.isCoach": false } },
+        { $unwind: '$planId' },
+        { $match: { 'planId.isCoach': false } },
         { $sort: { createdAt: -1 } },
         { $limit: 1 },
       ]);
 
-      const cleanOrders = [coachOrder, normalOrder].filter(order => order !== null && order !== undefined);
+      const cleanOrders = [coachOrder, normalOrder].filter(
+        order => order !== null && order !== undefined,
+      );
 
       orders = cleanOrders.map((order: any) => {
         if (order?.planId) plans.push(order.planId);
         return {
           ...order,
           planId: order.planId?._id,
-        }
+        };
       });
     } else {
       const lastOrder = await OrderMongoModel.findOne({ userId: user._id, isCoach }).sort({
@@ -315,14 +317,33 @@ export const updateMe = async (req: Request, res: Response) => {
 
   try {
     const me = req.user;
-    const { birthdate, wherePlay, numberPhone, category, photo, displayName,
-      gameLevel, dominantHand, matchPosition, playStyle, weeklyPlayFrequency,
-      injuryHistory, classPreferences, preferredClassSchedules, desiredPhysicalTrainingType,
-      preferredGameSchedules, otherPadelTrackInterests, preferredTournamentTypes,
-      preferredCompetitionDays, competitionCategories, mainCompetitionMotivation,
-      gymPartnershipMatching, currentPhysicalCondition, physicalPriority, physicalTrainingAvailability
-    } =
-      UpdateUserSchemaZod.parse(req.body);
+    const {
+      birthdate,
+      wherePlay,
+      numberPhone,
+      category,
+      photo,
+      displayName,
+      gameLevel,
+      dominantHand,
+      matchPosition,
+      playStyle,
+      weeklyPlayFrequency,
+      injuryHistory,
+      classPreferences,
+      preferredClassSchedules,
+      desiredPhysicalTrainingType,
+      preferredGameSchedules,
+      otherPadelTrackInterests,
+      preferredTournamentTypes,
+      preferredCompetitionDays,
+      competitionCategories,
+      mainCompetitionMotivation,
+      gymPartnershipMatching,
+      currentPhysicalCondition,
+      physicalPriority,
+      physicalTrainingAvailability,
+    } = UpdateUserSchemaZod.parse(req.body);
     const fields: any = {};
 
     if (birthdate) fields['birthdate'] = birthdate;
@@ -334,21 +355,31 @@ export const updateMe = async (req: Request, res: Response) => {
     if (dominantHand) fields['dominantHand'] = dominantHand;
     if (matchPosition) fields['matchPosition'] = matchPosition;
     if (playStyle) fields['playStyle'] = playStyle;
-    if (typeof weeklyPlayFrequency === 'number') fields['weeklyPlayFrequency'] = weeklyPlayFrequency;
+    if (typeof weeklyPlayFrequency === 'number')
+      fields['weeklyPlayFrequency'] = weeklyPlayFrequency;
     if (injuryHistory) fields['injuryHistory'] = injuryHistory;
     if (classPreferences) fields['classPreferences'] = classPreferences;
-    if (Array.isArray(preferredClassSchedules)) fields['preferredClassSchedules'] = preferredClassSchedules;
-    if (desiredPhysicalTrainingType) fields['desiredPhysicalTrainingType'] = desiredPhysicalTrainingType;
-    if (Array.isArray(preferredGameSchedules)) fields['preferredGameSchedules'] = preferredGameSchedules;
-    if (Array.isArray(otherPadelTrackInterests)) fields['otherPadelTrackInterests'] = otherPadelTrackInterests;
-    if (Array.isArray(preferredTournamentTypes)) fields['preferredTournamentTypes'] = preferredTournamentTypes;
-    if (Array.isArray(preferredCompetitionDays)) fields['preferredCompetitionDays'] = preferredCompetitionDays;
-    if (Array.isArray(competitionCategories)) fields['competitionCategories'] = competitionCategories;
+    if (Array.isArray(preferredClassSchedules))
+      fields['preferredClassSchedules'] = preferredClassSchedules;
+    if (desiredPhysicalTrainingType)
+      fields['desiredPhysicalTrainingType'] = desiredPhysicalTrainingType;
+    if (Array.isArray(preferredGameSchedules))
+      fields['preferredGameSchedules'] = preferredGameSchedules;
+    if (Array.isArray(otherPadelTrackInterests))
+      fields['otherPadelTrackInterests'] = otherPadelTrackInterests;
+    if (Array.isArray(preferredTournamentTypes))
+      fields['preferredTournamentTypes'] = preferredTournamentTypes;
+    if (Array.isArray(preferredCompetitionDays))
+      fields['preferredCompetitionDays'] = preferredCompetitionDays;
+    if (Array.isArray(competitionCategories))
+      fields['competitionCategories'] = competitionCategories;
     if (mainCompetitionMotivation) fields['mainCompetitionMotivation'] = mainCompetitionMotivation;
-    if (typeof gymPartnershipMatching === 'boolean') fields['gymPartnershipMatching'] = gymPartnershipMatching;
+    if (typeof gymPartnershipMatching === 'boolean')
+      fields['gymPartnershipMatching'] = gymPartnershipMatching;
     if (currentPhysicalCondition) fields['currentPhysicalCondition'] = currentPhysicalCondition;
     if (physicalPriority) fields['physicalPriority'] = physicalPriority;
-    if (typeof physicalTrainingAvailability === 'number') fields['physicalTrainingAvailability'] = physicalTrainingAvailability;
+    if (typeof physicalTrainingAvailability === 'number')
+      fields['physicalTrainingAvailability'] = physicalTrainingAvailability;
 
     if (photo) {
       const photoUser = await uploadImagePhotoUser({ imageBase64: photo, idUser: me._id });
