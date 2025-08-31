@@ -59,10 +59,10 @@ export const getMe = async (req: Request, res: Response) => {
         { $limit: 1 },
       ]);
 
-      const cleanOrders = [coachOrder, normalOrder].filter(order => order !== null);
+      const cleanOrders = [coachOrder, normalOrder].filter(order => order !== null && order !== undefined);
 
       orders = cleanOrders.map((order: any) => {
-        if (order.planId) plans.push(order.planId);
+        if (order?.planId) plans.push(order.planId);
         return {
           ...order,
           planId: order.planId?._id,

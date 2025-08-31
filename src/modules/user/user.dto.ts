@@ -28,6 +28,29 @@ export const UpdateUserSchemaZod = z.object({
       SelectCategoryUserModel.SEPTIMA_CATEGORIA,
     ])
     .optional(),
+    gameLevel: z.string().optional(),                
+    dominantHand: z.string().optional(),            
+    matchPosition: z.string().optional(),            
+    playStyle: z.string().optional(),                
+    weeklyPlayFrequency: z.string().optional(),      // 👀 lo dejé string como pusiste
+    injuryHistory: z.string().optional(),            
+    classPreferences: z.string().optional(),         
+    preferredClassSchedules: z.array(z.string()).optional(), 
+    desiredPhysicalTrainingType: z.string().optional(), 
+    preferredGameSchedules: z.array(z.string()).optional(),   
+    otherPadelTrackInterests: z.array(z.string()).optional(), 
+
+    // Competition profile
+    preferredTournamentTypes: z.array(z.string()).optional(), 
+    preferredCompetitionDays: z.array(z.string()).optional(), 
+    competitionCategories: z.array(z.string()).optional(),   // si prefieres números -> z.array(z.number())
+    mainCompetitionMotivation: z.string().optional(),  
+
+    // Physical preparation & well-being
+    gymPartnershipMatching: z.boolean().optional(),    
+    currentPhysicalCondition: z.string().optional(),   
+    physicalPriority: z.string().optional(),           
+    physicalTrainingAvailability: z.number().optional(),
 });
 
 export type UpdateUserDTO = z.infer<typeof UpdateUserSchemaZod>;
