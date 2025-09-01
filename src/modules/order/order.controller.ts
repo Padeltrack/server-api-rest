@@ -10,6 +10,7 @@ import { WeeklyVideoMongoModel } from '../weeklyVideo/weeklyVideo.model';
 import { getVideosByWeek } from '../weeklyVideo/weeklyVideo.model.helper';
 import { generateEmail } from '../mail/loadTemplate.mail';
 import { sendEMail } from '../mail/sendTemplate.mail';
+import { CounterMongoModel } from '../counter/counter.model';
 
 export const getOrders = async (req: Request, res: Response) => {
   req.logger = req.logger.child({ service: 'order', serviceHandler: 'getOrders' });
@@ -302,8 +303,9 @@ export const updateOrderStatus = async (req: Request, res: Response) => {
     const isPlanNotCoach = getPlan.isCoach === false;
 
     if (isApproved && isStudent && isPlanNotCoach) {
+      const getLimitVideoWeek = await CounterMongoModel.findOne({ _id: 'limitVideoWeek' });
       const week = fieldsUpdated.currentWeek;
-      const videosByWeek = await getVideosByWeek({ week });
+      const videosByWeek = await getVideosByWeek({ week, maxVideo: getLimitVideoWeek?.seq });
 
       await WeeklyVideoMongoModel.create({
         _id: new ObjectId().toHexString(),

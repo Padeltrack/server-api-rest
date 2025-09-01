@@ -572,9 +572,9 @@ export const registerGradeExam = async (req: Request, res: Response) => {
 
     // UPDATE LEVEL USER
     let levelUser: UserLevelModel = SelectUserLevelModel.Principiante;
-    if (average >= 6 && average < 8) {
+    if (average >= 4 && average <= 6) {
       levelUser = SelectUserLevelModel.Intermedio;
-    } else if (average >= 8) {
+    } else if (average >= 7) {
       levelUser = SelectUserLevelModel.Avanzado;
     }
 

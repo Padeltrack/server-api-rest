@@ -8,6 +8,7 @@ import { IPlanModel, PlanMongoModel, SelectDaysActiveModel } from '../../modules
 import { generateEmail } from '../../modules/mail/loadTemplate.mail';
 import { sendEMail } from '../../modules/mail/sendTemplate.mail';
 import { UserModel, UserMongoModel } from '../../modules/user/user.model';
+import { CounterMongoModel } from '../../modules/counter/counter.model';
 
 function daysBetween(fecha1: Date, fecha2: Date) {
   return Math.floor((fecha2.getTime() - fecha1.getTime()) / (1000 * 60 * 60 * 24));
@@ -33,8 +34,9 @@ const cronOrderProgressWeek = async () => {
           progress.lastProgressDate = new Date();
           await progress.save();
 
+          const getLimitVideoWeek = await CounterMongoModel.findOne({ _id: 'limitVideoWeek' });
           const week = progress.currentWeek;
-          const videosByWeek = await getVideosByWeek({ week });
+          const videosByWeek = await getVideosByWeek({ week, maxVideo: getLimitVideoWeek?.seq });
           await WeeklyVideoMongoModel.create({
             _id: new ObjectId().toHexString(),
             orderId: progress._id,
