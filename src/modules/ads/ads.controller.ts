@@ -4,6 +4,8 @@ import { ZodError } from 'zod';
 import { AdsModel, AdsMongoModel } from './ads.model';
 import { AdsRegisterSchemaZod, AdsUpdateSchemaZod } from './ads.dto';
 import { uploadImagePhotoUser } from './ads.helper';
+import { removeFileFirebaseStorage } from '../firebase/firebase.service';
+import { StorageFirebaseModel } from '../firebase/firebase.model';
 
 export const getAds = async (req: Request, res: Response) => {
   req.logger = req.logger.child({ service: 'ads', serviceHandler: 'getAds' });
@@ -26,7 +28,7 @@ export const createAds = async (req: Request, res: Response) => {
   try {
     const { link, imageBase64 } = AdsRegisterSchemaZod.parse(req.body);
 
-    const lastAd = await AdsMongoModel.findOne().sort({ orden: -1 });
+    const lastAd = await AdsMongoModel.findOne().sort({ order: -1 });
     const nextOrder = lastAd ? lastAd.order + 1 : 1;
     const idAds = new ObjectId().toHexString();
 
@@ -119,6 +121,14 @@ export const deleteAds = async (req: Request, res: Response) => {
       });
     }
 
+    const ads = await AdsMongoModel.countDocuments({ _id: id });
+    if (!ads) {
+      return res.status(404).json({
+        message: 'Ads not found',
+      });
+    }
+
+    await removeFileFirebaseStorage({ path: `${StorageFirebaseModel.ADS_IMAGE}/${id}` });
     await AdsMongoModel.deleteOne({ _id: id });
 
     return res.status(200).json({

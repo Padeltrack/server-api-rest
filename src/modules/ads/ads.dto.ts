@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 export const AdsRegisterSchemaZod = z.object({
   imageBase64: z.string().min(3),
-  link: z.string().url(),
+  link: z.string().url().optional(),
 });
 
 export const AdsUpdateSchemaZod = z.object({
