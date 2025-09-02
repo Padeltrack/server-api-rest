@@ -6,6 +6,7 @@ import { AdsRegisterSchemaZod, AdsUpdateSchemaZod } from './ads.dto';
 import { uploadImagePhotoUser } from './ads.helper';
 import { removeFileFirebaseStorage } from '../firebase/firebase.service';
 import { StorageFirebaseModel } from '../firebase/firebase.model';
+import { getExtensionFromUrl } from '../../shared/util/string.util';
 
 export const getAds = async (req: Request, res: Response) => {
   req.logger = req.logger.child({ service: 'ads', serviceHandler: 'getAds' });
@@ -121,14 +122,14 @@ export const deleteAds = async (req: Request, res: Response) => {
       });
     }
 
-    const ads = await AdsMongoModel.countDocuments({ _id: id });
+    const ads = await AdsMongoModel.findOne({ _id: id });
     if (!ads) {
       return res.status(404).json({
         message: 'Ads not found',
       });
     }
 
-    await removeFileFirebaseStorage({ path: `${StorageFirebaseModel.ADS_IMAGE}/${id}` });
+    await removeFileFirebaseStorage({ path: `${StorageFirebaseModel.ADS_IMAGE}/${id}.${getExtensionFromUrl(ads.urlImage)}` });
     await AdsMongoModel.deleteOne({ _id: id });
 
     return res.status(200).json({

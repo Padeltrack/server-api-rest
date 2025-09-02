@@ -1,4 +1,4 @@
-import { getBufferBase64 } from '../../shared/util/string.util';
+import { getBufferBase64, getExtensionFromUrl } from '../../shared/util/string.util';
 import { ExamAnswerMongoModel } from '../exam/exam-answer.model';
 import { BASE_STORE_FIREBASE } from '../firebase/firebase.contants';
 import { StorageFirebaseModel } from '../firebase/firebase.model';
@@ -40,6 +40,7 @@ export const uploadImagePhotoUser = async (options: {
 
 export const removeRelationUserModel = async (options: { userId: string }) => {
   const { userId } = options;
+  const user = await UserMongoModel.findOne({ _id: userId }).lean().select('_id');
   const odersId = await OrderMongoModel.find({ userId }).lean().select('_id');
   const idsOrders = odersId.map(order => order._id);
   await OrderMongoModel.deleteMany({ userId });
@@ -52,5 +53,5 @@ export const removeRelationUserModel = async (options: { userId: string }) => {
     });
   });
 
-  await removeFileFirebaseStorage({ path: `${StorageFirebaseModel.USER_PHOTO}/${userId}` });
+  await removeFileFirebaseStorage({ path: `${StorageFirebaseModel.USER_PHOTO}/${userId}.${getExtensionFromUrl(user?.photo)}` });
 };
