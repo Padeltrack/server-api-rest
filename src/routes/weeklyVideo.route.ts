@@ -11,14 +11,14 @@ const pathAuth = '/weeklyVideo';
 weeklyVideoRoutes.get(
   `${pathAuth}/me`,
   authenticate,
-  authorize(SelectRoleModel.Student),
+  authorize(SelectRoleModel.Student, SelectRoleModel.Coach),
   activeOrder,
   getWeeklyVideos,
 );
 weeklyVideoRoutes.patch(
   `${pathAuth}/check/video/me`,
   authenticate,
-  authorize(SelectRoleModel.Student),
+  authorize(SelectRoleModel.Student, SelectRoleModel.Coach),
   activeOrder,
   markCheckMeVideo,
 );
