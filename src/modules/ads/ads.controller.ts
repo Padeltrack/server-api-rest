@@ -27,7 +27,7 @@ export const createAds = async (req: Request, res: Response) => {
   req.logger.info({ status: 'start' });
 
   try {
-    const { link, imageBase64 } = AdsRegisterSchemaZod.parse(req.body);
+    const { link, imageBase64, active } = AdsRegisterSchemaZod.parse(req.body);
 
     const lastAd = await AdsMongoModel.findOne().sort({ order: -1 });
     const nextOrder = lastAd ? lastAd.order + 1 : 1;
@@ -43,6 +43,7 @@ export const createAds = async (req: Request, res: Response) => {
       urlImage,
       link,
       order: nextOrder,
+      active: active || false,
     });
 
     return res.status(200).json({ ads });
@@ -71,8 +72,8 @@ export const updateAds = async (req: Request, res: Response) => {
       });
     }
 
-    const { link, imageBase64 } = AdsUpdateSchemaZod.parse(req.body);
-    const updateFields: Partial<Pick<AdsModel, 'link' | 'urlImage'>> = {};
+    const { link, imageBase64, active } = AdsUpdateSchemaZod.parse(req.body);
+    const updateFields: Partial<Pick<AdsModel, 'link' | 'urlImage' | 'active'>> = {};
 
     if (link) updateFields.link = link;
     if (imageBase64) {
@@ -82,6 +83,7 @@ export const updateAds = async (req: Request, res: Response) => {
       });
       updateFields.urlImage = urlImage;
     }
+    if (typeof active === 'boolean') updateFields.active = active;
 
     const ads = await AdsMongoModel.findOneAndUpdate(
       {
