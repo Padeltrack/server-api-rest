@@ -12,6 +12,15 @@ export const getMatches = async (req: Request, res: Response) => {
   try {
     const me = req.user;
     const query: any = {};
+    const search = req.query?.search || '';
+
+    if (search) {
+      query.$or = [
+        { tournamentName: { $regex: search, $options: 'i' } },
+        { place: { $regex: search, $options: 'i' } },
+        { playersName: { $elemMatch: { $regex: search, $options: 'i' } } },
+      ];
+    }
 
     if (me.role === SelectRoleModel.Coach) {
       query.coachId = me._id;
@@ -19,6 +28,7 @@ export const getMatches = async (req: Request, res: Response) => {
 
     const count = await MatchMongoModel.countDocuments(query);
     const matches = await MatchMongoModel.aggregate([
+      { $match: query },
       { $sort: { createdAt: -1 } },
       {
         $project: {

@@ -3,6 +3,7 @@ import { ExamAnswerMongoModel } from '../exam/exam-answer.model';
 import { BASE_STORE_FIREBASE } from '../firebase/firebase.contants';
 import { StorageFirebaseModel } from '../firebase/firebase.model';
 import { removeFileFirebaseStorage, uploadFileFirebaseStorage } from '../firebase/firebase.service';
+import { MatchMongoModel } from '../match/match.model';
 import { OrderMongoModel } from '../order/order.model';
 import { deleteVimeoVideo } from '../vimeo/vimeo.helper';
 import { WeeklyVideoMongoModel } from '../weeklyVideo/weeklyVideo.model';
@@ -45,6 +46,7 @@ export const removeRelationUserModel = async (options: { userId: string }) => {
   const idsOrders = odersId.map(order => order._id);
   await OrderMongoModel.deleteMany({ userId });
   await WeeklyVideoMongoModel.deleteMany({ orderId: { $in: idsOrders } });
+  await MatchMongoModel.deleteMany({ coachId: userId });
   const examAnswers = await ExamAnswerMongoModel.find({ userId });
   examAnswers.forEach(async examAnswer => {
     await ExamAnswerMongoModel.deleteOne({ _id: examAnswer._id });
