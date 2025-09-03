@@ -7,7 +7,7 @@ import { SelectRoleModel } from '../modules/user/user.model';
 const adsRoutes = Router();
 const pathAds = '/ads';
 
-adsRoutes.get(`${pathAds}`, authenticate, authorize(SelectRoleModel.SuperAdmin), getAds);
+adsRoutes.get(`${pathAds}`, getAds);
 adsRoutes.post(`${pathAds}`, authenticate, authorize(SelectRoleModel.SuperAdmin), createAds);
 adsRoutes.patch(`${pathAds}/:id`, authenticate, authorize(SelectRoleModel.SuperAdmin), updateAds);
 adsRoutes.delete(`${pathAds}/:id`, authenticate, authorize(SelectRoleModel.SuperAdmin), deleteAds);
