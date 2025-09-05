@@ -46,8 +46,8 @@ app.use(
     origin: HOST_PERMITS,
   }),
 );
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ limit: '10mb', extended: true }));
+app.use(express.json({ limit: '20mb' }));
+app.use(express.urlencoded({ limit: '20mb', extended: true }));
 app.use(serverImagesStaticAssets());
 
 // app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));

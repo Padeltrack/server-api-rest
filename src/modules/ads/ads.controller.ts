@@ -72,6 +72,13 @@ export const updateAds = async (req: Request, res: Response) => {
       });
     }
 
+    const getAds = await AdsMongoModel.findOne({ _id: idAds });
+    if (!getAds) {
+      return res.status(404).json({
+        message: 'Ads not found',
+      });
+    }
+
     const { link, imageBase64, active } = AdsUpdateSchemaZod.parse(req.body);
     const updateFields: Partial<Pick<AdsModel, 'link' | 'urlImage' | 'active'>> = {};
 
@@ -82,6 +89,7 @@ export const updateAds = async (req: Request, res: Response) => {
         idAds,
       });
       updateFields.urlImage = urlImage;
+      await removeFileFirebaseStorage({ path: `${StorageFirebaseModel.ADS_IMAGE}/${idAds}.${getExtensionFromUrl(getAds.urlImage)}` });
     }
     if (typeof active === 'boolean') updateFields.active = active;
 
