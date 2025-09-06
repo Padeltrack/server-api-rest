@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
-import { RoleModel, SelectRoleModel, UserMongoModel } from './user.model';
+import { RoleModel, SelectRoleModel, UserModel, UserMongoModel } from './user.model';
 import { CreateAdminSchemaZod, UpdateUserSchemaZod } from './user.dto';
 import { ZodError } from 'zod';
 import { PlanMongoModel } from '../plan/plan.model';
@@ -183,27 +183,25 @@ export const getCoachOrStudentUsers = async (req: Request, res: Response) => {
     }
 
     const users = await UserMongoModel.find(query).skip(skip).limit(limit).sort({ createdAt: -1 });
-    
-// separar los que están en ids y los que no
-const priorityUsers = [];
-const otherUsers = [];
+    const priorityUsers: UserModel[] = [];
+    const otherUsers: UserModel[] = [];
 
-users.forEach(u => {
-  if (ids.includes(u._id)) {
-    priorityUsers.push(u);
-  } else {
-    otherUsers.push(u);
-  }
-});
+    users.forEach(u => {
+      if (ids.includes(u._id)) {
+        priorityUsers.push(u);
+      } else {
+        otherUsers.push(u);
+      }
+    });
 
-const priorityUsersOrdered = ids
-  .map(id => priorityUsers.find(u => u._id === id))
-  .filter(Boolean);
+    const priorityUsersOrdered = ids
+      .map(id => priorityUsers.find(u => u._id === id))
+      .filter(Boolean);
 
-const usersSorted = [...priorityUsersOrdered, ...otherUsers];
+    const usersSorted = [...priorityUsersOrdered, ...otherUsers];
 
 
-    return res.status(200).json({ users: usersSort });
+    return res.status(200).json({ users: usersSorted });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
     return res.status(401).json({ message: 'Error getting users' });
