@@ -503,7 +503,7 @@ export const deleteUser = async (req: Request, res: Response) => {
       });
     }
 
-    /*if (ADMINS_EMAILS.includes(getUser.email)) {
+    if (ADMINS_EMAILS.includes(getUser.email)) {
       return res.status(400).json({
         message: 'You cannot delete this user',
       });
@@ -518,7 +518,7 @@ export const deleteUser = async (req: Request, res: Response) => {
       await StudentCoachesMongoModel.deleteMany({ coachId: getUser._id });
     } else {
       await StudentCoachesMongoModel.deleteMany({ studentId: getUser._id });
-    }*/
+    }
 
     const deleteAccountEmail = await generateEmail({
       template: 'deleteAccount',
@@ -534,7 +534,7 @@ export const deleteUser = async (req: Request, res: Response) => {
 
     const msg = {
       from: `${process.env.NODE_MAILER_ROOT_EMAIL}`,
-      to: "goyeselcoca@gmail.com", //getUser.email,
+      to: getUser.email,
       subject: 'Lamentamos que te vallas de Padel Track',
       text: '-',
       html: deleteAccountEmail,
