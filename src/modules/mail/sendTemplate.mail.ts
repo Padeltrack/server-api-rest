@@ -25,7 +25,7 @@ export const sendEMail = (options: { data: any }) => {
       pass: `${process.env.NODE_MAILER_ROOT_PASS}`,
     },
     tls: {
-      rejectUnauthorized: false,
+      rejectUnauthorized: process.env.NODE_ENV === 'development' ? false : true,
     },
   });
 
