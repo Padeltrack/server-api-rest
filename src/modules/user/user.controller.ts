@@ -154,7 +154,7 @@ export const getCoachOrStudentUsers = async (req: Request, res: Response) => {
   req.logger.info({ status: 'start' });
 
   try {
-    const me = { _id: "68a5ab995dd8c33aa9b18c06", role: SelectRoleModel.Student }// req.user;
+    const me = req.user;
     const page = Number(req.query?.page) || 1;
     const limit = Number(req.query?.limit) || 10;
     const search = req.query?.search || '';
@@ -183,7 +183,25 @@ export const getCoachOrStudentUsers = async (req: Request, res: Response) => {
     }
 
     const users = await UserMongoModel.find(query).skip(skip).limit(limit).sort({ createdAt: -1 });
-    const usersSort = ids.map(id => users.find(u => u._id === id));
+    
+// separar los que están en ids y los que no
+const priorityUsers = [];
+const otherUsers = [];
+
+users.forEach(u => {
+  if (ids.includes(u._id)) {
+    priorityUsers.push(u);
+  } else {
+    otherUsers.push(u);
+  }
+});
+
+const priorityUsersOrdered = ids
+  .map(id => priorityUsers.find(u => u._id === id))
+  .filter(Boolean);
+
+const usersSorted = [...priorityUsersOrdered, ...otherUsers];
+
 
     return res.status(200).json({ users: usersSort });
   } catch (error) {
