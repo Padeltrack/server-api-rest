@@ -534,7 +534,7 @@ export const deleteUser = async (req: Request, res: Response) => {
 
     const msg = {
       from: `${process.env.NODE_MAILER_ROOT_EMAIL}`,
-      to: "goyeselcoca@gmail.com", //getUser.email,
+      to: getUser.email,
       subject: 'Lamentamos que te vallas de Padel Track',
       text: '-',
       html: deleteAccountEmail,
