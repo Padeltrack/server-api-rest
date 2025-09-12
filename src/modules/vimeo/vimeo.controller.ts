@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import fs from 'fs/promises';
 import { vimeoClient } from '../../config/vimeo.config';
 import {
   deleteVimeoVideo,
@@ -11,6 +12,7 @@ import { updateVideoToFolderVimeoSchemaZod, uploadVideoToFolderVimeoSchemaZod } 
 import { ZodError } from 'zod';
 import { VideoMongoModel } from '../video/video.model';
 import { freeFolder } from './viemo.constant';
+import { cleanUploadedFiles } from '../../middleware/multer.middleware';
 
 export const uploadVideoToFolderVimeo = async (req: Request, res: Response) => {
   req.logger = req.logger.child({ service: 'vimeo', serviceHandler: 'uploadVideoToFolderVimeo' });
@@ -47,10 +49,13 @@ export const uploadVideoToFolderVimeo = async (req: Request, res: Response) => {
       });
     }
 
+    await cleanUploadedFiles(req);
+
     res.status(200).json({
       message: 'Video uploaded successfully',
     });
   } catch (error) {
+    await cleanUploadedFiles(req);
     if (error instanceof ZodError) {
       return res.status(400).json({
         message: 'Error de validación',
@@ -227,14 +232,35 @@ export const updateVideoToFolderVimeo = async (req: Request, res: Response) => {
       });
     }
 
-    const filePath = req.file?.path;
+    const videoFile = (req.files as any)?.upload_video?.[0];
+    const thumbnailFile = (req.files as any)?.upload_thumbnail?.[0];
 
-    await updateVideoToVimeo({ idVideoVimeo, filePath, name, description });
+    const videoPath = videoFile?.path;
+    let thumbnailBuffer: ArrayBuffer | undefined;
+
+    if (thumbnailFile) {
+      const thumbnailReadFile = await fs.readFile(thumbnailFile.path);
+
+      thumbnailBuffer = thumbnailReadFile.buffer.slice(
+        thumbnailReadFile.byteOffset,
+        thumbnailReadFile.byteOffset + thumbnailReadFile.byteLength,
+      ) as ArrayBuffer;
+    }
+
+    await updateVideoToVimeo({
+      idVideoVimeo,
+      filePath: videoPath,
+      thumbnailBuffer,
+      name,
+      description,
+    });
+    await cleanUploadedFiles(req);
 
     res.status(200).json({
       message: 'Video updated successfully',
     });
   } catch (error) {
+    await cleanUploadedFiles(req);
     req.logger.error({ status: 'error', code: 500, error: error.message });
     res.status(500).json({ message: 'Server error', error: error });
   }

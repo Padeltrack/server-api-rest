@@ -89,7 +89,9 @@ export const updateAds = async (req: Request, res: Response) => {
         idAds,
       });
       updateFields.urlImage = urlImage;
-      await removeFileFirebaseStorage({ path: `${StorageFirebaseModel.ADS_IMAGE}/${idAds}.${getExtensionFromUrl(getAds.urlImage)}` });
+      await removeFileFirebaseStorage({
+        path: `${StorageFirebaseModel.ADS_IMAGE}/${idAds}.${getExtensionFromUrl(getAds.urlImage)}`,
+      });
     }
     if (typeof active === 'boolean') updateFields.active = active;
 
@@ -104,8 +106,8 @@ export const updateAds = async (req: Request, res: Response) => {
     );
 
     return res.status(200).json({
-        ads,
-        message: 'Ads updated successfully',
+      ads,
+      message: 'Ads updated successfully',
     });
   } catch (error) {
     if (error instanceof ZodError) {
@@ -139,7 +141,9 @@ export const deleteAds = async (req: Request, res: Response) => {
       });
     }
 
-    await removeFileFirebaseStorage({ path: `${StorageFirebaseModel.ADS_IMAGE}/${id}.${getExtensionFromUrl(ads.urlImage)}` });
+    await removeFileFirebaseStorage({
+      path: `${StorageFirebaseModel.ADS_IMAGE}/${id}.${getExtensionFromUrl(ads.urlImage)}`,
+    });
     await AdsMongoModel.deleteOne({ _id: id });
 
     return res.status(200).json({

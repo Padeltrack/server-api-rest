@@ -55,5 +55,7 @@ export const removeRelationUserModel = async (options: { userId: string }) => {
     });
   });
 
-  await removeFileFirebaseStorage({ path: `${StorageFirebaseModel.USER_PHOTO}/${userId}.${getExtensionFromUrl(user?.photo)}` });
+  await removeFileFirebaseStorage({
+    path: `${StorageFirebaseModel.USER_PHOTO}/${userId}.${getExtensionFromUrl(user?.photo)}`,
+  });
 };

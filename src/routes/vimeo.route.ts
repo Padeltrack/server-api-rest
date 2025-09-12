@@ -48,7 +48,10 @@ router.patch(
   `${basePath}/folder/video/:id`,
   authenticate,
   authorize(SelectRoleModel.SuperAdmin),
-  uploadVideo.single('upload_video'),
+  uploadVideo.fields([
+    { name: 'upload_video', maxCount: 1 },
+    { name: 'upload_thumbnail', maxCount: 1 },
+  ]),
   updateVideoToFolderVimeo,
 );
 router.delete(

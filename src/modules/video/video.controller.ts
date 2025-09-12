@@ -20,10 +20,10 @@ export const getVideos = async (req: Request, res: Response) => {
     const limit = Number(req.query?.limit) || 10;
     const skip = (page - 1) * limit;
     const search = req.query?.search || '';
-    let weeks = req.query?.weeks as string || '';
+    let weeks = (req.query?.weeks as string) || '';
 
     let numberWeeks: number[] = [];
-    if (weeks) numberWeeks = weeks.split(",").map(Number)
+    if (weeks) numberWeeks = weeks.split(',').map(Number);
 
     const query: any = {};
 

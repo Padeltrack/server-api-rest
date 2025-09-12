@@ -35,15 +35,15 @@ export const getTextBeforeAtEmail = (email: string) => {
 export const getExtensionFromUrl = (url?: string | null) => {
   try {
     if (!url) return null;
-    const pathname = new URL(url).pathname; 
-    const filename = decodeURIComponent(pathname.split("/").pop() || "");
-    
+    const pathname = new URL(url).pathname;
+    const filename = decodeURIComponent(pathname.split('/').pop() || '');
+
     const match = filename.match(/\.([a-zA-Z0-9]+)$/);
     if (!match) return null;
 
     const ext = match[1].toLowerCase();
-    return ext === "jpeg" ? "jpg" : ext;
+    return ext === 'jpeg' ? 'jpg' : ext;
   } catch {
     return null;
   }
-}
+};

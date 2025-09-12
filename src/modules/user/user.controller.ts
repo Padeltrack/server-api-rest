@@ -164,11 +164,15 @@ export const getCoachOrStudentUsers = async (req: Request, res: Response) => {
 
     if (me.role === SelectRoleModel.Student) {
       role = SelectRoleModel.Coach;
-      const gerAssign = await StudentCoachesMongoModel.find({ studentId: me._id }).select('coachId');
+      const gerAssign = await StudentCoachesMongoModel.find({ studentId: me._id }).select(
+        'coachId',
+      );
       ids = gerAssign.map(_id => _id.coachId);
     } else {
       role = SelectRoleModel.Student;
-      const gerAssign = await StudentCoachesMongoModel.find({ coachId: me._id }).select('studentId');
+      const gerAssign = await StudentCoachesMongoModel.find({ coachId: me._id }).select(
+        'studentId',
+      );
       ids = gerAssign.map(_id => _id.studentId);
     }
 
@@ -199,7 +203,6 @@ export const getCoachOrStudentUsers = async (req: Request, res: Response) => {
       .filter(Boolean);
 
     const usersSorted = [...priorityUsersOrdered, ...otherUsers];
-
 
     return res.status(200).json({ users: usersSorted });
   } catch (error) {

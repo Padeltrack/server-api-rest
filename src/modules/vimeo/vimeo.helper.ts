@@ -87,10 +87,11 @@ export const uploadVideoToVimeo = (options: {
 export const updateVideoToVimeo = (options: {
   idVideoVimeo: string;
   filePath?: string;
+  thumbnailBuffer?: ArrayBuffer;
   name?: string;
   description?: string;
 }): Promise<void> => {
-  const { idVideoVimeo, filePath, name, description } = options;
+  const { idVideoVimeo, filePath, thumbnailBuffer, name, description } = options;
   return new Promise((resolve, reject) => {
     const query: any = {};
     if (name) query['name'] = name;
@@ -108,28 +109,93 @@ export const updateVideoToVimeo = (options: {
           return reject(error);
         }
 
-        if (!filePath) return resolve(); 
+        if (!filePath) return resolve();
+        replaceVimeoVideoFile({ idVideoVimeo, filePath })
+          .then(() => {
+            if (!thumbnailBuffer) return resolve();
+            createPictureToVimeo({ idVideoVimeo })
+              .then(async picture => {
+                const image = await uploadPictureToVimeo({
+                  upload_link: picture.link,
+                  buffer: thumbnailBuffer,
+                });
+                let [, , , , pictureId] = image?.url.split('/');
+                if (pictureId) pictureId = pictureId.split('?')[0];
+                if (pictureId) {
+                  await activePictureToVimeo({ idVideoVimeo, pictureId });
+                }
+                resolve();
+              })
+              .catch(reject);
+          })
+          .catch(reject);
+      },
+    );
+  });
+};
 
-        vimeoClient.replace(
-          filePath,
-          `/videos/${idVideoVimeo}`,
-          (uri: string) => {
-            console.log('Video reemplazado con éxito:', uri);
-            /*vimeoClient.request(
-            {
-              method: "POST",
-              path: `/videos/${idVideoVimeo}/pictures`,
-            });*/
-            resolve();
-          },
-          (uploaded: number, total: number) => {
-            console.log(`Progreso: ${((uploaded / total) * 100).toFixed(2)}%`);
-          },
-          (err: any) => {
-            console.error('Error replacing video:', err);
-            reject(err);
-          }
-        );
+export const createPictureToVimeo = (options: { idVideoVimeo: string }): Promise<any> => {
+  const { idVideoVimeo } = options;
+  return new Promise((resolve, reject) => {
+    vimeoClient.request(
+      { method: 'POST', path: `/videos/${idVideoVimeo}/pictures` },
+      (err, body) => (err ? reject(err) : resolve(body)),
+    );
+  });
+};
+
+export const activePictureToVimeo = (options: {
+  idVideoVimeo: string;
+  pictureId: string;
+}): Promise<void> => {
+  const { idVideoVimeo, pictureId } = options;
+  return new Promise((resolve, reject) => {
+    vimeoClient.request(
+      {
+        method: 'PATCH',
+        path: `/videos/${idVideoVimeo}/pictures/${pictureId}`,
+        query: { active: true },
+      },
+      err => {
+        if (err) return reject(err);
+
+        console.log('Miniatura actualizada ✅');
+        resolve();
+      },
+    );
+  });
+};
+
+export const uploadPictureToVimeo = async (options: {
+  upload_link: string;
+  buffer: ArrayBuffer;
+}): Promise<any> => {
+  const { upload_link, buffer } = options;
+  return await fetch(upload_link, {
+    method: 'PUT',
+    body: buffer,
+  });
+};
+
+export const replaceVimeoVideoFile = (options: {
+  idVideoVimeo: string;
+  filePath: string;
+}): Promise<void> => {
+  const { idVideoVimeo, filePath } = options;
+  return new Promise((resolve, reject) => {
+    vimeoClient.replace(
+      filePath,
+      `/videos/${idVideoVimeo}`,
+      (uri: string) => {
+        console.log('Video reemplazado con éxito:', uri);
+        resolve();
+      },
+      (uploaded: number, total: number) => {
+        console.log(`Progreso: ${((uploaded / total) * 100).toFixed(2)}%`);
+      },
+      (err: any) => {
+        console.error('Error replacing video:', err);
+        reject(err);
       },
     );
   });
