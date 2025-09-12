@@ -227,7 +227,9 @@ export const updateVideoToFolderVimeo = async (req: Request, res: Response) => {
       });
     }
 
-    await updateVideoToVimeo({ idVideoVimeo, name, description });
+    const filePath = req.file?.path;
+
+    await updateVideoToVimeo({ idVideoVimeo, filePath, name, description });
 
     res.status(200).json({
       message: 'Video updated successfully',

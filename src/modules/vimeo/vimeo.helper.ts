@@ -86,10 +86,11 @@ export const uploadVideoToVimeo = (options: {
 
 export const updateVideoToVimeo = (options: {
   idVideoVimeo: string;
+  filePath?: string;
   name?: string;
   description?: string;
 }): Promise<void> => {
-  const { idVideoVimeo, name, description } = options;
+  const { idVideoVimeo, filePath, name, description } = options;
   return new Promise((resolve, reject) => {
     const query: any = {};
     if (name) query['name'] = name;
@@ -107,7 +108,28 @@ export const updateVideoToVimeo = (options: {
           return reject(error);
         }
 
-        resolve();
+        if (!filePath) return resolve(); 
+
+        vimeoClient.replace(
+          filePath,
+          `/videos/${idVideoVimeo}`,
+          (uri: string) => {
+            console.log('Video reemplazado con éxito:', uri);
+            /*vimeoClient.request(
+            {
+              method: "POST",
+              path: `/videos/${idVideoVimeo}/pictures`,
+            });*/
+            resolve();
+          },
+          (uploaded: number, total: number) => {
+            console.log(`Progreso: ${((uploaded / total) * 100).toFixed(2)}%`);
+          },
+          (err: any) => {
+            console.error('Error replacing video:', err);
+            reject(err);
+          }
+        );
       },
     );
   });
