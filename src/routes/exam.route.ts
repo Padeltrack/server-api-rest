@@ -10,6 +10,7 @@ import {
   getRegisterAnswerExam,
   assignExamToCoach,
   finalizeAnswerExam,
+  updateQuestionnaire,
 } from '../modules/exam/exam.controller';
 import { authenticate } from '../middleware/auth.middleware';
 import { authorize } from '../middleware/roles.middleware';
@@ -79,6 +80,16 @@ examRoutes.post(
   authenticate,
   authorize(SelectRoleModel.SuperAdmin),
   assignExamToCoach,
+);
+examRoutes.patch(
+  `${pathAExam}/questionnaire/update/:id`,
+  authenticate,
+  authorize(SelectRoleModel.SuperAdmin),
+  uploadVideo.fields([
+    { name: 'upload_video', maxCount: 1 },
+    { name: 'upload_thumbnail', maxCount: 1 },
+  ]),
+  updateQuestionnaire,
 );
 examRoutes.delete(
   `${pathAExam}/questionnaire/delete/:id`,

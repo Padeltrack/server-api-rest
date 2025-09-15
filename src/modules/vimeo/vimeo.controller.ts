@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
-import fs from 'fs/promises';
 import { vimeoClient } from '../../config/vimeo.config';
 import {
   deleteVimeoVideo,
+  extractBufferToFileThumbnail,
   getInfoPublicExtractVimeoVideoById,
   updateVideoToVimeo,
   uploadVideoToVimeo,
@@ -233,19 +233,8 @@ export const updateVideoToFolderVimeo = async (req: Request, res: Response) => {
     }
 
     const videoFile = (req.files as any)?.upload_video?.[0];
-    const thumbnailFile = (req.files as any)?.upload_thumbnail?.[0];
-
     const videoPath = videoFile?.path;
-    let thumbnailBuffer: ArrayBuffer | undefined;
-
-    if (thumbnailFile) {
-      const thumbnailReadFile = await fs.readFile(thumbnailFile.path);
-
-      thumbnailBuffer = thumbnailReadFile.buffer.slice(
-        thumbnailReadFile.byteOffset,
-        thumbnailReadFile.byteOffset + thumbnailReadFile.byteLength,
-      ) as ArrayBuffer;
-    }
+    const thumbnailBuffer = await extractBufferToFileThumbnail(req);
 
     await updateVideoToVimeo({
       idVideoVimeo,

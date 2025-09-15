@@ -1,6 +1,8 @@
 import { vimeoClient } from '../../config/vimeo.config';
 import { promisify } from 'util';
+import { Request } from 'express';
 import fs from 'fs';
+import fsPromise from 'fs/promises';
 
 const unlinkAsync = promisify(fs.unlink);
 
@@ -272,4 +274,21 @@ export const getInfoPublicExtractVimeoVideoById = (options: { videoVimeo: any })
     height,
     thumbnail,
   };
+};
+
+export const extractBufferToFileThumbnail = async (req: Request) => {
+  const thumbnailFile = (req.files as any)?.upload_thumbnail?.[0];
+
+  let thumbnailBuffer: ArrayBuffer | undefined;
+
+  if (thumbnailFile) {
+    const thumbnailReadFile = await fsPromise.readFile(thumbnailFile.path);
+
+    thumbnailBuffer = thumbnailReadFile.buffer.slice(
+      thumbnailReadFile.byteOffset,
+      thumbnailReadFile.byteOffset + thumbnailReadFile.byteLength,
+    ) as ArrayBuffer;
+  }
+
+  return thumbnailBuffer;
 };

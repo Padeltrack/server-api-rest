@@ -33,6 +33,10 @@ videoRoutes.patch(
   `${pathVideo}/:id`,
   authenticate,
   authorize(SelectRoleModel.SuperAdmin),
+  uploadVideo.fields([
+    { name: 'upload_video', maxCount: 1 },
+    { name: 'upload_thumbnail', maxCount: 1 },
+  ]),
   updateVideo,
 );
 videoRoutes.patch(

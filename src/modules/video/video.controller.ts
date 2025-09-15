@@ -4,12 +4,14 @@ import { VideoMongoModel } from './video.model';
 import { CreateVideoSchemaZod, UpdateVideoSchemaZod } from './video.dto';
 import {
   deleteVimeoVideo,
+  extractBufferToFileThumbnail,
   getUrlTokenExtractVimeoVideoById,
   getVimeoVideoById,
   updateVideoToVimeo,
   uploadVideoToVimeo,
 } from '../vimeo/vimeo.helper';
 import { planVideoFolder } from '../vimeo/viemo.constant';
+import { cleanUploadedFiles } from '../../middleware/multer.middleware';
 
 export const getVideos = async (req: Request, res: Response) => {
   req.logger = req.logger.child({ service: 'videos', serviceHandler: 'getVideos' });
@@ -234,12 +236,25 @@ export const updateVideo = async (req: Request, res: Response) => {
       });
     }
 
+    const videoFile = (req.files as any)?.upload_video?.[0];
+    const videoPath = videoFile?.path;
+    const thumbnailBuffer = await extractBufferToFileThumbnail(req);
+
     const idVideoVimeo = getVideo?.idVideoVimeo;
     const isChangeName = nombre !== getVideo?.nombre || descripcion !== getVideo?.descripcion;
-    const isChangeNull = !nombre && !descripcion;
-    if (idVideoVimeo && isChangeName && !isChangeNull) {
-      await updateVideoToVimeo({ idVideoVimeo, name: nombre, description: descripcion });
+    const isUpdatedVimeo = isChangeName || videoPath || thumbnailBuffer;
+
+    if (idVideoVimeo && isUpdatedVimeo) {
+      await updateVideoToVimeo({
+        idVideoVimeo,
+        filePath: videoPath,
+        thumbnailBuffer,
+        name: nombre,
+        description: descripcion,
+      });
     }
+
+    await cleanUploadedFiles(req);
 
     const video = await VideoMongoModel.findOneAndUpdate(
       { _id: videoId },

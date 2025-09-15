@@ -17,14 +17,17 @@ import {
 } from '../user/user.model';
 import {
   deleteVimeoVideo,
+  extractBufferToFileThumbnail,
   getUrlTokenExtractVimeoVideoById,
   getVimeoVideoById,
+  updateVideoToVimeo,
   uploadVideoToVimeo,
 } from '../vimeo/vimeo.helper';
 import { examAnswerStudentFolder, examFolder } from '../vimeo/viemo.constant';
 import { sendEMail } from '../mail/sendTemplate.mail';
 import { HOST_CLIENT_ADMIN_PROD } from '../../shared/util/url.util';
 import { generateEmail } from '../mail/loadTemplate.mail';
+import { cleanUploadedFiles } from '../../middleware/multer.middleware';
 
 export const getQuestionnaireExam = async (req: Request, res: Response) => {
   req.logger = req.logger.child({ service: 'exam', serviceHandler: 'getQuestionnaireExam' });
@@ -700,6 +703,54 @@ export const assignExamToCoach = async (req: Request, res: Response) => {
     return res.status(200).json({
       message: 'Questionnaire assigned successfully',
       coach: getCoach,
+    });
+  } catch (error) {
+    if (error instanceof ZodError) {
+      return res.status(400).json({
+        message: 'Error de validación',
+        issues: error.errors,
+      });
+    }
+
+    req.logger.error({ status: 'error', code: 500, error: error.message });
+    return res.status(500).json({ message: 'Error register answer exam', error });
+  }
+};
+
+export const updateQuestionnaire = async (req: Request, res: Response) => {
+  req.logger = req.logger.child({ service: 'exam', serviceHandler: 'updateQuestionnaire' });
+  req.logger.info({ status: 'start' });
+
+  try {
+    const idQuestionnaire = req.params.id as string;
+    if (!idQuestionnaire) {
+      return res.status(400).json({
+        message: 'Video id is required',
+      });
+    }
+
+    const getQuestionnaire = await ExamQuestionnaireMongoModel.findOne({ _id: idQuestionnaire });
+    if (!getQuestionnaire) {
+      return res.status(404).json({
+        message: 'Questionnaire not found',
+      });
+    }
+
+    const videoFile = (req.files as any)?.upload_video?.[0];
+    const videoPath = videoFile?.path;
+    const thumbnailBuffer = await extractBufferToFileThumbnail(req);
+
+    const idVideoVimeo = getQuestionnaire.idVideoVimeo;
+
+    await updateVideoToVimeo({
+      idVideoVimeo,
+      filePath: videoPath,
+      thumbnailBuffer,
+    });
+    await cleanUploadedFiles(req);
+
+    res.status(200).json({
+      message: 'Video updated successfully',
     });
   } catch (error) {
     if (error instanceof ZodError) {
