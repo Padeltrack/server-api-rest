@@ -1,12 +1,13 @@
 import { Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
-import { ExamQuestionnaireMongoModel } from './exam.model';
+import { ExamQuestionnaireModel, ExamQuestionnaireMongoModel } from './exam.model';
 import { ExamAnswerMongoModel, SelectStatusAnswerModel } from './exam-answer.model';
 import {
   addQuestionnaireSchemaZod,
   AssignExamToCoachSchemaZod,
   ExamAnswerRegisterSchemaZod,
   ExamGradeRegisterSchemaZod,
+  updateQuestionnaireSchemaZod,
 } from './exam.dto';
 import { ZodError } from 'zod';
 import {
@@ -722,7 +723,14 @@ export const updateQuestionnaire = async (req: Request, res: Response) => {
   req.logger.info({ status: 'start' });
 
   try {
+    const { title, description } = updateQuestionnaireSchemaZod.parse(req.body);
     const idQuestionnaire = req.params.id as string;
+    const updateFields: Partial<Pick<ExamQuestionnaireModel, 'title' | 'description'>> = {};
+    let questionnaire: any = {};
+
+    if (title) updateFields.title = title;
+    if (description) updateFields.description = description;
+
     if (!idQuestionnaire) {
       return res.status(400).json({
         message: 'Video id is required',
@@ -742,15 +750,28 @@ export const updateQuestionnaire = async (req: Request, res: Response) => {
 
     const idVideoVimeo = getQuestionnaire.idVideoVimeo;
 
-    await updateVideoToVimeo({
-      idVideoVimeo,
-      filePath: videoPath,
-      thumbnailBuffer,
-    });
-    await cleanUploadedFiles(req);
+    if (videoPath || thumbnailBuffer) {
+      await updateVideoToVimeo({
+        idVideoVimeo,
+        filePath: videoPath,
+        thumbnailBuffer,
+      });
+      await cleanUploadedFiles(req);
+    }
+
+    if (Object.keys(updateFields).length) {
+      questionnaire = await ExamQuestionnaireMongoModel.findOneAndUpdate(
+        { _id: idQuestionnaire },
+        {
+          $set: updateFields,
+        },
+        { new: true },
+      );
+    }
 
     res.status(200).json({
       message: 'Video updated successfully',
+      questionnaire
     });
   } catch (error) {
     if (error instanceof ZodError) {
