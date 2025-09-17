@@ -178,7 +178,7 @@ export const createOrder = async (req: Request, res: Response) => {
         orderNumber: order.orderNumber,
         email: me.email,
         supportEmail: 'padeltrackhub@gmail.com',
-        companyName: 'Padel Track',
+        companyName: 'PadelTrack',
         orderDate: new Date().toLocaleString(),
         orderTotal: `${getPlan.price}`,
         orderItems: [
@@ -194,7 +194,7 @@ export const createOrder = async (req: Request, res: Response) => {
     const msg = {
       from: `${process.env.NODE_MAILER_ROOT_EMAIL}`,
       to: me.email,
-      subject: 'Recibimos tu orden de Padel Track',
+      subject: 'Recibimos tu orden de PadelTrack',
       text: '-',
       html: newOrderEmail,
     };
@@ -324,7 +324,7 @@ export const updateOrderStatus = async (req: Request, res: Response) => {
         rejectionReason: fieldsUpdated?.messageRejected || '',
         email: getUser.email,
         supportEmail: 'padeltrackhub@gmail.com',
-        companyName: 'Padel Track',
+        companyName: 'PadelTrack',
         cancellationDate: new Date().toLocaleString(),
         orderTotal: `${getPlan.price}`,
         orderItems: [
@@ -341,10 +341,10 @@ export const updateOrderStatus = async (req: Request, res: Response) => {
       from: `${process.env.NODE_MAILER_ROOT_EMAIL}`,
       to: getUser.email,
       subject: isCancel
-        ? 'Tu orden fue cancelada en Padel Track'
+        ? 'Tu orden fue cancelada en PadelTrack'
         : isApproved
-          ? 'Tu orden fue aprobada en Padel Track'
-          : 'Tu orden fue rechazada en Padel Track',
+          ? 'Tu orden fue aprobada en PadelTrack'
+          : 'Tu orden fue rechazada en PadelTrack',
       text: '-',
       html: statusOrderEmail,
     };

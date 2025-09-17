@@ -1,14 +1,10 @@
-<mjml>
-  <mj-body background-color="#f4f4f4">
-    <mj-section background-color="#f8f9fa" padding="10px 0">
-      <mj-column width="100%">
-        <mj-image
-          src="https://production-padel-track-production.up.railway.app/public/images/logo-padel-track-bg-blue.jpeg"
-          alt="Logo"
-          align="center"
-          width="350px"
-        />
-      </mj-column>
-    </mj-section>
-  </mj-body>
-</mjml>
+<mj-section background-color="#f8f9fa" padding="10px 0">
+  <mj-column width="100%">
+    <mj-image
+      src="https://production-padel-track-production.up.railway.app/public/images/logo-padel-track-bg-blue.jpeg"
+      alt="Logo"
+      align="center"
+      width="350px"
+    />
+  </mj-column>
+</mj-section>

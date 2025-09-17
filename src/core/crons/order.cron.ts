@@ -118,7 +118,7 @@ const cronOrderStatusComplete = async () => {
           const msg = {
             from: `${process.env.NODE_MAILER_ROOT_EMAIL}`,
             to: `${order.user.email}`,
-            subject: 'Orden completada, Padel Track',
+            subject: 'Orden completada, PadelTrack',
             text: '-',
             html: orderCompleteEmail,
           };

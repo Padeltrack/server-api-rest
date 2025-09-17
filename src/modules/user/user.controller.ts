@@ -468,7 +468,7 @@ export const deleteMe = async (req: Request, res: Response) => {
         email: me.email,
         supportEmail: 'padeltrackhub@gmail.com',
         helpCenterUrl: 'https://padeltrack.app',
-        companyName: 'Padel Track',
+        companyName: 'PadelTrack',
         deletionDate: new Date().toLocaleString(),
       },
     });
@@ -476,7 +476,7 @@ export const deleteMe = async (req: Request, res: Response) => {
     const msg = {
       from: `${process.env.NODE_MAILER_ROOT_EMAIL}`,
       to: me.email,
-      subject: 'Lamentamos que te vallas de Padel Track',
+      subject: 'Lamentamos que te vallas de PadelTrack',
       text: '-',
       html: deleteAccountEmail,
     };
@@ -530,7 +530,7 @@ export const deleteUser = async (req: Request, res: Response) => {
         email: getUser.email,
         supportEmail: 'padeltrackhub@gmail.com',
         helpCenterUrl: 'https://padeltrack.app',
-        companyName: 'Padel Track',
+        companyName: 'PadelTrack',
         deletionDate: new Date().toLocaleString(),
       },
     });
@@ -538,7 +538,7 @@ export const deleteUser = async (req: Request, res: Response) => {
     const msg = {
       from: `${process.env.NODE_MAILER_ROOT_EMAIL}`,
       to: getUser.email,
-      subject: 'Lamentamos que te vallas de Padel Track',
+      subject: 'Lamentamos que te vallas de PadelTrack',
       text: '-',
       html: deleteAccountEmail,
     };

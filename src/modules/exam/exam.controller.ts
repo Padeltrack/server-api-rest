@@ -604,7 +604,7 @@ export const registerGradeExam = async (req: Request, res: Response) => {
     const msg = {
       from: `${process.env.NODE_MAILER_ROOT_EMAIL}`,
       to: getUser.email,
-      subject: 'Calificación de examen, Padel Track',
+      subject: 'Calificación de examen, PadelTrack',
       text: '-',
       html: examGradeEmail,
     };
@@ -694,7 +694,7 @@ export const assignExamToCoach = async (req: Request, res: Response) => {
     const msg = {
       from: `${process.env.NODE_MAILER_ROOT_EMAIL}`,
       to: getCoach.email,
-      subject: 'Asignación de examen, Padel Track',
+      subject: 'Asignación de examen, PadelTrack',
       text: '-',
       html: assignExamEmail,
     };

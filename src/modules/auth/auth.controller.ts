@@ -81,7 +81,7 @@ export const registerUserWithGoogle = async (req: Request, res: Response) => {
     const msg = {
       from: `${process.env.NODE_MAILER_ROOT_EMAIL}`,
       to: email,
-      subject: 'Bienvenido a Padel Track',
+      subject: 'Bienvenido a PadelTrack',
       text: '-',
       html: welcomeEmail,
     };
