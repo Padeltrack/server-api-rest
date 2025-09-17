@@ -8,7 +8,7 @@
           Tu cuenta ha sido eliminada
         </mj-text>
         <mj-text font-size="14px" line-height="160%">
-          Hola {{displayName}},<br /><br />
+          <b>¡Hola {{displayName}}, lamentamos tu decisión.!</b><br /><br />
           Te confirmamos que hemos procesado la solicitud de
           <strong>eliminación de tu cuenta</strong> en {{companyName}} el día
           <strong>{{deletionDate}}</strong
@@ -20,6 +20,10 @@
           • Ya no podrás iniciar sesión con tus credenciales.<br />
           • Se desactivaron tus suscripciones y accesos asociados.<br />
           • Tus datos personales se eliminarán de manera segura.
+        </mj-text>
+
+        <mj-text line-height="160%">
+          <b>Nos esforzaremos en mejorar y brindarte un mejor servicio, esperamos verte pronto</b>
         </mj-text>
 
         <!--{{#if dataExportUrl}}
@@ -51,17 +55,6 @@
           Solicitar reactivación
         </mj-button>
         {{/if}}-->
-
-        <mj-divider border-color="#E5E7EB" padding-top="16px" padding-bottom="16px" />
-
-        <mj-text font-size="12px" line-height="170%" color="#6B7280">
-          Si tienes dudas, responde a este correo o contáctanos en
-          <a href="mailto:{{supportEmail}}" style="color: #111827; text-decoration: underline">{{supportEmail}}</a
-          >{{#if helpCenterUrl}} o visita nuestro
-          <a href="{{helpCenterUrl}}" style="color: #111827; text-decoration: underline"
-            >Centro de Ayuda</a
-          >{{/if}}.
-        </mj-text>
       </mj-column>
     </mj-section>
 
@@ -76,5 +69,20 @@
     </mj-section>
 
     <mj-include path="./src/modules/mail/templates/layout/footer.mjml" />
+
+    <mj-divider border-color="#E5E7EB" padding-top="16px" padding-bottom="16px" />
+
+    <mj-section background-color="#F9FAFB" padding="12px 0">
+      <mj-column>
+        <mj-text font-size="12px" line-height="170%" color="#6B7280">
+          Si tienes dudas, responde a este correo o contáctanos en
+          <a href="mailto:{{supportEmail}}" style="color: #111827; text-decoration: underline">{{supportEmail}}</a
+          >{{#if helpCenterUrl}} o visita nuestro
+          <a href="{{helpCenterUrl}}" style="color: #111827; text-decoration: underline"
+            >Centro de Ayuda</a
+          >{{/if}}.
+        </mj-text>
+      </mj-column>
+    </mj-section>
   </mj-body>
 </mjml>

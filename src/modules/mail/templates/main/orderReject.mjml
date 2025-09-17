@@ -4,7 +4,7 @@
 
     <mj-section background-color="#ffffff" padding="24px 0">
         <mj-column>
-            <mj-text font-size="20px" font-weight="700" line-height="130%" color="#DC2626">
+            <mj-text font-size="20px" font-weight="700" line-height="130%">
                 Tu orden ha sido rechazada
             </mj-text>
 
@@ -48,17 +48,11 @@
                 Si crees que este rechazo fue un error o deseas más información, por favor contáctanos en:
             </mj-text>
 
-            <mj-button href="mailto:{{supportEmail}}" font-size="14px" padding="8px 16px" background-color="#DC2626" color="#ffffff">
+            <mj-button href="mailto:{{supportEmail}}" font-size="14px" padding="8px 16px" background-color="#DEFE03" color="#000">
                 Contactar soporte
             </mj-button>
 
             <mj-divider border-color="#E5E7EB" padding-top="16px" padding-bottom="16px" />
-
-            <mj-text font-size="12px" line-height="170%" color="#6B7280">
-                Este correo es una notificación automática. No respondas directamente a este mensaje.  
-                Para cualquier consulta escribe a 
-                <a href="mailto:{{supportEmail}}" style="color:#111827; text-decoration:underline;">{{supportEmail}}</a>.
-            </mj-text>
         </mj-column>
     </mj-section>
 
@@ -71,5 +65,15 @@
     </mj-section>
 
     <mj-include path="./src/modules/mail/templates/layout/footer.mjml" />
+
+    <mj-section background-color="#ffffff" padding="24px 0">
+        <mj-column>
+            <mj-text font-size="12px" line-height="170%" color="#6B7280">
+                Este correo es una notificación automática. No respondas directamente a este mensaje.  
+                Para cualquier consulta escribe a 
+                <a href="mailto:{{supportEmail}}" style="color:#111827; text-decoration:underline;">{{supportEmail}}</a>.
+            </mj-text>
+        </mj-column>
+    </mj-section>
   </mj-body>
 </mjml>

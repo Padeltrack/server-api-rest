@@ -11,24 +11,22 @@
           color="#333333"
           padding-bottom="10px"
         >
-          ¡Bienvenido a Padel Track 🎉!
+          ¡Bienvenido a PadelTrack 🎉!
         </mj-text>
 
         <mj-text align="center" color="#555555" font-size="16px" line-height="24px">
           Hola <b>{{name}}</b
           >,<br /><br />
-          Gracias por registrarte en nuestra plataforma. Estamos muy felices de tenerte con
-          nosotros. Desde ahora podrás acceder a todas nuestras funcionalidades y aprovechar lo
-          mejor de nuestros servicios.
+          <b>¡Gracias por confiar en PadelTrack!.</b> Tu camino hacia un mejor rendimiento ya empezó y nos alegra ser parte de ese proceso. Con nuestra app tendrás una herramienta pensada para acompañarte en cada entrenamiento y ayudarte a dar ese salto que buscas en tu evolución.
         </mj-text>
 
-        <mj-button href="https://tusitio.com/login" font-size="16px" padding="20px">
+        <mj-button href="https://padeltrack.app/" font-size="16px" padding="20px">
           Empezar ahora
         </mj-button>
 
         <mj-text align="center" color="#999999" font-size="12px" padding-top="15px">
           Si tienes preguntas, puedes contactarte con nuestro
-          <a href="https://tusitio.com/soporte" style="color: #007bff; text-decoration: none"
+          <a href="mailto:info@padeltrack.app" style="color: #007bff; text-decoration: none"
             >Centro de Ayuda</a
           >.
         </mj-text>

@@ -4,7 +4,7 @@
 
     <mj-section background-color="#ffffff" padding="24px 0">
         <mj-column>
-            <mj-text font-size="20px" font-weight="700" line-height="130%" color="#16A34A">
+            <mj-text font-size="20px" font-weight="700" line-height="130%" color="#0C1A3E">
             ¡Tu orden ha sido aprobada!
             </mj-text>
 
@@ -14,7 +14,7 @@
             </mj-text>
 
             <mj-text font-size="14px" line-height="160%">
-                Nuestro equipo ya está preparando tu pedido. En breve recibirás más actualizaciones sobre el envío o entrega.
+                Nuestro equipo ya está preparando tu pedido. En breve recibirás más actualizaciones sobre tu orden de compra.
             </mj-text>
 
             <mj-divider border-color="#E5E7EB" padding-top="16px" padding-bottom="16px" />
@@ -61,7 +61,8 @@
         </mj-column>
     </mj-section>
 
-    <!-- ===== BLOQUE OPCIONAL: Aviso legal ===== -->
+    <mj-include path="./src/modules/mail/templates/layout/footer.mjml" />
+
     <mj-section background-color="#F9FAFB" padding="12px 0">
         <mj-column>
             <mj-text font-size="11px" line-height="160%" color="#6B7280">
@@ -69,8 +70,5 @@
             </mj-text>
         </mj-column>
     </mj-section>
-
-
-    <mj-include path="./src/modules/mail/templates/layout/footer.mjml" />
   </mj-body>
 </mjml>
