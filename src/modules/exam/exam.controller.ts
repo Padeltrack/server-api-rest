@@ -571,7 +571,7 @@ export const registerGradeExam = async (req: Request, res: Response) => {
       {
         $set: {
           answers: updatedAnswers,
-          average: average.toFixed(2),
+          average,
           status: SelectStatusAnswerModel.Completado,
         },
       },
