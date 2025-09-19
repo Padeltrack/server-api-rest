@@ -599,7 +599,7 @@ export const registerGradeExam = async (req: Request, res: Response) => {
     const examGradeEmail = await generateEmail({
       template: 'examGradeStudent',
       variables: {
-        average,
+        average: `${average}`,
         studentName: getUser.displayName,
       },
     });
