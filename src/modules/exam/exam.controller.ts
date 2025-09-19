@@ -559,7 +559,10 @@ export const registerGradeExam = async (req: Request, res: Response) => {
       });
     }
 
-    const average = (answers.reduce((sum, a) => sum + (a.score || 0), 0) / (answers.length || 1)).toFixed(2);
+    const average = parseFloat(
+      (answers.reduce((sum, a) => sum + (a.score || 0), 0) / (answers.length || 1)).toFixed(2)
+    );
+
 
     await ExamAnswerMongoModel.updateOne(
       {
@@ -568,7 +571,7 @@ export const registerGradeExam = async (req: Request, res: Response) => {
       {
         $set: {
           answers: updatedAnswers,
-          average,
+          average: average.toFixed(2),
           status: SelectStatusAnswerModel.Completado,
         },
       },
