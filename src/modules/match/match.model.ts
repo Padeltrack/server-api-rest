@@ -71,6 +71,7 @@ export interface MatchModel extends Document {
   place: string;
   tournamentName: string;
   coachId: string;
+  finalPoints: number[][];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -123,6 +124,7 @@ const MatchSchema = new Schema<MatchModel>(
     totalTime: { type: Number, required: true },
     place: { type: String, required: true },
     coachId: { type: String, required: true },
+    finalPoints: { type: [[Number]], required: true },
     tournamentName: { type: String, required: true },
   },
   {
