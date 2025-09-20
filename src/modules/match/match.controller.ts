@@ -134,6 +134,7 @@ export const getMatch = async (req: Request, res: Response) => {
           winners: 1,
           err: 1,
           screenshots: 1,
+          finalPoints: 1,
           'players._id': 1,
           'players.displayName': 1,
           'players.photo': 1,
@@ -158,7 +159,7 @@ export const createMatch = async (req: Request, res: Response) => {
   try {
     const me = req.user;
     const dataMatch = createMatchSchemaZod.parse(req.body);
-    const { playersId, playersName, screenshots } = dataMatch;
+    const { playersId, playersName, screenshots, finalPoints } = dataMatch;
 
     if (!playersId.length || !playersName.length) {
       return res.status(400).json({
@@ -169,6 +170,12 @@ export const createMatch = async (req: Request, res: Response) => {
     if (playersId.length !== 2 || playersName.length !== 2) {
       return res.status(400).json({
         message: 'Two players are required',
+      });
+    }
+
+    if (!finalPoints.length) {
+      return res.status(400).json({
+        message: 'Final Points are required',
       });
     }
 
