@@ -55,6 +55,7 @@ export const createMatchSchemaZod = z.object({
   totalTime: z.number({ required_error: 'El tiempo es requerido' }).min(0),
   place: z.string({ required_error: 'El lugar es requerido' }).min(1),
   tournamentName: z.string({ required_error: 'El nombre del torneo es requerido' }).min(1),
+  finalPoints: z.array(z.array(z.number({ required_error: 'El valor de punto final es requerido' }).min(0)))
 });
 
 export type CreateMatchDto = z.infer<typeof createMatchSchemaZod>;
