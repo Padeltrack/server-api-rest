@@ -67,11 +67,15 @@ export interface MatchModel extends Document {
   screenshots: ScreenshotsMatchModel[];
   winners: WinnersMatchModel[];
   err: ErrMatchModel[];
-  totalTime: number;
+  totalTime: string;
   place: string;
   tournamentName: string;
   coachId: string;
   finalPoints: number[][];
+  tiebreaks: number[][];
+  superTiebreaks: number[][];
+  setsNumber: number;
+  notes?: string | null; 
   createdAt: Date;
   updatedAt: Date;
 }
@@ -121,10 +125,14 @@ const MatchSchema = new Schema<MatchModel>(
     screenshots: { type: [ScreenshotsSchema], required: true },
     winners: { type: [WinnersMatchSchema], required: true },
     err: { type: [ErrMatchSchema], required: true },
-    totalTime: { type: Number, required: true },
+    totalTime: { type: String, required: true },
     place: { type: String, required: true },
     coachId: { type: String, required: true },
     finalPoints: { type: [[Number]], required: true },
+    tiebreaks: { type: [[Number]], required: true },
+    superTiebreaks: { type: [[Number]], required: true },
+    setsNumber: { type: Number, required: true },
+    notes: { type: String, required: false },
     tournamentName: { type: String, required: true },
   },
   {
