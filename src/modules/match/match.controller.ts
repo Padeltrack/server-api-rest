@@ -135,6 +135,11 @@ export const getMatch = async (req: Request, res: Response) => {
           err: 1,
           screenshots: 1,
           finalPoints: 1,
+          tiebreaks: 1,
+          superTiebreaks: 1,
+          setsNumber: 1,
+          notes: 1,
+          playersName: 1,
           'players._id': 1,
           'players.displayName': 1,
           'players.photo': 1,
@@ -159,7 +164,7 @@ export const createMatch = async (req: Request, res: Response) => {
   try {
     const me = req.user;
     const dataMatch = createMatchSchemaZod.parse(req.body);
-    const { playersId, playersName, screenshots, finalPoints } = dataMatch;
+    const { playersId, playersName, screenshots, finalPoints, superTiebreaks, tiebreaks } = dataMatch;
 
     if (!playersId.length || !playersName.length) {
       return res.status(400).json({
@@ -176,6 +181,18 @@ export const createMatch = async (req: Request, res: Response) => {
     if (!finalPoints.length) {
       return res.status(400).json({
         message: 'Final Points are required',
+      });
+    }
+
+    if (!tiebreaks.length) {
+      return res.status(400).json({
+        message: 'Tie break are required',
+      });
+    }
+
+    if (!superTiebreaks.length) {
+      return res.status(400).json({
+        message: 'Super tie breaks are required',
       });
     }
 
