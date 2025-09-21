@@ -59,7 +59,7 @@ export const createMatchSchemaZod = z.object({
   tiebreaks: z.array(z.array(z.number({ required_error: 'El valor de tie breaks es requerido' }).min(0))),
   superTiebreaks: z.array(z.array(z.number({ required_error: 'El valor de super tie breaks es requerido' }).min(0))),
   setsNumber: z.number({ required_error: 'El numero de sets es requerido' }),
-  notes: z.strin().optional();
+  notes: z.strin().optional(),
 });
 
 export type CreateMatchDto = z.infer<typeof createMatchSchemaZod>;
