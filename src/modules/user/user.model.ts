@@ -66,26 +66,34 @@ export interface UserModel extends Document {
   countryOfOrigin?: string;
   countryOfResidence?: string;
   cityOfResidence?: string;
-  gameLevel?: string;
+  frequencyClub?: string;
   dominantHand?: string;
   matchPosition?: string;
   playStyle?: string;
-  weeklyPlayFrequency?: number;
   injuryHistory?: string;
-  classPreferences?: string;
-  preferredClassSchedules?: string[];
   desiredPhysicalTrainingType?: string;
-  preferredGameSchedules?: string[];
-  otherPadelTrackInterests?: string[];
-  preferredTournamentTypes?: string[];
-  preferredCompetitionDays?: string[];
-  competitionCategories?: string[];
+  competitionGender?: string;
+  competitionCategory?: string;
+  // weeklyPlayFrequency?: number;
+  // classPreferences?: string;
+  // preferredClassSchedules?: string[];
+  // preferredGameSchedules?: string[];
+  // otherPadelTrackInterests?: string[];
+  // preferredTournamentTypes?: string[];
+  // preferredCompetitionDays?: string[];
+  // competitionCategories?: string[];
+  // currentPhysicalCondition?: string;
+  // physicalTrainingAvailability?: number;
   mainCompetitionMotivation?: string;
   gymPartnershipMatching?: boolean;
-  currentPhysicalCondition?: string;
   physicalPriority?: string;
-  physicalTrainingAvailability?: number;
-  // COACH
+  languagesSpoken?: string;
+  highestCertification?: string;
+  complementaryTraining?: string[];
+  studentsTrained?: string[];
+  workClub?: string;
+  yearsExperience?: number;
+  successStories?: string;
 }
 
 const UserOnboardingSchema = new Schema(
@@ -166,25 +174,34 @@ const UserMongoSchema = new Schema<UserModel>(
     countryOfOrigin: { type: String },
     countryOfResidence: { type: String },
     cityOfResidence: { type: String },
-    gameLevel: { type: String },
+    frequencyClub: { type: String },
     dominantHand: { type: String },
     matchPosition: { type: String },
     playStyle: { type: String },
-    weeklyPlayFrequency: { type: Number },
-    injuryHistory: { type: String },
-    classPreferences: { type: String },
-    preferredClassSchedules: [{ type: String }],
+    competitionGender: { type: String },
+    competitionCategory: { type: String },
     desiredPhysicalTrainingType: { type: String },
-    preferredGameSchedules: [{ type: String }],
-    otherPadelTrackInterests: [{ type: String }],
-    preferredTournamentTypes: [{ type: String }],
-    preferredCompetitionDays: [{ type: String }],
-    competitionCategories: [{ type: String }],
+    injuryHistory: { type: String },
+    // weeklyPlayFrequency: { type: Number },
+    // classPreferences: { type: String },
+    // preferredClassSchedules: [{ type: String }],
+    // preferredGameSchedules: [{ type: String }],
+    // otherPadelTrackInterests: [{ type: String }],
+    // preferredTournamentTypes: [{ type: String }],
+    // preferredCompetitionDays: [{ type: String }],
+    // competitionCategories: [{ type: String }],
+    // currentPhysicalCondition: { type: String },
+    // physicalTrainingAvailability: { type: Number },
     mainCompetitionMotivation: { type: String },
     gymPartnershipMatching: { type: Boolean },
-    currentPhysicalCondition: { type: String },
     physicalPriority: { type: String },
-    physicalTrainingAvailability: { type: Number },
+    languagesSpoken: { type: String },
+    highestCertification: { type: String },
+    complementaryTraining: [{ type: String }],
+    studentsTrained: [{ type: String }],
+    workClub: { type: String },
+    yearsExperience: { type: Number },
+    successStories: { type: String },
   },
   {
     timestamps: true,

@@ -354,25 +354,24 @@ export const updateMe = async (req: Request, res: Response) => {
       countryOfOrigin,
       countryOfResidence,
       cityOfResidence,
-      gameLevel,
       dominantHand,
       matchPosition,
       playStyle,
-      weeklyPlayFrequency,
       injuryHistory,
-      classPreferences,
-      preferredClassSchedules,
       desiredPhysicalTrainingType,
-      preferredGameSchedules,
-      otherPadelTrackInterests,
-      preferredTournamentTypes,
-      preferredCompetitionDays,
-      competitionCategories,
+      competitionGender,
+      competitionCategory,
+      frequencyClub,
+      languagesSpoken,
+      highestCertification,
+      complementaryTraining,
+      studentsTrained,
+      workClub,
+      yearsExperience,
+      successStories,
       mainCompetitionMotivation,
       gymPartnershipMatching,
-      currentPhysicalCondition,
       physicalPriority,
-      physicalTrainingAvailability,
     } = UpdateUserSchemaZod.parse(req.body);
     const fields: any = {};
 
@@ -384,35 +383,28 @@ export const updateMe = async (req: Request, res: Response) => {
     if (countryOfOrigin) fields['countryOfOrigin'] = countryOfOrigin;
     if (countryOfResidence) fields['countryOfResidence'] = countryOfResidence;
     if (cityOfResidence) fields['cityOfResidence'] = cityOfResidence;
-    if (gameLevel) fields['gameLevel'] = gameLevel;
+    if (competitionGender) fields['competitionGender'] = competitionGender;
     if (dominantHand) fields['dominantHand'] = dominantHand;
     if (matchPosition) fields['matchPosition'] = matchPosition;
     if (playStyle) fields['playStyle'] = playStyle;
-    if (typeof weeklyPlayFrequency === 'number')
-      fields['weeklyPlayFrequency'] = weeklyPlayFrequency;
+    if (languagesSpoken) fields['languagesSpoken'] = languagesSpoken;
     if (injuryHistory) fields['injuryHistory'] = injuryHistory;
-    if (classPreferences) fields['classPreferences'] = classPreferences;
-    if (Array.isArray(preferredClassSchedules))
-      fields['preferredClassSchedules'] = preferredClassSchedules;
+    if (competitionCategory) fields['competitionCategory'] = competitionCategory;
+    if (workClub) fields['workClub'] = workClub;
     if (desiredPhysicalTrainingType)
       fields['desiredPhysicalTrainingType'] = desiredPhysicalTrainingType;
-    if (Array.isArray(preferredGameSchedules))
-      fields['preferredGameSchedules'] = preferredGameSchedules;
-    if (Array.isArray(otherPadelTrackInterests))
-      fields['otherPadelTrackInterests'] = otherPadelTrackInterests;
-    if (Array.isArray(preferredTournamentTypes))
-      fields['preferredTournamentTypes'] = preferredTournamentTypes;
-    if (Array.isArray(preferredCompetitionDays))
-      fields['preferredCompetitionDays'] = preferredCompetitionDays;
-    if (Array.isArray(competitionCategories))
-      fields['competitionCategories'] = competitionCategories;
+    if (highestCertification) fields['highestCertification'] = highestCertification;
+    if (Array.isArray(complementaryTraining))
+      fields['complementaryTraining'] = complementaryTraining;
+    if (Array.isArray(studentsTrained))
+      fields['studentsTrained'] = studentsTrained;
+    if (successStories) fields['successStories'] = successStories;
     if (mainCompetitionMotivation) fields['mainCompetitionMotivation'] = mainCompetitionMotivation;
     if (typeof gymPartnershipMatching === 'boolean')
       fields['gymPartnershipMatching'] = gymPartnershipMatching;
-    if (currentPhysicalCondition) fields['currentPhysicalCondition'] = currentPhysicalCondition;
+    if (frequencyClub) fields['frequencyClub'] = frequencyClub;
     if (physicalPriority) fields['physicalPriority'] = physicalPriority;
-    if (typeof physicalTrainingAvailability === 'number')
-      fields['physicalTrainingAvailability'] = physicalTrainingAvailability;
+    if (typeof yearsExperience === 'number') fields['yearsExperience'] = yearsExperience;
 
     if (photo) {
       const photoUser = await uploadImagePhotoUser({ imageBase64: photo, idUser: me._id });
