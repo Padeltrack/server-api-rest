@@ -404,7 +404,7 @@ export const updateMe = async (req: Request, res: Response) => {
       fields['gymPartnershipMatching'] = gymPartnershipMatching;
     if (frequencyClub) fields['frequencyClub'] = frequencyClub;
     if (physicalPriority) fields['physicalPriority'] = physicalPriority;
-    if (typeof yearsExperience === 'number') fields['yearsExperience'] = yearsExperience;
+    if (yearsExperience) fields['yearsExperience'] = yearsExperience;
 
     if (photo) {
       const photoUser = await uploadImagePhotoUser({ imageBase64: photo, idUser: me._id });
