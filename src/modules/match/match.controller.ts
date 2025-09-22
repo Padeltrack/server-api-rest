@@ -139,6 +139,7 @@ export const getMatch = async (req: Request, res: Response) => {
           superTiebreaks: 1,
           setsNumber: 1,
           notes: 1,
+          isAD: 1,
           playersName: 1,
           'players._id': 1,
           'players.displayName': 1,
