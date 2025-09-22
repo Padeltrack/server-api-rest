@@ -47,7 +47,7 @@ export const UpdateUserSchemaZod = z.object({
   complementaryTraining: z.array(z.string()).optional(),
   studentsTrained: z.array(z.string()).optional(),
   workClub: z.string().optional(),
-  yearsExperience: z.number().optional(),
+  yearsExperience: z.string().optional(),
   successStories: z.string().optional(),
 });
 

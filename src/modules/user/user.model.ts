@@ -92,7 +92,7 @@ export interface UserModel extends Document {
   complementaryTraining?: string[];
   studentsTrained?: string[];
   workClub?: string;
-  yearsExperience?: number;
+  yearsExperience?: string;
   successStories?: string;
 }
 
@@ -200,7 +200,7 @@ const UserMongoSchema = new Schema<UserModel>(
     complementaryTraining: [{ type: String }],
     studentsTrained: [{ type: String }],
     workClub: { type: String },
-    yearsExperience: { type: Number },
+    yearsExperience: { type: String },
     successStories: { type: String },
   },
   {
