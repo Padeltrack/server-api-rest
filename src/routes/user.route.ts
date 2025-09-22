@@ -23,7 +23,7 @@ userRoutes.get(`${pathUser}/me`, authenticate, getMe);
 userRoutes.get(
   `${pathUser}/coach`,
   authenticate,
-  // authorize(SelectRoleModel.Student),
+  authorize(SelectRoleModel.Student),
   getCoachOrStudentUsers,
 );
 userRoutes.get(

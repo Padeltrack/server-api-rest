@@ -76,6 +76,7 @@ export interface MatchModel extends Document {
   superTiebreaks: number[][];
   setsNumber: number;
   notes?: string | null; 
+  isAD: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -133,6 +134,7 @@ const MatchSchema = new Schema<MatchModel>(
     superTiebreaks: { type: [[Number]], required: true },
     setsNumber: { type: Number, required: true },
     notes: { type: String, required: false },
+    isAD: { type: Boolean, required: true },
     tournamentName: { type: String, required: true },
   },
   {
