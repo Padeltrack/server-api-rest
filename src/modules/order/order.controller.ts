@@ -11,6 +11,7 @@ import { getVideosByWeek } from '../weeklyVideo/weeklyVideo.model.helper';
 import { generateEmail } from '../mail/loadTemplate.mail';
 import { sendEMail } from '../mail/sendTemplate.mail';
 import { CounterMongoModel } from '../counter/counter.model';
+import { HOST_CLIENT_ADMIN_PROD } from '../../shared/util/url.util';
 
 export const getOrders = async (req: Request, res: Response) => {
   req.logger = req.logger.child({ service: 'order', serviceHandler: 'getOrders' });
@@ -200,6 +201,36 @@ export const createOrder = async (req: Request, res: Response) => {
     };
 
     sendEMail({ data: msg });
+
+    // NOTIFICATION ADMIN
+
+    const newOrderAdminEmail = await generateEmail({
+      template: 'newOrderAdmin',
+      variables: {
+        displayName: 'Administrador',
+        orderNumber: order.orderNumber,
+        orderDate: new Date().toLocaleString(),
+        orderTotal: `${getPlan.price}`,
+        orderItems: [
+          {
+            name: `${getPlan.name}`,
+            quantity: '1',
+            price: `${getPlan.price}`,
+          },
+        ] as any,
+        orderLink: `${HOST_CLIENT_ADMIN_PROD}/order/${idOrder}`,
+      },
+    });
+
+    const msgAdmin = {
+      from: `${process.env.NODE_MAILER_ROOT_EMAIL}`,
+      to: `${process.env.NODE_MAILER_ROOT_EMAIL}`,
+      subject: 'Nueva orden de compra en PadelTrack',
+      text: '-',
+      html: newOrderAdminEmail,
+    };
+
+    sendEMail({ data: msgAdmin });
 
     return res.status(200).json({ order });
   } catch (error) {

@@ -75,7 +75,7 @@ export interface MatchModel extends Document {
   tiebreaks: number[][];
   superTiebreaks: number[][];
   setsNumber: number;
-  notes?: string | null; 
+  notes?: string | null;
   isAD: boolean;
   createdAt: Date;
   updatedAt: Date;

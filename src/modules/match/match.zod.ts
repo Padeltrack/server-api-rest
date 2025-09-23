@@ -55,9 +55,15 @@ export const createMatchSchemaZod = z.object({
   totalTime: z.string({ required_error: 'El tiempo es requerido' }),
   place: z.string({ required_error: 'El lugar es requerido' }).min(1),
   tournamentName: z.string({ required_error: 'El nombre del torneo es requerido' }).min(1),
-  finalPoints: z.array(z.array(z.number({ required_error: 'El valor de punto final es requerido' }).min(0))),
-  tiebreaks: z.array(z.array(z.number({ required_error: 'El valor de tie breaks es requerido' }).min(0))),
-  superTiebreaks: z.array(z.array(z.number({ required_error: 'El valor de super tie breaks es requerido' }).min(0))),
+  finalPoints: z.array(
+    z.array(z.number({ required_error: 'El valor de punto final es requerido' }).min(0)),
+  ),
+  tiebreaks: z.array(
+    z.array(z.number({ required_error: 'El valor de tie breaks es requerido' }).min(0)),
+  ),
+  superTiebreaks: z.array(
+    z.array(z.number({ required_error: 'El valor de super tie breaks es requerido' }).min(0)),
+  ),
   setsNumber: z.number({ required_error: 'El numero de sets es requerido' }),
   notes: z.string().optional(),
   isAD: z.boolean(),

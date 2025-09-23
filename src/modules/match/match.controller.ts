@@ -165,7 +165,8 @@ export const createMatch = async (req: Request, res: Response) => {
   try {
     const me = req.user;
     const dataMatch = createMatchSchemaZod.parse(req.body);
-    const { playersId, playersName, screenshots, finalPoints, superTiebreaks, tiebreaks } = dataMatch;
+    const { playersId, playersName, screenshots, finalPoints, superTiebreaks, tiebreaks } =
+      dataMatch;
 
     if (!playersId.length || !playersName.length) {
       return res.status(400).json({

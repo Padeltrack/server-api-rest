@@ -396,8 +396,7 @@ export const updateMe = async (req: Request, res: Response) => {
     if (highestCertification) fields['highestCertification'] = highestCertification;
     if (Array.isArray(complementaryTraining))
       fields['complementaryTraining'] = complementaryTraining;
-    if (Array.isArray(studentsTrained))
-      fields['studentsTrained'] = studentsTrained;
+    if (Array.isArray(studentsTrained)) fields['studentsTrained'] = studentsTrained;
     if (successStories) fields['successStories'] = successStories;
     if (mainCompetitionMotivation) fields['mainCompetitionMotivation'] = mainCompetitionMotivation;
     if (typeof gymPartnershipMatching === 'boolean')

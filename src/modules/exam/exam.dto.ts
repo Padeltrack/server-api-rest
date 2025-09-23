@@ -21,7 +21,10 @@ export const addQuestionnaireSchemaZod = z.object({
 });
 
 export const updateQuestionnaireSchemaZod = z.object({
-  title: z.string({ required_error: 'El titulo es requerido' }).min(1, 'El titulo es requerido').optional(),
+  title: z
+    .string({ required_error: 'El titulo es requerido' })
+    .min(1, 'El titulo es requerido')
+    .optional(),
   description: z
     .string({ required_error: 'La descripción es requerida' })
     .min(1, 'La descripción es requerida')

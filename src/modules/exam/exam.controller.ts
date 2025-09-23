@@ -367,6 +367,29 @@ export const registerAnswerExam = async (req: Request, res: Response) => {
     const countAnswers = currentExam?.answers?.length || 0;
     if (questionsExamCount === countAnswers + 1) {
       isComplete = true;
+
+      // NOTIFICATION ADMIN
+
+      const notificationAdminEmail = await generateEmail({
+        template: 'newExamAdmin',
+        variables: {
+          displayName: 'Administrador',
+          examId: currentExam._id,
+          submittedAt: new Date().toLocaleString(),
+          studentName: me.displayName,
+          assignExamLink: `${HOST_CLIENT_ADMIN_PROD}/exams/${currentExam._id}`,
+        },
+      });
+
+      const msgAdmin = {
+        from: `${process.env.NODE_MAILER_ROOT_EMAIL}`,
+        to: `${process.env.NODE_MAILER_ROOT_EMAIL}`,
+        subject: 'Nuevo examen a revisar en PadelTrack',
+        text: '-',
+        html: notificationAdminEmail,
+      };
+
+      sendEMail({ data: msgAdmin });
     }
 
     return res.status(200).json({
@@ -560,9 +583,8 @@ export const registerGradeExam = async (req: Request, res: Response) => {
     }
 
     const average = parseFloat(
-      (answers.reduce((sum, a) => sum + (a.score || 0), 0) / (answers.length || 1)).toFixed(2)
+      (answers.reduce((sum, a) => sum + (a.score || 0), 0) / (answers.length || 1)).toFixed(2),
     );
-
 
     await ExamAnswerMongoModel.updateOne(
       {
@@ -774,7 +796,7 @@ export const updateQuestionnaire = async (req: Request, res: Response) => {
 
     res.status(200).json({
       message: 'Video updated successfully',
-      questionnaire
+      questionnaire,
     });
   } catch (error) {
     if (error instanceof ZodError) {
