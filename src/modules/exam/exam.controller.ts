@@ -726,6 +726,29 @@ export const assignExamToCoach = async (req: Request, res: Response) => {
 
     sendEMail({ data: msg });
 
+    // students
+
+    const notifyStudentAssignExamEmail = await generateEmail({
+      template: 'notifyStudentAssignCoachExam',
+      variables: {
+        coachName: getCoach.displayName,
+        studentName: getUser.displayName,
+        reviewHours: '48',
+        examTitle: 'Preparación física',
+        supportEmail: 'padeltrackhub@gmail.com',
+      },
+    });
+
+    const msgStudent = {
+      from: `${process.env.NODE_MAILER_ROOT_EMAIL}`,
+      to: getUser.email,
+      subject: 'Revisión de examen, PadelTrack',
+      text: '-',
+      html: notifyStudentAssignExamEmail,
+    };
+
+    sendEMail({ data: msgStudent });
+
     return res.status(200).json({
       message: 'Questionnaire assigned successfully',
       coach: getCoach,
