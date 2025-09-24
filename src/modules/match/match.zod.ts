@@ -29,8 +29,7 @@ export const createMatchSchemaZod = z.object({
         ]),
         comment: z.string().optional(),
       }),
-    )
-    .min(1),
+    ).optional(),
   err: z.array(
     z.object({
       mainErrorType: z.enum([
@@ -51,7 +50,7 @@ export const createMatchSchemaZod = z.object({
       ]),
       comment: z.string().optional(),
     }),
-  ),
+  ).optional(),
   totalTime: z.string({ required_error: 'El tiempo es requerido' }),
   place: z.string({ required_error: 'El lugar es requerido' }).min(1),
   tournamentName: z.string({ required_error: 'El nombre del torneo es requerido' }).min(1),
