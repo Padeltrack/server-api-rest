@@ -29,28 +29,31 @@ export const createMatchSchemaZod = z.object({
         ]),
         comment: z.string().optional(),
       }),
-    ).optional(),
-  err: z.array(
-    z.object({
-      mainErrorType: z.enum([
-        SelectMainErrorTypeModel.forcedError,
-        SelectMainErrorTypeModel.unforcedError,
-      ]),
-      zone: z.enum([SelectZoneModel.backcourt, SelectZoneModel.net, SelectZoneModel.transition]),
-      shotType: z.enum([
-        SelectShotTypeModel.block,
-        SelectShotTypeModel.dropShot,
-        SelectShotTypeModel.smash,
-        SelectShotTypeModel.volley,
-      ]),
-      errorType: z.enum([
-        SelectErrorTypeModel.physical,
-        SelectErrorTypeModel.tactical,
-        SelectErrorTypeModel.technical,
-      ]),
-      comment: z.string().optional(),
-    }),
-  ).optional(),
+    )
+    .optional(),
+  err: z
+    .array(
+      z.object({
+        mainErrorType: z.enum([
+          SelectMainErrorTypeModel.forcedError,
+          SelectMainErrorTypeModel.unforcedError,
+        ]),
+        zone: z.enum([SelectZoneModel.backcourt, SelectZoneModel.net, SelectZoneModel.transition]),
+        shotType: z.enum([
+          SelectShotTypeModel.block,
+          SelectShotTypeModel.dropShot,
+          SelectShotTypeModel.smash,
+          SelectShotTypeModel.volley,
+        ]),
+        errorType: z.enum([
+          SelectErrorTypeModel.physical,
+          SelectErrorTypeModel.tactical,
+          SelectErrorTypeModel.technical,
+        ]),
+        comment: z.string().optional(),
+      }),
+    )
+    .optional(),
   totalTime: z.string({ required_error: 'El tiempo es requerido' }),
   place: z.string({ required_error: 'El lugar es requerido' }).min(1),
   tournamentName: z.string({ required_error: 'El nombre del torneo es requerido' }).min(1),
