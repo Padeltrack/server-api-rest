@@ -391,7 +391,7 @@ export const updateMe = async (req: Request, res: Response) => {
     if (injuryHistory) fields['injuryHistory'] = injuryHistory;
     if (competitionCategory) fields['competitionCategory'] = competitionCategory;
     if (workClub) fields['workClub'] = workClub;
-    if (desiredPhysicalTrainingType)
+    if (Array.isArray(desiredPhysicalTrainingType))
       fields['desiredPhysicalTrainingType'] = desiredPhysicalTrainingType;
     if (highestCertification) fields['highestCertification'] = highestCertification;
     if (Array.isArray(complementaryTraining))

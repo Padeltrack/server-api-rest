@@ -71,7 +71,7 @@ export interface UserModel extends Document {
   matchPosition?: string;
   playStyle?: string;
   injuryHistory?: string;
-  desiredPhysicalTrainingType?: string;
+  desiredPhysicalTrainingType?: string[];
   competitionGender?: string;
   competitionCategory?: string;
   // weeklyPlayFrequency?: number;
@@ -180,7 +180,7 @@ const UserMongoSchema = new Schema<UserModel>(
     playStyle: { type: String },
     competitionGender: { type: String },
     competitionCategory: { type: String },
-    desiredPhysicalTrainingType: { type: String },
+    desiredPhysicalTrainingType: [{ type: String }],
     injuryHistory: { type: String },
     // weeklyPlayFrequency: { type: Number },
     // classPreferences: { type: String },

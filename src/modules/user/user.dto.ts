@@ -35,7 +35,7 @@ export const UpdateUserSchemaZod = z.object({
   matchPosition: z.string().optional(),
   playStyle: z.string().optional(),
   injuryHistory: z.string().optional(),
-  desiredPhysicalTrainingType: z.string().optional(),
+  desiredPhysicalTrainingType: z.array(z.string()).optional(),
   mainCompetitionMotivation: z.string().optional(),
   gymPartnershipMatching: z.boolean().optional(),
   physicalPriority: z.string().optional(),
