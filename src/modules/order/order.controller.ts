@@ -286,7 +286,7 @@ export const updateOrderStatus = async (req: Request, res: Response) => {
     const getUser = await UserMongoModel.findOne({ _id: getOrder.userId });
     if (!getUser) {
       return res.status(404).json({
-        message: 'User not found',
+        message: 'Usuario no encontrado',
       });
     }
 

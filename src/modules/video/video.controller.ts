@@ -86,7 +86,7 @@ export const getVideoById = async (req: Request, res: Response) => {
     const _id = req.params.id;
 
     if (!_id) {
-      return res.status(400).json({ message: 'Video id is required' });
+      return res.status(400).json({ message: 'Se requiere identificación de video' });
     }
 
     const video: any = await VideoMongoModel.findOne({ _id });
@@ -129,7 +129,7 @@ export const addVideo = async (req: Request, res: Response) => {
     const filePath = req.file?.path;
 
     if (!filePath) {
-      return res.status(400).json({ message: 'No file uploaded' });
+      return res.status(400).json({ message: 'No se ha subido ningún archivo' });
     }
 
     const result: any = await uploadVideoToVimeo({
@@ -171,11 +171,11 @@ export const updateFileVideo = async (req: Request, res: Response) => {
     const filePath = req.file?.path;
 
     if (!videoId) {
-      return res.status(400).json({ message: 'Video id is required' });
+      return res.status(400).json({ message: 'Se requiere identificación de video' });
     }
 
     if (!filePath) {
-      return res.status(400).json({ message: 'No file uploaded' });
+      return res.status(400).json({ message: 'No se ha subido ningún archivo' });
     }
 
     const getVideo = await VideoMongoModel.findOne({ _id: videoId });
@@ -225,7 +225,7 @@ export const updateVideo = async (req: Request, res: Response) => {
 
     if (!videoId) {
       return res.status(400).json({
-        message: 'Video id is required',
+        message: 'Se requiere identificación de video',
       });
     }
 
@@ -283,7 +283,7 @@ export const deleteVideo = async (req: Request, res: Response) => {
 
     if (!videoId) {
       return res.status(400).json({
-        message: 'Video id is required',
+        message: 'Se requiere identificación de video',
       });
     }
 

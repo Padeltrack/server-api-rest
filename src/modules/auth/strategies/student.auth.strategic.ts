@@ -12,7 +12,7 @@ export const studentsAuthStrategic = async (options: {
 
   if (isPanelAdmin) {
     return res.status(403).json({
-      message: 'Forbidden',
+      message: 'Prohibido',
     });
   }
 

@@ -120,7 +120,7 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "message": { "type": "String", "example": "User not found" }
+                  "message": { "type": "String", "example": "Usuario no encontrado" }
                 }
               }
             }

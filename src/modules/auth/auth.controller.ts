@@ -31,7 +31,7 @@ export const registerUserWithGoogle = async (req: Request, res: Response) => {
 
     if (!email) {
       return res.status(400).json({
-        message: 'Email is required',
+        message: 'Se requiere correo electrónico',
       });
     }
 
@@ -39,21 +39,21 @@ export const registerUserWithGoogle = async (req: Request, res: Response) => {
 
     if (countUser) {
       return res.status(401).json({
-        message: 'User already exists',
+        message: 'La usuario ya existe',
         isRegister: true,
       });
     }
 
     if (!onboarding.length) {
       return res.status(404).json({
-        message: 'No onboarding found',
+        message: 'No se encontró ninguna incorporación',
       });
     }
 
     const { valid, errors } = await validateOnboardingAnswers({ onboarding });
     if (!valid) {
       return res.status(400).json({
-        message: 'Invalid onboarding answers',
+        message: 'Respuestas de incorporación no válidas',
         errors,
       });
     }
@@ -95,7 +95,7 @@ export const registerUserWithGoogle = async (req: Request, res: Response) => {
     };
 
     return res.status(200).json({
-      message: 'Register successful',
+      message: 'Registro exitoso',
       me,
     });
   } catch (error) {
@@ -127,7 +127,7 @@ export const loginWithGoogle = async (req: Request, res: Response) => {
 
     if (!email) {
       return res.status(404).json({
-        message: 'User not found',
+        message: 'Usuario no encontrado',
       });
     }
 
@@ -135,7 +135,7 @@ export const loginWithGoogle = async (req: Request, res: Response) => {
 
     if (!getUser) {
       return res.status(404).json({
-        message: 'User not found',
+        message: 'Usuario no encontrado',
         isRegister: false,
       });
     }
@@ -168,7 +168,7 @@ export const verifyAdminMfa = async (req: Request, res: Response) => {
 
     if (!email) {
       return res.status(404).json({
-        message: 'User not found',
+        message: 'Usuario no encontrado',
         isRegister: true,
       });
     }
@@ -177,13 +177,13 @@ export const verifyAdminMfa = async (req: Request, res: Response) => {
 
     if (!getUser?.mfaSecret) {
       return res.status(401).json({
-        message: 'User not admin',
+        message: 'Usuario no encontrado',
       });
     }
 
     if (![SelectRoleModel.Admin, SelectRoleModel.SuperAdmin].includes(getUser.role as any)) {
       return res.status(401).json({
-        message: 'User not admin',
+        message: 'Usuario no encontrado',
       });
     }
 
@@ -208,7 +208,7 @@ export const verifyAdminMfa = async (req: Request, res: Response) => {
     };
 
     return res.status(200).json({
-      message: 'Login successful',
+      message: 'Inicio de sesión exitosa',
       me,
     });
   } catch (error) {

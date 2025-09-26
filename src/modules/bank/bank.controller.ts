@@ -14,7 +14,7 @@ export const getBanks = async (req: Request, res: Response) => {
     return res.status(200).json({ banks });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(500).json({ message: 'Error fetching banks', error });
+    return res.status(500).json({ message: 'Error al obtener los bancos', error });
   }
 };
 
@@ -29,7 +29,7 @@ export const createBank = async (req: Request, res: Response) => {
     const getBank = await BankMongoModel.findOne({ numberAccount });
     if (getBank) {
       return res.status(400).json({
-        message: 'Bank already exists',
+        message: 'El banco ya existe',
       });
     }
 
@@ -52,7 +52,7 @@ export const createBank = async (req: Request, res: Response) => {
     }
 
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(500).json({ message: 'Error creating bank', error });
+    return res.status(500).json({ message: 'Error al crear el banco', error });
   }
 };
 
@@ -68,7 +68,7 @@ export const updateBank = async (req: Request, res: Response) => {
 
     if (!_id) {
       return res.status(404).json({
-        message: 'Not found id bank',
+        message: 'No se encontró el banco de identificación',
       });
     }
 
@@ -94,7 +94,7 @@ export const updateBank = async (req: Request, res: Response) => {
     }
 
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(500).json({ message: 'Error updating bank', error });
+    return res.status(500).json({ message: 'Error al actualizar el banco', error });
   }
 };
 
@@ -107,17 +107,17 @@ export const deleteBank = async (req: Request, res: Response) => {
 
     if (!id) {
       return res.status(404).json({
-        message: 'Not found id bank',
+        message: 'No se encontró el banco de identificación',
       });
     }
 
     await BankMongoModel.deleteOne({ _id: id });
 
     return res.status(200).json({
-      message: 'Bank deleted successfully',
+      message: 'Banco eliminado exitosamente',
     });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(500).json({ message: 'Error creating bank', error });
+    return res.status(500).json({ message: 'Error al eliminar el banco', error });
   }
 };

@@ -25,7 +25,7 @@ export const authenticate = async (req: Request, res: Response, next: NextFuncti
     const user = await UserMongoModel.findOne({ _id: decoded._id });
 
     if (!user) {
-      return res.status(401).json({ message: 'User not found' });
+      return res.status(401).json({ message: 'Usuario no encontrado' });
     }
 
     req.user = user;

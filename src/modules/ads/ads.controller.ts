@@ -18,7 +18,7 @@ export const getAds = async (req: Request, res: Response) => {
     return res.status(200).json({ ads });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(500).json({ message: 'Error fetching ads', error });
+    return res.status(500).json({ message: 'Error al obtener anuncios', error });
   }
 };
 
@@ -55,7 +55,7 @@ export const createAds = async (req: Request, res: Response) => {
       });
     }
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(500).json({ message: 'Error creating ads', error });
+    return res.status(500).json({ message: 'Error al crear anuncios', error });
   }
 };
 
@@ -75,7 +75,7 @@ export const updateAds = async (req: Request, res: Response) => {
     const getAds = await AdsMongoModel.findOne({ _id: idAds });
     if (!getAds) {
       return res.status(404).json({
-        message: 'Ads not found',
+        message: 'Anuncios no encontrados',
       });
     }
 
@@ -107,7 +107,7 @@ export const updateAds = async (req: Request, res: Response) => {
 
     return res.status(200).json({
       ads,
-      message: 'Ads updated successfully',
+      message: 'Anuncios actualizados exitosamente',
     });
   } catch (error) {
     if (error instanceof ZodError) {
@@ -117,7 +117,7 @@ export const updateAds = async (req: Request, res: Response) => {
       });
     }
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(500).json({ message: 'Error fetching ads', error });
+    return res.status(500).json({ message: 'Error al actualizar los anuncios', error });
   }
 };
 
@@ -130,14 +130,14 @@ export const deleteAds = async (req: Request, res: Response) => {
 
     if (!id) {
       return res.status(400).json({
-        message: 'Id is required',
+        message: 'Se requiere identificación',
       });
     }
 
     const ads = await AdsMongoModel.findOne({ _id: id });
     if (!ads) {
       return res.status(404).json({
-        message: 'Ads not found',
+        message: 'Anuncios no encontrados',
       });
     }
 
@@ -147,10 +147,10 @@ export const deleteAds = async (req: Request, res: Response) => {
     await AdsMongoModel.deleteOne({ _id: id });
 
     return res.status(200).json({
-      message: 'Ads deleted successfully',
+      message: 'Anuncios eliminados exitosamente',
     });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(500).json({ message: 'Error removing ads', error });
+    return res.status(500).json({ message: 'Error al eliminar anuncios', error });
   }
 };

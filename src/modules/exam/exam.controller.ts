@@ -51,7 +51,7 @@ export const getQuestionnaireExam = async (req: Request, res: Response) => {
     return res.status(200).json({ questionnaires });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(500).json({ message: 'Error fetching questions exam', error });
+    return res.status(500).json({ message: 'Error al obtener las preguntas del examen', error });
   }
 };
 
@@ -136,7 +136,7 @@ export const getAnswerExamByList = async (req: Request, res: Response) => {
     return res.status(200).json({ exams, count });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(500).json({ message: 'Error fetching answer exam list', error });
+    return res.status(500).json({ message: 'Error al obtener la lista de respuestas del examen', error });
   }
 };
 
@@ -170,7 +170,7 @@ export const getAnswerExamById = async (req: Request, res: Response) => {
       .sort({ order: -1 });
     if (!getExam) {
       return res.status(404).json({
-        message: 'Answer not found',
+        message: 'Respuesta no encontrada',
       });
     }
 
@@ -215,7 +215,7 @@ export const getAnswerExamById = async (req: Request, res: Response) => {
     return res.status(200).json({ exam: getExam, hasAllQuestionsAnswered });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(500).json({ message: 'Error fetching answer exam by id', error });
+    return res.status(500).json({ message: 'Error al obtener la respuesta del examen por id', error });
   }
 };
 
@@ -232,7 +232,7 @@ export const getRegisterAnswerExam = async (req: Request, res: Response) => {
 
     if (!currentExam) {
       return res.status(200).json({
-        message: 'You have not registered for the exam yet',
+        message: 'Aún no te has inscrito para el examen',
         answers: [],
         hasAllQuestionsAnswered: false,
       });
@@ -255,7 +255,7 @@ export const getRegisterAnswerExam = async (req: Request, res: Response) => {
     return res.status(200).json({ answers: answersLinkVideo, status: currentExam.status });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(500).json({ message: 'Error fetching answer exam by id', error });
+    return res.status(500).json({ message: 'Error al obtener la respuesta del examen por id', error });
   }
 };
 
@@ -271,27 +271,27 @@ export const registerAnswerExam = async (req: Request, res: Response) => {
 
     if (me.level) {
       return res.status(401).json({
-        message: 'You have already completed the exam',
+        message: 'Ya has completado el examen',
       });
     }
     let isComplete = false;
 
     const getExistQuestionExam = await ExamQuestionnaireMongoModel.exists({ _id: questionnaireId });
     if (!getExistQuestionExam) {
-      return res.status(404).json({ message: 'Question not found' });
+      return res.status(404).json({ message: 'Pregunta no encontrada' });
     }
 
     const currentExam = await ExamAnswerMongoModel.findOne({ userId }).sort({ createdAt: -1 });
 
     if (currentExam && currentExam.status !== SelectStatusAnswerModel.Pendiente) {
       return res.status(400).json({
-        message: 'You have already completed the exam',
+        message: 'Ya has completado el examen',
         isComplete: true,
       });
     }
 
     if (!filePath) {
-      return res.status(400).json({ message: 'No file uploaded' });
+      return res.status(400).json({ message: 'No se ha subido ningún archivo' });
     }
 
     const result: any = await uploadVideoToVimeo({
@@ -321,7 +321,7 @@ export const registerAnswerExam = async (req: Request, res: Response) => {
       });
 
       return res.status(200).json({
-        message: 'Answer registered successfully',
+        message: 'Respuesta registrada exitosamente',
         isComplete: false,
       });
     }
@@ -393,7 +393,7 @@ export const registerAnswerExam = async (req: Request, res: Response) => {
     }
 
     return res.status(200).json({
-      message: 'Answer registered successfully',
+      message: 'Respuesta registrada exitosamente',
       isComplete,
     });
   } catch (error) {
@@ -419,7 +419,7 @@ export const finalizeAnswerExam = async (req: Request, res: Response) => {
 
     if (me.level) {
       return res.status(401).json({
-        message: 'You have already completed the exam',
+        message: 'Ya has completado el examen',
       });
     }
     let isComplete = false;
@@ -427,13 +427,13 @@ export const finalizeAnswerExam = async (req: Request, res: Response) => {
 
     if (!currentExam) {
       return res.status(404).json({
-        message: 'Exam not found',
+        message: 'Examen no encontrado',
       });
     }
 
     if (currentExam.status !== SelectStatusAnswerModel.Pendiente) {
       return res.status(400).json({
-        message: 'You have already completed the exam',
+        message: 'Ya has completado el examen',
         isComplete: true,
       });
     }
@@ -449,13 +449,13 @@ export const finalizeAnswerExam = async (req: Request, res: Response) => {
       isComplete = true;
     } else {
       return res.status(400).json({
-        message: 'You have not completed the exam',
+        message: 'No has completado el examen',
         isComplete: false,
       });
     }
 
     return res.status(200).json({
-      message: 'Answer finalized successfully',
+      message: 'Respuesta finalizada exitosamente',
       isComplete,
     });
   } catch (error) {
@@ -467,7 +467,7 @@ export const finalizeAnswerExam = async (req: Request, res: Response) => {
     }
 
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(500).json({ message: 'Error register answer exam', error });
+    return res.status(500).json({ message: 'Error en el registro de respuestas del examen', error });
   }
 };
 
@@ -480,7 +480,7 @@ export const addQuestionnaire = async (req: Request, res: Response) => {
     const filePath = req.file?.path;
 
     if (!filePath) {
-      return res.status(400).json({ message: 'No file uploaded' });
+      return res.status(400).json({ message: 'No se ha subido ningún archivo' });
     }
 
     const result: any = await uploadVideoToVimeo({
@@ -509,7 +509,7 @@ export const addQuestionnaire = async (req: Request, res: Response) => {
     });
 
     return res.status(200).json({
-      message: 'Add questionnaire successfully',
+      message: 'Añadir cuestionario correctamente',
     });
   } catch (error) {
     if (error instanceof ZodError) {
@@ -520,7 +520,7 @@ export const addQuestionnaire = async (req: Request, res: Response) => {
     }
 
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(500).json({ message: 'Error register answer exam', error });
+    return res.status(500).json({ message: 'Error en el registro de respuestas del examen', error });
   }
 };
 
@@ -536,38 +536,38 @@ export const registerGradeExam = async (req: Request, res: Response) => {
 
     if (!getExamAnswer) {
       return res.status(404).json({
-        message: 'Answer not found',
+        message: 'Respuesta no encontrada',
       });
     }
 
     if (me._id !== getExamAnswer?.assignCoachId) {
       return res.status(403).json({
-        message: 'Forbidden',
+        message: 'Prohibido',
       });
     }
 
     if (getExamAnswer.status !== SelectStatusAnswerModel.Revision) {
       return res.status(400).json({
-        message: 'Answer not found',
+        message: 'Respuesta no encontrada',
       });
     }
 
     if (!answers.length) {
       return res.status(404).json({
-        message: 'No answers found',
+        message: 'No se encontraron respuestas',
       });
     }
 
     if (getExamAnswer.answers.length !== answers.length) {
       return res.status(400).json({
-        message: 'Number of answers does not match',
+        message: 'El número de respuestas no coincide',
       });
     }
 
     const getUser = await UserMongoModel.findOne({ _id: getExamAnswer.userId });
     if (!getUser) {
       return res.status(404).json({
-        message: 'User not found',
+        message: 'Usuario no encontrado',
       });
     }
 
@@ -578,7 +578,7 @@ export const registerGradeExam = async (req: Request, res: Response) => {
 
     if (updatedAnswers.length !== answers.length) {
       return res.status(400).json({
-        message: 'Number of answers does not match',
+        message: 'El número de respuestas no coincide',
       });
     }
 
@@ -637,7 +637,7 @@ export const registerGradeExam = async (req: Request, res: Response) => {
     sendEMail({ data: msg });
 
     return res.status(200).json({
-      message: 'Grade registered successfully',
+      message: 'Grado registrado exitosamente',
       updatedAnswers,
       levelUser,
       average,
@@ -652,7 +652,7 @@ export const registerGradeExam = async (req: Request, res: Response) => {
     }
 
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(500).json({ message: 'Error fetching grade exam', error });
+    return res.status(500).json({ message: 'Error en el registro de respuestas del examen', error });
   }
 };
 
@@ -666,20 +666,20 @@ export const assignExamToCoach = async (req: Request, res: Response) => {
     const getExamAnswer = await ExamAnswerMongoModel.findOne({ _id: examAnswerId });
     if (!getExamAnswer) {
       return res.status(404).json({
-        message: 'Exam answer not found',
+        message: 'Exam Respuesta no encontrada',
       });
     }
 
     const getUser = await UserMongoModel.findOne({ _id: getExamAnswer.userId });
     if (!getUser) {
       return res.status(404).json({
-        message: 'User not found',
+        message: 'Usuario no encontrado',
       });
     }
 
     if (coachId === getUser._id) {
       return res.status(400).json({
-        message: 'You cannot assign your own exam to yourself',
+        message: 'No puedes asignarte tu propio examen',
       });
     }
 
@@ -689,14 +689,14 @@ export const assignExamToCoach = async (req: Request, res: Response) => {
       )
     ) {
       return res.status(400).json({
-        message: 'Exam answer is not in a valid state',
+        message: 'La respuesta del examen no está en un estado válido',
       });
     }
 
     const getCoach = await UserMongoModel.findOne({ _id: coachId });
     if (!getCoach) {
       return res.status(404).json({
-        message: 'Coach not found',
+        message: 'Entrenador no encontrado',
       });
     }
 
@@ -750,7 +750,7 @@ export const assignExamToCoach = async (req: Request, res: Response) => {
     sendEMail({ data: msgStudent });
 
     return res.status(200).json({
-      message: 'Questionnaire assigned successfully',
+      message: 'Cuestionario asignado con éxito',
       coach: getCoach,
     });
   } catch (error) {
@@ -762,7 +762,7 @@ export const assignExamToCoach = async (req: Request, res: Response) => {
     }
 
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(500).json({ message: 'Error register answer exam', error });
+    return res.status(500).json({ message: 'Error en el registro de respuestas del examen', error });
   }
 };
 
@@ -781,14 +781,14 @@ export const updateQuestionnaire = async (req: Request, res: Response) => {
 
     if (!idQuestionnaire) {
       return res.status(400).json({
-        message: 'Video id is required',
+        message: 'Se requiere identificación de video',
       });
     }
 
     const getQuestionnaire = await ExamQuestionnaireMongoModel.findOne({ _id: idQuestionnaire });
     if (!getQuestionnaire) {
       return res.status(404).json({
-        message: 'Questionnaire not found',
+        message: 'Cuestionario no encontrado',
       });
     }
 
@@ -818,7 +818,7 @@ export const updateQuestionnaire = async (req: Request, res: Response) => {
     }
 
     res.status(200).json({
-      message: 'Video updated successfully',
+      message: 'Vídeo actualizado con éxito',
       questionnaire,
     });
   } catch (error) {
@@ -830,7 +830,7 @@ export const updateQuestionnaire = async (req: Request, res: Response) => {
     }
 
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(500).json({ message: 'Error register answer exam', error });
+    return res.status(500).json({ message: 'Error al actualizar respuestas del examen', error });
   }
 };
 
@@ -845,7 +845,7 @@ export const deleteQuestionnaire = async (req: Request, res: Response) => {
 
     if (!getQuestionnaire) {
       return res.status(404).json({
-        message: 'Questionnaire not found',
+        message: 'Cuestionario no encontrado',
       });
     }
 
@@ -855,7 +855,7 @@ export const deleteQuestionnaire = async (req: Request, res: Response) => {
     await deleteVimeoVideo({ idVideoVimeo: getQuestionnaire.idVideoVimeo });
 
     return res.status(200).json({
-      message: 'Questionnaire deleted successfully',
+      message: 'Cuestionario eliminado correctamente',
     });
   } catch (error) {
     if (error instanceof ZodError) {
@@ -866,6 +866,6 @@ export const deleteQuestionnaire = async (req: Request, res: Response) => {
     }
 
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(500).json({ message: 'Error register answer exam', error });
+    return res.status(500).json({ message: 'Error al eliminar cuestionario', error });
   }
 };

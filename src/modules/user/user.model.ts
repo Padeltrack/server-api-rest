@@ -1,4 +1,5 @@
 import mongoose, { Schema, Document } from 'mongoose';
+import { AVATAR_DEFAULT } from './user.constant';
 
 export const SelectRoleModel = {
   SuperAdmin: 'SuperAdmin',
@@ -55,7 +56,7 @@ export interface UserModel extends Document {
   birthdate: Date;
   wherePlay: string;
   email: string;
-  photo: string | null;
+  photo: string;
   role: RoleModel;
   verified?: boolean;
   worked?: boolean;
@@ -131,7 +132,7 @@ const UserMongoSchema = new Schema<UserModel>(
       unique: true,
       sparse: true,
     },
-    photo: { type: String, required: false, default: null },
+    photo: { type: String, required: false, default: AVATAR_DEFAULT },
     birthdate: { type: Date, required: false, default: null },
     wherePlay: { type: String, required: false, default: null },
     gender: {

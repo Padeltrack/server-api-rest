@@ -287,7 +287,7 @@ export const markVerifiedUser = async (req: Request, res: Response) => {
 
     if (!getCoachUser) {
       return res.status(404).json({
-        message: 'Coach not found',
+        message: 'Entrenador no encontrado',
       });
     }
 
@@ -320,7 +320,7 @@ export const markWorkedUser = async (req: Request, res: Response) => {
 
     if (!getCoachUser) {
       return res.status(404).json({
-        message: 'Coach not found',
+        message: 'Entrenador no encontrado',
       });
     }
 
@@ -493,7 +493,7 @@ export const deleteUser = async (req: Request, res: Response) => {
     const getUser = await UserMongoModel.findOne({ _id: userId });
     if (!getUser) {
       return res.status(404).json({
-        message: 'User not found',
+        message: 'Usuario no encontrado',
       });
     }
 

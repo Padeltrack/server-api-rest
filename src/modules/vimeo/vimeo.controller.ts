@@ -25,7 +25,7 @@ export const uploadVideoToFolderVimeo = async (req: Request, res: Response) => {
     const filePath = req.file?.path;
 
     if (!filePath) {
-      return res.status(400).json({ message: 'No file uploaded' });
+      return res.status(400).json({ message: 'No se ha subido ningún archivo' });
     }
 
     const isFreeFolder = freeFolder === Number(folderId);
@@ -228,7 +228,7 @@ export const updateVideoToFolderVimeo = async (req: Request, res: Response) => {
 
     if (!idVideoVimeo) {
       return res.status(400).json({
-        message: 'Video id is required',
+        message: 'Se requiere identificación de video',
       });
     }
 
@@ -264,7 +264,7 @@ export const removeVideoToFolderVimeo = async (req: Request, res: Response) => {
 
     if (!idVideoVimeo) {
       return res.status(400).json({
-        message: 'Video id is required',
+        message: 'Se requiere identificación de video',
       });
     }
 

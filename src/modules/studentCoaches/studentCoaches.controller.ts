@@ -112,7 +112,7 @@ export const assignCoach = async (req: Request, res: Response) => {
     });
     if (!getCoach) {
       return res.status(404).json({
-        message: 'Coach not found or not a coach',
+        message: 'Entrenador no encontrado or not a coach',
       });
     }
 
