@@ -1,4 +1,5 @@
 import fs from 'fs';
+import LoggerColor from 'node-color-log';
 import { parseSemanasField } from '../modules/video/video.helper';
 import { ObjectId } from 'mongodb';
 import { connectToMongo, disconnectFromMongo } from '../config/mongo.config';
@@ -19,12 +20,12 @@ const run = () => {
           ...doc,
           semanas: parseSemanasField(doc?.semanas),
         });
-      } catch (err) {
-        console.error('Error inserting:', doc, err);
+      } catch (err: any) {
+        LoggerColor.bold().bgColor('red').error(err.message);
       }
     }
 
-    console.log('Subida completada.');
+    LoggerColor.bold().success('Subida completada.');
     await disconnectFromMongo();
   });
 };

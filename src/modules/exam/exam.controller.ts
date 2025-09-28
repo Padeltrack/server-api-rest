@@ -136,7 +136,9 @@ export const getAnswerExamByList = async (req: Request, res: Response) => {
     return res.status(200).json({ exams, count });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(500).json({ message: 'Error al obtener la lista de respuestas del examen', error });
+    return res
+      .status(500)
+      .json({ message: 'Error al obtener la lista de respuestas del examen', error });
   }
 };
 
@@ -215,7 +217,9 @@ export const getAnswerExamById = async (req: Request, res: Response) => {
     return res.status(200).json({ exam: getExam, hasAllQuestionsAnswered });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(500).json({ message: 'Error al obtener la respuesta del examen por id', error });
+    return res
+      .status(500)
+      .json({ message: 'Error al obtener la respuesta del examen por id', error });
   }
 };
 
@@ -255,7 +259,9 @@ export const getRegisterAnswerExam = async (req: Request, res: Response) => {
     return res.status(200).json({ answers: answersLinkVideo, status: currentExam.status });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(500).json({ message: 'Error al obtener la respuesta del examen por id', error });
+    return res
+      .status(500)
+      .json({ message: 'Error al obtener la respuesta del examen por id', error });
   }
 };
 
@@ -467,7 +473,9 @@ export const finalizeAnswerExam = async (req: Request, res: Response) => {
     }
 
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(500).json({ message: 'Error en el registro de respuestas del examen', error });
+    return res
+      .status(500)
+      .json({ message: 'Error en el registro de respuestas del examen', error });
   }
 };
 
@@ -520,7 +528,9 @@ export const addQuestionnaire = async (req: Request, res: Response) => {
     }
 
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(500).json({ message: 'Error en el registro de respuestas del examen', error });
+    return res
+      .status(500)
+      .json({ message: 'Error en el registro de respuestas del examen', error });
   }
 };
 
@@ -652,7 +662,9 @@ export const registerGradeExam = async (req: Request, res: Response) => {
     }
 
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(500).json({ message: 'Error en el registro de respuestas del examen', error });
+    return res
+      .status(500)
+      .json({ message: 'Error en el registro de respuestas del examen', error });
   }
 };
 
@@ -762,7 +774,9 @@ export const assignExamToCoach = async (req: Request, res: Response) => {
     }
 
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(500).json({ message: 'Error en el registro de respuestas del examen', error });
+    return res
+      .status(500)
+      .json({ message: 'Error en el registro de respuestas del examen', error });
   }
 };
 

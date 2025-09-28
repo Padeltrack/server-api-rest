@@ -112,7 +112,12 @@ export const addVideo = async (req: Request, res: Response) => {
   req.logger.info({ status: 'start' });
 
   try {
-    const videoData = CreateVideoSchemaZod.parse(req.body);
+    const parseBody = {
+      ...req.body,
+      semanas: JSON.parse(req.body?.semanas || '[]'),
+      plan: JSON.parse(req.body?.plan || '[]'),
+    };
+    const videoData = CreateVideoSchemaZod.parse(parseBody);
 
     if (!videoData.plan.length) {
       return res.status(400).json({
@@ -148,8 +153,6 @@ export const addVideo = async (req: Request, res: Response) => {
     await VideoMongoModel.create({
       _id: new ObjectId().toHexString(),
       ...videoData,
-      plan: videoData.plan.split(',').map(plan => plan.trim()),
-      semanas: videoData.semanas.split(',').map(sem => Number(sem.trim())),
       idVideoVimeo: result.uri.split('/').pop(),
     });
 
@@ -220,7 +223,12 @@ export const updateVideo = async (req: Request, res: Response) => {
 
   try {
     const videoId = req.params.id;
-    const videoData = UpdateVideoSchemaZod.parse(req.body);
+    const parseBody = {
+      ...req.body,
+      semanas: JSON.parse(req.body?.semanas || '[]'),
+      plan: JSON.parse(req.body?.plan || '[]'),
+    };
+    const videoData = UpdateVideoSchemaZod.parse(parseBody);
     const { nombre, descripcion } = videoData;
 
     if (!videoId) {
