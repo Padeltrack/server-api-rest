@@ -79,7 +79,7 @@ export const updatePlan = async (req: Request, res: Response) => {
 
     if (!id) {
       return res.status(400).json({
-        message: 'Plan id is required',
+        message: 'Se requiere identificación del plan',
       });
     }
 

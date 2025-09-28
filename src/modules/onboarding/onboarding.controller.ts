@@ -32,13 +32,13 @@ export const updateQuestionOnboarding = async (req: Request, res: Response) => {
 
     if (!id) {
       return res.status(400).json({
-        message: 'Id is required',
+        message: 'Se requiere identificación',
       });
     }
 
     if (!options.length) {
       return res.status(400).json({
-        message: 'Options is required',
+        message: 'Se requieren opciones',
       });
     }
 
@@ -73,13 +73,13 @@ export const deleteQuestionOnboarding = async (req: Request, res: Response) => {
 
     if (!id) {
       return res.status(400).json({
-        message: 'Id is required',
+        message: 'Se requiere identificación',
       });
     }
 
     await OnboardingQuestionMongoModel.deleteOne({ _id: id });
     return res.status(200).json({
-      message: 'Question deleted successfully',
+      message: 'Pregunta eliminada exitosamente',
     });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });

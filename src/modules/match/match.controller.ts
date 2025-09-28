@@ -170,31 +170,31 @@ export const createMatch = async (req: Request, res: Response) => {
 
     if (!playersId.length || !playersName.length) {
       return res.status(400).json({
-        message: 'Players are required',
+        message: 'Se requieren jugadores',
       });
     }
 
     if (playersId.length !== 2 || playersName.length !== 2) {
       return res.status(400).json({
-        message: 'Two players are required',
+        message: 'Se requieren dos jugadoras',
       });
     }
 
     if (!finalPoints.length) {
       return res.status(400).json({
-        message: 'Final Points are required',
+        message: 'Se requieren puntos finales',
       });
     }
 
     if (!tiebreaks.length) {
       return res.status(400).json({
-        message: 'Tie break are required',
+        message: 'Se requiere desempate',
       });
     }
 
     if (!superTiebreaks.length) {
       return res.status(400).json({
-        message: 'Super tie breaks are required',
+        message: 'Se requieren súper tie breaks',
       });
     }
 
@@ -204,7 +204,7 @@ export const createMatch = async (req: Request, res: Response) => {
     });
     if (playersCount < 2) {
       return res.status(400).json({
-        message: 'Players must be different',
+        message: 'Las jugadoras deben ser diferentes',
       });
     }
 

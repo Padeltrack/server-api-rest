@@ -68,7 +68,7 @@ export const updateAds = async (req: Request, res: Response) => {
 
     if (!idAds) {
       return res.status(400).json({
-        message: 'Id is required',
+        message: 'Se requiere identificación',
       });
     }
 

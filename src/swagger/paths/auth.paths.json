@@ -133,7 +133,7 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "message": { "type": "String", "example": "Unauthorized" }
+                  "message": { "type": "String", "example": "No autorizado" }
                 }
               }
             }

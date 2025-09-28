@@ -79,7 +79,7 @@ export const getCoachesByStudent = async (req: Request, res: Response) => {
 
     if (!studentId) {
       return res.status(400).json({
-        message: 'Student ID is required',
+        message: 'Se requiere identificación de estudiante',
       });
     }
 
@@ -94,7 +94,7 @@ export const getCoachesByStudent = async (req: Request, res: Response) => {
     return res.status(200).json({ coaches, count });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(500).json({ message: 'Error fetching coaches', error });
+    return res.status(500).json({ message: 'Error al obtener coaches', error });
   }
 };
 
@@ -128,7 +128,7 @@ export const assignCoach = async (req: Request, res: Response) => {
       });
 
       return res.status(200).json({
-        message: 'Coach unassigned successfully',
+        message: 'Entrenador desasignado exitosamente',
       });
     } else {
       await StudentCoachesMongoModel.create({
@@ -138,7 +138,7 @@ export const assignCoach = async (req: Request, res: Response) => {
       });
 
       return res.status(200).json({
-        message: 'Coach assigned successfully',
+        message: 'Entrenador asignado con éxito',
       });
     }
   } catch (error) {
@@ -162,14 +162,14 @@ export const removeAssignCoach = async (req: Request, res: Response) => {
 
     if (!existingAssignment) {
       return res.status(404).json({
-        message: 'Coach assignment not found',
+        message: 'No se encontró la asignación de entrenador',
       });
     }
 
     await StudentCoachesMongoModel.deleteOne({ studentId: me._id, _id: assignCoach });
 
     return res.status(200).json({
-      message: 'Coach assignment removed successfully',
+      message: 'Asignación de entrenador eliminada con éxito',
     });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });

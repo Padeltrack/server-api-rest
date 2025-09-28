@@ -5,7 +5,7 @@ export const verifyIdFirebaseTokenGoogle = async (token: string) => {
   try {
     return await auth().verifyIdToken(token);
   } catch (error) {
-    throw new Error('Unauthorized');
+    throw new Error('No autorizado');
   }
 };
 

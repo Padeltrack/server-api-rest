@@ -29,13 +29,14 @@ export const uploadVideoToFolderVimeo = async (req: Request, res: Response) => {
     }
 
     const isFreeFolder = freeFolder === Number(folderId);
+    const nameVideo =
+      name ||
+      req.file?.originalname ||
+      `Video subido desde la plataforma ${new Date().toISOString()}`;
     const result: any = await uploadVideoToVimeo({
       video: {
         filePath,
-        name:
-          name ||
-          req.file?.originalname ||
-          `Video subido desde la plataforma ${new Date().toISOString()}`,
+        name: nameVideo,
         description,
       },
       folderId,
@@ -52,7 +53,7 @@ export const uploadVideoToFolderVimeo = async (req: Request, res: Response) => {
     await cleanUploadedFiles(req);
 
     res.status(200).json({
-      message: 'Video uploaded successfully',
+      message: 'Vídeo subido exitosamente',
     });
   } catch (error) {
     await cleanUploadedFiles(req);
@@ -86,13 +87,13 @@ export const getVimeoVideos = async (req: Request, res: Response) => {
     });
 
     res.status(200).json({
-      message: 'Videos fetched successfully',
+      message: 'Vídeos obtenidos correctamente',
       data: response.body,
     });
   } catch (error: any) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
     res.status(500).json({
-      message: 'Error retrieving videos from Vimeo',
+      message: 'Error al recuperar vídeos de Vimeo',
       error: error.message || error,
     });
   }
@@ -122,13 +123,13 @@ export const getFreeVimeoVideos = async (req: Request, res: Response) => {
     response.body.data = dataVideos;
 
     res.status(200).json({
-      message: 'Videos fetched successfully',
+      message: 'Vídeos obtenidos correctamente',
       data: response.body,
     });
   } catch (error: any) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
     res.status(500).json({
-      message: 'Error retrieving videos from Vimeo',
+      message: 'Error al recuperar vídeos de Vimeo',
       error: error.message || error,
     });
   }
@@ -152,13 +153,13 @@ export const getFoldersVimeo = async (req: Request, res: Response) => {
     });
 
     res.status(200).json({
-      message: 'Folders fetched successfully',
+      message: 'Carpetas recuperadas exitosamente',
       data: response.body,
     });
   } catch (error: any) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
     res.status(500).json({
-      message: 'Error retrieving folders from Vimeo',
+      message: 'Error al recuperar carpetas de Vimeo',
       error: error.message || error,
     });
   }
@@ -175,13 +176,13 @@ export const getFolderByIdVimeo = async (req: Request, res: Response) => {
       path: `/me/projects/${id}`,
     });
     res.status(200).json({
-      message: 'Folders fetched successfully',
+      message: 'Carpetas recuperadas exitosamente',
       data: response.body,
     });
   } catch (error: any) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
     res.status(500).json({
-      message: 'Error retrieving folders from Vimeo',
+      message: 'Error al recuperar carpetas de Vimeo',
       error: error.message || error,
     });
   }
@@ -206,13 +207,13 @@ export const getItemsFolderByIdVimeo = async (req: Request, res: Response) => {
     });
 
     res.status(200).json({
-      message: 'Folders fetched successfully',
+      message: 'Carpetas recuperadas exitosamente',
       data: response.body,
     });
   } catch (error: any) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
     res.status(500).json({
-      message: 'Error retrieving folders from Vimeo',
+      message: 'Error al recuperar carpetas de Vimeo',
       error: error.message || error,
     });
   }
@@ -246,7 +247,7 @@ export const updateVideoToFolderVimeo = async (req: Request, res: Response) => {
     await cleanUploadedFiles(req);
 
     res.status(200).json({
-      message: 'Video updated successfully',
+      message: 'Vídeo actualizado con éxito',
     });
   } catch (error) {
     await cleanUploadedFiles(req);
@@ -272,7 +273,7 @@ export const removeVideoToFolderVimeo = async (req: Request, res: Response) => {
     await VideoMongoModel.deleteOne({ idVideoVimeo });
 
     res.status(200).json({
-      message: 'Video removed successfully',
+      message: 'Vídeo eliminado con éxito',
     });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });

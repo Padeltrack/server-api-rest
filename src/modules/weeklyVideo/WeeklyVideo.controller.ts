@@ -13,7 +13,7 @@ export const getWeeklyVideos = async (req: Request, res: Response) => {
 
     if (!order) {
       return res.status(404).json({
-        message: 'Order not found',
+        message: 'Pedido no encontrado',
       });
     }
 
@@ -24,7 +24,7 @@ export const getWeeklyVideos = async (req: Request, res: Response) => {
 
     if (!weeklyVideo) {
       return res.status(404).json({
-        message: 'Weekly video not found',
+        message: 'Vídeo semanal no encontrado',
       });
     }
 
@@ -53,7 +53,7 @@ export const getWeeklyVideos = async (req: Request, res: Response) => {
     return res.status(200).json({ weeklyVideo });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(500).json({ message: 'Error fetching weeklyVideo' });
+    return res.status(500).json({ message: 'Error al obtener el vídeo semanal' });
   }
 };
 
@@ -67,7 +67,7 @@ export const markCheckMeVideo = async (req: Request, res: Response) => {
 
     if (!order) {
       return res.status(404).json({
-        message: 'Order not found',
+        message: 'Pedido no encontrado',
       });
     }
 
@@ -85,7 +85,7 @@ export const markCheckMeVideo = async (req: Request, res: Response) => {
 
     if (!weeklyVideo?.videos?.length) {
       return res.status(404).json({
-        message: 'Weekly video not found',
+        message: 'Vídeo semanal no encontrado',
       });
     }
 
@@ -103,10 +103,12 @@ export const markCheckMeVideo = async (req: Request, res: Response) => {
     );
 
     return res.status(200).json({
-      message: 'Weekly video check updated successfully',
+      message: 'La verificación de video semanal se actualizó correctamente',
     });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(500).json({ message: 'Error fetching weeklyVideo' });
+    return res
+      .status(500)
+      .json({ message: 'Error al actualizar la verificación de video semanal' });
   }
 };

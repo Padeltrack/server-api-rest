@@ -75,7 +75,7 @@ export const getOrdersById = async (req: Request, res: Response) => {
   try {
     const orderId = req.params.id;
 
-    if (!orderId) return res.status(400).json({ message: 'Order id is required' });
+    if (!orderId) return res.status(400).json({ message: 'Order Se requiere identificación' });
 
     const order = await OrderMongoModel.findOne({ _id: orderId })
       .populate('planId')
@@ -101,7 +101,7 @@ export const createOrder = async (req: Request, res: Response) => {
     const getPlan = await PlanMongoModel.findOne({ _id: planId, active: true });
     if (!getPlan) {
       return res.status(400).json({
-        message: 'Plan not found',
+        message: 'Plan no encontrado',
       });
     }
 
@@ -257,13 +257,13 @@ export const updateOrderStatus = async (req: Request, res: Response) => {
     const getOrder = await OrderMongoModel.findOne({ _id: orderId });
     if (!getOrder) {
       return res.status(404).json({
-        message: 'Order not found',
+        message: 'Pedido no encontrado',
       });
     }
 
     if (status === getOrder.status) {
       return res.status(400).json({
-        message: 'Status already updated',
+        message: 'Estado ya actualizado',
       });
     }
 
@@ -272,14 +272,14 @@ export const updateOrderStatus = async (req: Request, res: Response) => {
       getOrder.status !== SelectStatusOrderModel.Approved
     ) {
       return res.status(400).json({
-        message: 'Order not approved',
+        message: 'Pedido no aprobado',
       });
     }
 
     const getPlan = await PlanMongoModel.findOne({ _id: getOrder.planId });
     if (!getPlan) {
       return res.status(404).json({
-        message: 'Plan not found',
+        message: 'Plan no encontrado',
       });
     }
 
@@ -326,7 +326,7 @@ export const updateOrderStatus = async (req: Request, res: Response) => {
     const updated = await OrderMongoModel.findByIdAndUpdate({ _id: orderId }, fieldsUpdated, {
       new: true,
     });
-    if (!updated) return res.status(404).json({ message: 'Order not found' });
+    if (!updated) return res.status(404).json({ message: 'Pedido no encontrado' });
 
     const isApproved = fieldsUpdated.status === SelectStatusOrderModel.Approved;
     const isCancel = fieldsUpdated.status === SelectStatusOrderModel.Cancelled;

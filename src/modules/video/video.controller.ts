@@ -7,6 +7,7 @@ import {
   extractBufferToFileThumbnail,
   getUrlTokenExtractVimeoVideoById,
   getVimeoVideoById,
+  setThumbnailToVimeo,
   updateVideoToVimeo,
   uploadVideoToVimeo,
 } from '../vimeo/vimeo.helper';
@@ -171,32 +172,43 @@ export const updateFileVideo = async (req: Request, res: Response) => {
 
   try {
     const videoId = req.params.id;
-    const filePath = req.file?.path;
+    const videoFile = (req.files as any)?.upload_video?.[0];
+    const videoPath = videoFile?.path;
 
     if (!videoId) {
       return res.status(400).json({ message: 'Se requiere identificación de video' });
     }
 
-    if (!filePath) {
+    const getVideo = await VideoMongoModel.findOne({ _id: videoId });
+    if (!getVideo) {
+      return res.status(404).json({ message: 'Vídeo no encontrado' });
+    }
+    const idVideoVimeo = getVideo?.idVideoVimeo;
+
+    const thumbnailBuffer = await extractBufferToFileThumbnail(req);
+    if (!videoPath && thumbnailBuffer) {
+      await setThumbnailToVimeo({ idVideoVimeo, thumbnailBuffer });
+      return res.status(200).json({
+        message: 'Imagen de portal actualizada',
+      });
+    }
+
+    if (!videoPath) {
       return res.status(400).json({ message: 'No se ha subido ningún archivo' });
     }
 
-    const getVideo = await VideoMongoModel.findOne({ _id: videoId });
-    if (!getVideo) {
-      return res.status(404).json({ message: 'Video not found' });
+    if (idVideoVimeo) {
+      await deleteVimeoVideo({ idVideoVimeo });
     }
 
-    if (getVideo?.idVideoVimeo) {
-      await deleteVimeoVideo({ idVideoVimeo: getVideo.idVideoVimeo });
-    }
-
+    const nameVideo =
+      getVideo.nombre ||
+      req.file?.originalname ||
+      `Video subido desde la plataforma ${new Date().toISOString()}`;
     const result: any = await uploadVideoToVimeo({
       video: {
-        filePath,
-        name:
-          getVideo.nombre ||
-          req.file?.originalname ||
-          `Video subido desde la plataforma ${new Date().toISOString()}`,
+        filePath: videoPath,
+        name: nameVideo,
         description: getVideo?.descripcion || '',
       },
       folderId: planVideoFolder,
@@ -209,11 +221,11 @@ export const updateFileVideo = async (req: Request, res: Response) => {
     );
 
     return res.status(200).json({
-      message: 'Video updated successfully',
+      message: 'Vídeo actualizado con éxito',
     });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(401).json({ message: 'Error adding video' });
+    return res.status(401).json({ message: 'Error al actualizar el vídeo' });
   }
 };
 
@@ -240,7 +252,7 @@ export const updateVideo = async (req: Request, res: Response) => {
     const getVideo = await VideoMongoModel.findOne({ _id: videoId });
     if (!getVideo) {
       return res.status(404).json({
-        message: 'Video not found',
+        message: 'Vídeo no encontrado',
       });
     }
 
@@ -252,7 +264,9 @@ export const updateVideo = async (req: Request, res: Response) => {
     const isChangeName = nombre !== getVideo?.nombre || descripcion !== getVideo?.descripcion;
     const isUpdatedVimeo = isChangeName || videoPath || thumbnailBuffer;
 
-    if (idVideoVimeo && isUpdatedVimeo) {
+    if (!videoPath && thumbnailBuffer) {
+      await setThumbnailToVimeo({ idVideoVimeo, thumbnailBuffer });
+    } else if (idVideoVimeo && isUpdatedVimeo) {
       await updateVideoToVimeo({
         idVideoVimeo,
         filePath: videoPath,
@@ -273,12 +287,12 @@ export const updateVideo = async (req: Request, res: Response) => {
     );
 
     return res.status(200).json({
-      message: 'Video updated successfully',
+      message: 'Vídeo actualizado con éxito',
       video,
     });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(401).json({ message: 'Error updating video' });
+    return res.status(401).json({ message: 'Error al actualizar el vídeo' });
   }
 };
 
@@ -298,7 +312,7 @@ export const deleteVideo = async (req: Request, res: Response) => {
     const getVideo = await VideoMongoModel.findOne({ _id: videoId });
     if (!getVideo) {
       return res.status(404).json({
-        message: 'Video not found',
+        message: 'Vídeo no encontrado',
       });
     }
 
@@ -309,10 +323,10 @@ export const deleteVideo = async (req: Request, res: Response) => {
     await VideoMongoModel.deleteOne({ _id: videoId });
 
     return res.status(200).json({
-      message: 'Video deleted successfully',
+      message: 'Vídeo eliminado correctamente',
     });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(401).json({ message: 'Error deleting video' });
+    return res.status(401).json({ message: 'Error al eliminar el vídeo' });
   }
 };

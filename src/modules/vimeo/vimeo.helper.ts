@@ -115,25 +115,41 @@ export const updateVideoToVimeo = (options: {
         replaceVimeoVideoFile({ idVideoVimeo, filePath })
           .then(() => {
             if (!thumbnailBuffer) return resolve();
-            createPictureToVimeo({ idVideoVimeo })
-              .then(async picture => {
-                const image = await uploadPictureToVimeo({
-                  upload_link: picture.link,
-                  buffer: thumbnailBuffer,
-                });
-                let [, , , , pictureId] = image?.url.split('/');
-                if (pictureId) pictureId = pictureId.split('?')[0];
-                if (pictureId) {
-                  await activePictureToVimeo({ idVideoVimeo, pictureId });
-                }
-                resolve();
-              })
+            setThumbnailToVimeo({ idVideoVimeo, thumbnailBuffer })
+              .then(() => resolve())
               .catch(reject);
           })
           .catch(reject);
       },
     );
   });
+};
+
+export const setThumbnailToVimeo = async ({
+  idVideoVimeo,
+  thumbnailBuffer,
+}: {
+  idVideoVimeo: string;
+  thumbnailBuffer: ArrayBuffer;
+}): Promise<void> => {
+  try {
+    const picture = await createPictureToVimeo({ idVideoVimeo });
+    const res = await uploadPictureToVimeo({
+      upload_link: picture.link,
+      buffer: thumbnailBuffer,
+    });
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error(`Upload failed: ${res.status} ${res.statusText} - ${text}`);
+    }
+    let [, , , , pictureId] = picture.uri.split('/');
+    if (pictureId) {
+      await activePictureToVimeo({ idVideoVimeo, pictureId });
+    }
+  } catch (error) {
+    console.error('Error setting thumbnail to Vimeo:', error);
+    throw error;
+  }
 };
 
 export const createPictureToVimeo = (options: { idVideoVimeo: string }): Promise<any> => {
