@@ -21,6 +21,7 @@ import {
   extractBufferToFileThumbnail,
   getUrlTokenExtractVimeoVideoById,
   getVimeoVideoById,
+  setThumbnailToVimeo,
   updateVideoToVimeo,
   uploadVideoToVimeo,
 } from '../vimeo/vimeo.helper';
@@ -812,7 +813,9 @@ export const updateQuestionnaire = async (req: Request, res: Response) => {
 
     const idVideoVimeo = getQuestionnaire.idVideoVimeo;
 
-    if (videoPath || thumbnailBuffer) {
+    if (!videoPath && thumbnailBuffer) {
+      await setThumbnailToVimeo({ idVideoVimeo, thumbnailBuffer });
+    } else if (videoPath) {
       await updateVideoToVimeo({
         idVideoVimeo,
         filePath: videoPath,

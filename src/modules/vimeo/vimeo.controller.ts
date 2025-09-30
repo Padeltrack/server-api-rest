@@ -4,6 +4,7 @@ import {
   deleteVimeoVideo,
   extractBufferToFileThumbnail,
   getInfoPublicExtractVimeoVideoById,
+  setThumbnailToVimeo,
   updateVideoToVimeo,
   uploadVideoToVimeo,
 } from './vimeo.helper';
@@ -237,13 +238,18 @@ export const updateVideoToFolderVimeo = async (req: Request, res: Response) => {
     const videoPath = videoFile?.path;
     const thumbnailBuffer = await extractBufferToFileThumbnail(req);
 
-    await updateVideoToVimeo({
-      idVideoVimeo,
-      filePath: videoPath,
-      thumbnailBuffer,
-      name,
-      description,
-    });
+    if (!videoPath && thumbnailBuffer) {
+      await setThumbnailToVimeo({ idVideoVimeo, thumbnailBuffer });
+    } else if (videoPath) {
+      await updateVideoToVimeo({
+        idVideoVimeo,
+        filePath: videoPath,
+        thumbnailBuffer,
+        name,
+        description,
+      });
+    }
+
     await cleanUploadedFiles(req);
 
     res.status(200).json({
