@@ -20,7 +20,7 @@ export const getOrders = async (req: Request, res: Response) => {
   try {
     const me = req.user;
     const page = Number(req.query?.page) || 1;
-    const limit = Number(req.query?.limit) || 10;
+    const limit = Number(req.query?.limit) || 150;
     const isCoach = req.query?.isCoach || false;
     const status = req.query?.status || '';
     const search = req.query?.search || '';

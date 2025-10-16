@@ -95,7 +95,7 @@ export const getUsers = async (req: Request, res: Response) => {
 
   try {
     const page = Number(req.query?.page) || 1;
-    const limit = Number(req.query?.limit) || 10;
+    const limit = Number(req.query?.limit) || 150;
     const search = req.query?.search || '';
     const gender = req.query?.gender || '';
     const level = req.query?.level || '';
@@ -156,7 +156,7 @@ export const getCoachOrStudentUsers = async (req: Request, res: Response) => {
   try {
     const me = req.user;
     const page = Number(req.query?.page) || 1;
-    const limit = Number(req.query?.limit) || 10;
+    const limit = Number(req.query?.limit) || 150;
     const search = req.query?.search || '';
     const skip = (page - 1) * limit;
     let role: RoleModel = SelectRoleModel.Student;
