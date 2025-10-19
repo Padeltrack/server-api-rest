@@ -11,6 +11,7 @@ sendgrid.env
 
 # Environment variables
 .env*
+!.env.example
 !.env.sample
 
 # Script

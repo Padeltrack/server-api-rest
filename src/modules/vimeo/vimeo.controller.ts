@@ -29,7 +29,7 @@ export const uploadVideoToFolderVimeo = async (req: Request, res: Response) => {
       return res.status(400).json({ message: 'No se ha subido ningún archivo' });
     }
 
-    const isFreeFolder = freeFolder === Number(folderId);
+    const isFreeFolder = !!(freeFolder && Number(freeFolder) === Number(folderId));
     const nameVideo =
       name ||
       req.file?.originalname ||

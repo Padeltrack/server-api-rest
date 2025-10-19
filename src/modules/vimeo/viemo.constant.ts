@@ -1,4 +1,4 @@
-export const freeFolder = 26080633;
-export const planVideoFolder = 26116894;
-export const examFolder = 26116892;
-export const examAnswerStudentFolder = 26158852;
+export const freeFolder = process.env.VIMEO_FREE_FOLDER_ID;
+export const planVideoFolder = process.env.VIMEO_PLAN_VIDEO_FOLDER_ID;
+export const examFolder = process.env.VIMEO_EXAM_FOLDER_ID;
+export const examAnswerStudentFolder = process.env.VIMEO_EXAM_ANSWER_STUDENT_FOLDER_ID;

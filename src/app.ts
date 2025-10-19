@@ -1,6 +1,5 @@
 import express from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
 import LoggerColor from 'node-color-log';
 import fs from 'fs';
 import path from 'path';
@@ -22,6 +21,7 @@ import AdsRoutes from './routes/ads.route';
 import { errorHandler } from './middleware/errorHandler.middleware';
 import { connectToMongo } from './config/mongo.config';
 import { initializeFirebase } from './config/firebase.config';
+import { configureEnvironment } from './config/env.config';
 import { logger } from './middleware/logger.middleware';
 import { HOST_PERMITS } from './shared/util/url.util';
 import { cronApp } from './core/crons';
@@ -30,12 +30,14 @@ import { serverImagesStaticAssets } from './middleware/imagesCache.middleware';
 // const { swaggerDocument } = require('./swagger');
 // const swaggerUi = require('swagger-ui-express');
 
+// Configurar las variables de entorno según el ambiente (development o production)
+configureEnvironment();
+
 const uploadDir = path.join('uploads');
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir);
 }
 
-dotenv.config();
 initializeFirebase();
 cronApp();
 
