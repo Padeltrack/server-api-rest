@@ -27,15 +27,16 @@ const cronOrderProgressWeek = async () => {
     for (const progress of progresos) {
       if (progress?.currentWeek && progress?.lastProgressDate) {
         const days = daysBetween(progress.lastProgressDate, new Date());
+        let week = progress.currentWeek;
 
         if (days >= 7) {
+          // Avanzar la semana actual
           const semanasAvance = Math.floor(days / 7);
-          progress.currentWeek += semanasAvance;
+          week += semanasAvance;
           progress.lastProgressDate = new Date();
           await progress.save();
 
           const getLimitVideoWeek = await CounterMongoModel.findOne({ _id: 'limitVideoWeek' });
-          const week = progress.currentWeek;
           const videosByWeek = await getVideosByWeek({ week, maxVideo: getLimitVideoWeek?.seq });
           await WeeklyVideoMongoModel.create({
             _id: new ObjectId().toHexString(),
@@ -45,7 +46,23 @@ const cronOrderProgressWeek = async () => {
           });
 
           LoggerColor.bold().log(
-            `📅 Usuario ${progress.userId} avanzó ${semanasAvance} semanas → Semana actual: ${progress.currentWeek}`,
+            `📅 Usuario ${progress.userId} avanzó ${semanasAvance} semanas → Semana actual: ${week}`,
+          );
+        } else {
+          // Reiniciar los videos de la semana actual
+          await WeeklyVideoMongoModel.updateOne(
+            {
+              orderId: progress._id,
+              week,
+            },
+            {
+              $set: {
+                'videos.$[].check': false,
+              },
+            },
+          );
+          LoggerColor.bold().log(
+            `📅 Usuario ${progress.userId} reincio los videos de la Semana actual: ${week}`,
           );
         }
       }
@@ -146,14 +163,14 @@ const cronDateOrderExpired = async () => {
 
       const { daysActive } = order.planId as any;
       const expirationDate = new Date(order.completedOrderDate);
-      const durationDays =
-        daysActive === SelectDaysActiveModel.ONE_MONTH
+      const durationDays = [
+        SelectDaysActiveModel.THREE_MONTHS,
+        SelectDaysActiveModel.TWELVE_MONTHS,
+      ].includes(daysActive)
+        ? 60
+        : daysActive === SelectDaysActiveModel.ONE_MONTH
           ? 30
-          : daysActive === SelectDaysActiveModel.THREE_MONTHS
-            ? 60
-            : daysActive === SelectDaysActiveModel.TWELVE_MONTHS
-              ? 60
-              : 0;
+          : 0;
       expirationDate.setDate(expirationDate.getDate() + durationDays);
 
       if (now > expirationDate) {

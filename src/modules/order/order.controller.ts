@@ -282,6 +282,7 @@ export const updateOrderStatus = async (req: Request, res: Response) => {
         message: 'Plan no encontrado',
       });
     }
+    const isPlanNotCoach = getPlan.isCoach === false;
 
     const getUser = await UserMongoModel.findOne({ _id: getOrder.userId });
     if (!getUser) {
@@ -310,14 +311,34 @@ export const updateOrderStatus = async (req: Request, res: Response) => {
         fieldsUpdated.messageRejected = null;
       }
 
+      if (isPlanNotCoach) {
+        fieldsUpdated.currentWeek = 1;
+
+        // Obtener orden aprobada mas reciente para continuar con la semana para usuarios no coaches.
+        if (!getOrder.isCoach) {
+          const lastOrderApproved = await OrderMongoModel.findOne({
+            userId: getUser._id,
+            status: SelectStatusOrderModel.Approved,
+            isCoach: false,
+            currentWeek: { $exists: true }
+          }, { sort: { createdAt: -1 } });
+
+          if (lastOrderApproved?.currentWeek) {
+            fieldsUpdated.currentWeek = lastOrderApproved.currentWeek + 1;
+          }
+        }
+      }
+
       fieldsUpdated.approvedOrderDate = new Date();
-      fieldsUpdated.currentWeek = 1;
       fieldsUpdated.lastProgressDate = new Date();
     } else if (status === SelectStatusOrderModel.Rejected) {
       fieldsUpdated.messageRejected = messageRejected;
-      fieldsUpdated.approvedOrderDate = undefined;
-      fieldsUpdated.currentWeek = undefined;
-      fieldsUpdated.lastProgressDate = undefined;
+
+      if (isPlanNotCoach) {
+        fieldsUpdated.approvedOrderDate = undefined;
+        fieldsUpdated.currentWeek = undefined;
+        fieldsUpdated.lastProgressDate = undefined;
+      }
     } else if (status === SelectStatusOrderModel.Cancelled) {
       fieldsUpdated.cancellationDate = new Date();
       fieldsUpdated.messageRejected = messageRejected;
@@ -330,8 +351,6 @@ export const updateOrderStatus = async (req: Request, res: Response) => {
 
     const isApproved = fieldsUpdated.status === SelectStatusOrderModel.Approved;
     const isCancel = fieldsUpdated.status === SelectStatusOrderModel.Cancelled;
-    // const isStudent = getUser.role === SelectRoleModel.Student;
-    const isPlanNotCoach = getPlan.isCoach === false;
 
     if (isApproved && isPlanNotCoach) {
       const getLimitVideoWeek = await CounterMongoModel.findOne({ _id: 'limitVideoWeek' });
