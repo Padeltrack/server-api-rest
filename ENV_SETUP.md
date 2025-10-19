@@ -143,30 +143,113 @@ Al iniciar la aplicación, verás:
 
 ## 📦 Deployment
 
-### Desarrollo en la Nube
-Usa las mismas variables que desarrollo local, ajustando solo:
-- `MONGO_URI` si usas una base de datos diferente
-- `NODE_ENV=development`
+### Desarrollo Local
+Usa las mismas variables que desarrollo local con el archivo `.env_development`:
+- Ejecutar con `npm run dev` o `npm run dev:linux`
 
-### Producción
-Asegúrate de:
+### Producción Local
+Para probar producción localmente:
 1. Actualizar todas las variables en `.env_production`
 2. Usar credenciales de producción
 3. Ejecutar con `npm run start:prod` (o `:prod:linux` en Linux/Mac)
 
+### ☁️ Deployment en Railway (Recomendado)
+
+Railway no requiere archivos `.env`. Configura las variables directamente en su plataforma:
+
+#### Paso 1: Configurar Variables en Railway Dashboard
+
+Accede a tu proyecto en Railway y configura estas variables de entorno:
+
+**Variables Requeridas:**
+```
+PORT=3000
+MONGO_URI=<tu_mongodb_uri_de_produccion>
+JWT_SECRET=<tu_jwt_secret_seguro>
+JWT_SECRET_REFRESH=<tu_jwt_refresh_secret_seguro>
+FIREBASE_PROJECT_ID=<tu_proyecto_firebase>
+FIREBASE_CLIENT_EMAIL=<tu_email_firebase>
+FIREBASE_PRIVATE_KEY=<tu_private_key_firebase>
+BUCKET_URL=<tu_bucket_firebase>
+BASE_STORE_FIREBASE=<tu_base_store_firebase>
+VIMEO_CLIENT_ID=<tu_vimeo_client_id>
+VIMEO_CLIENT_SECRET=<tu_vimeo_client_secret>
+VIMEO_ACCESS_TOKEN=<tu_vimeo_access_token>
+NODE_MAILER_ROOT_EMAIL=<tu_email>
+NODE_MAILER_ROOT_PASS=<tu_app_password>
+ADMIN_EMAILS=<lista_de_emails_admin>
+```
+
+**Variables Adicionales de Vimeo (si las usas):**
+```
+VIMEO_FREE_FOLDER_ID=<tu_folder_id>
+VIMEO_PLAN_VIDEO_FOLDER_ID=<tu_folder_id>
+VIMEO_EXAM_FOLDER_ID=<tu_folder_id>
+VIMEO_EXAM_ANSWER_STUDENT_FOLDER_ID=<tu_folder_id>
+```
+
+#### Paso 2: Configurar Comando de Inicio
+
+En la configuración de Railway, establece el comando de inicio:
+```bash
+npm run start:deploy:linux
+```
+
+#### Paso 3: Deploy
+
+Railway automáticamente:
+- ✅ Detecta el puerto configurado
+- ✅ Instala las dependencias
+- ✅ Ejecuta el comando de inicio
+- ✅ Proporciona una URL pública
+
+**Ventajas de Railway:**
+- No necesitas archivos `.env` en el repositorio
+- Variables de entorno seguras y encriptadas
+- Despliegue automático en cada push
+- Logs en tiempo real
+- Escalado automático
+
+### Deployment en Heroku
+
+Similar a Railway, Heroku también usa variables de entorno del servidor:
+
+```bash
+# Configurar variables
+heroku config:set PORT=3000
+heroku config:set MONGO_URI=<tu_mongo_uri>
+heroku config:set JWT_SECRET=<tu_jwt_secret>
+# ... resto de variables
+
+# Deploy
+git push heroku main
+```
+
 ## 🆘 Solución de Problemas
 
-### Error: "Environment file not found"
-- Verifica que exista el archivo `.env_development` o `.env_production`
+### Error: "Environment file not found" (Desarrollo Local)
+- **En local**: Verifica que exista el archivo `.env_development` o `.env_production`
 - Verifica que el nombre del archivo sea correcto (con guión bajo)
+- **En Railway**: Este error NO debería aparecer. Si aparece, asegúrate de usar el script `start:deploy:linux`
 
 ### Error: "Missing required environment variables"
-- Revisa que todas las variables requeridas estén definidas en tu archivo .env
+- **En local**: Revisa que todas las variables requeridas estén definidas en tu archivo .env
+- **En Railway**: Verifica que todas las variables estén configuradas en el dashboard de Railway
 - Compara con la lista de variables requeridas en este documento
 
-### El ambiente no cambia
+### El ambiente no cambia (Local)
 - Asegúrate de usar el script correcto (`dev`, `start:prod`, etc.)
 - Verifica que la variable `NODE_ENV` esté correctamente configurada en el script
+
+### La aplicación no inicia en Railway
+1. Verifica los logs en el dashboard de Railway
+2. Asegúrate de que todas las variables de entorno estén configuradas
+3. Verifica que el comando de inicio sea: `npm run start:deploy:linux`
+4. Revisa que el `FIREBASE_PRIVATE_KEY` esté correctamente escapado (con `\n` para saltos de línea)
+
+### Problemas con Firebase en Railway
+- Asegúrate de que `FIREBASE_PRIVATE_KEY` incluya los saltos de línea: `\n`
+- Verifica que la key esté completa con `-----BEGIN PRIVATE KEY-----` y `-----END PRIVATE KEY-----`
 
 ## 📞 Soporte
 

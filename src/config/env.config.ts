@@ -6,6 +6,7 @@ import LoggerColor from 'node-color-log';
 /**
  * Configuración de variables de entorno según el ambiente
  * Carga automáticamente el archivo .env correcto basado en NODE_ENV
+ * Si el archivo no existe (como en Railway/Heroku), usa las variables del servidor
  */
 export const configureEnvironment = (): void => {
   // Obtener el ambiente actual, por defecto 'development'
@@ -18,23 +19,22 @@ export const configureEnvironment = (): void => {
   
   const envPath = path.resolve(process.cwd(), envFile);
   
-  // Verificar si el archivo existe
-  if (!fs.existsSync(envPath)) {
-    LoggerColor.error(`❌ Environment file not found: ${envFile}`);
-    LoggerColor.warn(`⚠️  Please create ${envFile} file in the root directory`);
-    process.exit(1);
+  // Intentar cargar el archivo .env si existe (desarrollo local)
+  if (fs.existsSync(envPath)) {
+    // Cargar las variables de entorno desde el archivo
+    const result = dotenv.config({ path: envPath });
+    
+    if (result.error) {
+      LoggerColor.error(`❌ Error loading environment variables from ${envFile}:`, result.error);
+      process.exit(1);
+    }
+    
+    LoggerColor.color('cyan').bold().log(`✅ Environment loaded from file: ${envFile}`);
+  } else {
+    // Si no existe el archivo, asumir que las variables están en el servidor (Railway, Heroku, etc.)
+    LoggerColor.color('cyan').bold().log(`✅ Environment loaded from server: ${nodeEnv.toUpperCase()}`);
+    LoggerColor.color('yellow').log(`ℹ️  No .env file found, using server environment variables`);
   }
-  
-  // Cargar las variables de entorno
-  const result = dotenv.config({ path: envPath });
-  
-  if (result.error) {
-    LoggerColor.error(`❌ Error loading environment variables from ${envFile}:`, result.error);
-    process.exit(1);
-  }
-  
-  // Log del ambiente cargado
-  LoggerColor.color('cyan').bold().log(`✅ Environment loaded: ${nodeEnv.toUpperCase()}`);
   
   // Validar variables críticas
   validateRequiredEnvVars();

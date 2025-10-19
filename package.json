@@ -9,6 +9,7 @@
     "start:linux": "NODE_ENV=development ts-node src/app.ts",
     "start:prod": "set NODE_ENV=production && ts-node src/app.ts",
     "start:prod:linux": "NODE_ENV=production ts-node src/app.ts",
+    "start:deploy:linux": "ts-node src/app.ts",
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.json\" --write \"package.json\"",
     "format:check": "prettier --check \"src/**/*.ts\" --check \"package.json\"",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",

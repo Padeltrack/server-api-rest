@@ -176,6 +176,9 @@ npm run start:linux
 
 # Iniciar servidor en modo producción
 npm run start:prod:linux
+
+# Deployment en Railway/Heroku (usa variables del servidor)
+npm run start:deploy:linux
 ```
 
 ## 🏗️ Arquitectura
@@ -228,12 +231,35 @@ El proyecto sigue una arquitectura modular organizada por features:
 
 El proyecto soporta múltiples ambientes mediante variables de entorno:
 
-- **Development**: Base de datos de desarrollo, logs detallados, hot-reload
-- **Production**: Base de datos de producción, logs optimizados, configuración segura
+- **Development Local**: Usa `.env_development` para desarrollo local
+- **Production Local**: Usa `.env_production` para pruebas de producción local
+- **Cloud Deployment (Railway/Heroku)**: Usa variables de entorno configuradas en la plataforma
 
-El sistema automáticamente carga el archivo `.env_development` o `.env_production` según la variable `NODE_ENV`.
+### Funcionamiento Automático
+- Si existe un archivo `.env_development` o `.env_production`, se carga automáticamente
+- Si no existe (como en Railway), el sistema usa las variables ya configuradas en el servidor
+- El sistema valida que todas las variables críticas estén presentes antes de iniciar
 
 Para más información, consulta [ENV_SETUP.md](ENV_SETUP.md).
+
+## ☁️ Deployment en Railway
+
+Railway configura las variables de entorno directamente en su plataforma, sin necesidad de archivos `.env`:
+
+1. **Conecta tu repositorio** a Railway
+2. **Configura las variables de entorno** en el dashboard de Railway:
+   - `PORT`, `MONGO_URI`, `JWT_SECRET`, `JWT_SECRET_REFRESH`
+   - `FIREBASE_PROJECT_ID`, `FIREBASE_CLIENT_EMAIL`, `FIREBASE_PRIVATE_KEY`
+   - `VIMEO_CLIENT_ID`, `VIMEO_CLIENT_SECRET`, `VIMEO_ACCESS_TOKEN`
+   - `NODE_MAILER_ROOT_EMAIL`, `NODE_MAILER_ROOT_PASS`
+   - Todas las demás variables requeridas
+3. **Configura el comando de inicio** en Railway:
+   ```bash
+   npm run start:deploy:linux
+   ```
+4. Railway detectará automáticamente el puerto y desplegará la aplicación
+
+> **Nota**: No necesitas configurar `NODE_ENV` en Railway, el script `start:deploy:linux` funciona sin esta variable.
 
 ## 🔐 Seguridad
 
