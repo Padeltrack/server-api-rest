@@ -29,6 +29,7 @@ const cronOrderProgressWeek = async () => {
         const days = daysBetween(progress.lastProgressDate, new Date());
         let week = progress.currentWeek;
 
+        console.log("days between", days);
         if (days >= 7) {
           // Avanzar la semana actual
           const semanasAvance = Math.floor(days / 7);
@@ -50,6 +51,10 @@ const cronOrderProgressWeek = async () => {
           );
         } else {
           // Reiniciar los videos de la semana actual
+          console.log("Reiniciar ", {
+            orderId: progress._id,
+            week,
+          });
           await WeeklyVideoMongoModel.updateOne(
             {
               orderId: progress._id,
@@ -193,4 +198,8 @@ export const cronOrder = () => {
     await cronOrderProgressWeek();
     await cronDateOrderExpired();
   });
+
+  /*cron.schedule('0 39 17 * * *', async () => {
+    await cronOrderProgressWeek();
+  });*/
 };

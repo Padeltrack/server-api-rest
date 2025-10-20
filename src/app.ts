@@ -77,6 +77,8 @@ const PORT = process.env.PORT || 3000;
 connectToMongo()
   .then(() => {
     app.listen(PORT, () => {
+      console.log('Hora local del servidor:', new Date());
+      console.log('Zona horaria del servidor:', Intl.DateTimeFormat().resolvedOptions().timeZone);
       LoggerColor.bold().log(`🚀 Server running on http://localhost:${PORT}`);
       LoggerColor.bold().log(`📚 Swagger docs at http://localhost:${PORT}/api-docs`);
     });
