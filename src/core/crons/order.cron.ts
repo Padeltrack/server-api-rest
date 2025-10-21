@@ -198,8 +198,4 @@ export const cronOrder = () => {
     await cronOrderProgressWeek();
     await cronDateOrderExpired();
   });
-
-  /*cron.schedule('0 39 17 * * *', async () => {
-    await cronOrderProgressWeek();
-  });*/
 };

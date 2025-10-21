@@ -17,10 +17,16 @@ export const getPlans = async (req: Request, res: Response) => {
     }
 
     const plans = await PlanMongoModel.find(query).sort({ createdAt: -1 });
-    return res.status(200).json({ plans });
+    return res.status(200).json({ 
+      plans, 
+      message: req.t('plans.list.loaded')
+    });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(500).json({ message: 'Error fetching plans', error });
+    return res.status(500).json({ 
+      message: req.t('errors.serverError'), 
+      error 
+    });
   }
 };
 
@@ -37,10 +43,16 @@ export const getCoachPlans = async (req: Request, res: Response) => {
     }
 
     const plans = await PlanMongoModel.find(query).sort({ createdAt: -1 });
-    return res.status(200).json({ plans });
+    return res.status(200).json({ 
+      plans,
+      message: req.t('plans.list.loaded')
+    });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(500).json({ message: 'Error fetching plans', error });
+    return res.status(500).json({ 
+      message: req.t('errors.serverError'), 
+      error 
+    });
   }
 };
 
@@ -51,14 +63,23 @@ export const createPlan = async (req: Request, res: Response) => {
   try {
     const parsed = createPlanSchema.safeParse(req.body);
     if (!parsed.success) {
-      return res.status(400).json({ errors: parsed.error.flatten() });
+      return res.status(400).json({ 
+        message: req.t('errors.badRequest'),
+        errors: parsed.error.flatten() 
+      });
     }
 
     const newPlan = await PlanMongoModel.create(parsed.data);
-    return res.status(201).json({ plan: newPlan });
+    return res.status(201).json({ 
+      plan: newPlan,
+      message: req.t('plans.create.success')
+    });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(500).json({ message: 'Server error', error });
+    return res.status(500).json({ 
+      message: req.t('errors.serverError'), 
+      error 
+    });
   }
 };
 
@@ -79,21 +100,34 @@ export const updatePlan = async (req: Request, res: Response) => {
 
     if (!id) {
       return res.status(400).json({
-        message: 'Se requiere identificación del plan',
+        message: req.t('errors.badRequest'),
       });
     }
 
     const plan = await PlanMongoModel.findOneAndUpdate({ _id: id }, fields, { new: true });
-    return res.status(200).json({ plan });
+    
+    if (!plan) {
+      return res.status(404).json({ 
+        message: req.t('plans.detail.notFound') 
+      });
+    }
+    
+    return res.status(200).json({ 
+      plan,
+      message: req.t('plans.update.success')
+    });
   } catch (error) {
     if (error instanceof ZodError) {
       return res.status(400).json({
-        message: 'Error de validación',
+        message: req.t('errors.badRequest'),
         issues: error.errors,
       });
     }
 
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(500).json({ message: 'Server error', error });
+    return res.status(500).json({ 
+      message: req.t('errors.serverError'), 
+      error 
+    });
   }
 };

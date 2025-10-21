@@ -3,6 +3,7 @@ import cors from 'cors';
 import LoggerColor from 'node-color-log';
 import fs from 'fs';
 import path from 'path';
+import middleware from 'i18next-http-middleware';
 
 import vimeoRoutes from './routes/vimeo.route';
 import planRoutes from './routes/plan.route';
@@ -22,6 +23,7 @@ import { errorHandler } from './middleware/errorHandler.middleware';
 import { connectToMongo } from './config/mongo.config';
 import { initializeFirebase } from './config/firebase.config';
 import { configureEnvironment } from './config/env.config';
+import i18next from './config/i18n.config';
 import { logger } from './middleware/logger.middleware';
 import { HOST_PERMITS } from './shared/util/url.util';
 import { cronApp } from './core/crons';
@@ -50,6 +52,8 @@ app.use(
 );
 app.use(express.json({ limit: '20mb' }));
 app.use(express.urlencoded({ limit: '20mb', extended: true }));
+app.use(middleware.handle(i18next));
+
 app.use(serverImagesStaticAssets());
 
 // app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
@@ -77,10 +81,9 @@ const PORT = process.env.PORT || 3000;
 connectToMongo()
   .then(() => {
     app.listen(PORT, () => {
-      console.log('Hora local del servidor:', new Date());
-      console.log('Zona horaria del servidor:', Intl.DateTimeFormat().resolvedOptions().timeZone);
       LoggerColor.bold().log(`🚀 Server running on http://localhost:${PORT}`);
       LoggerColor.bold().log(`📚 Swagger docs at http://localhost:${PORT}/api-docs`);
+      LoggerColor.color('green').log('🌍 i18n initialized - Languages: es, en, pt');
     });
   })
   .catch(err => {

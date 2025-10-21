@@ -1,0 +1,445 @@
+{
+  "common": {
+    "success": "Operation successful",
+    "error": "An error has occurred",
+    "notFound": "Not found",
+    "unauthorized": "Unauthorized",
+    "forbidden": "Access denied",
+    "badRequest": "Bad request",
+    "serverError": "Server error",
+    "created": "Successfully created",
+    "updated": "Successfully updated",
+    "deleted": "Successfully deleted",
+    "welcome": "Welcome",
+    "goodbye": "Goodbye",
+    "loading": "Loading...",
+    "noData": "No data available",
+    "idRequired": "ID is required",
+    "invalidId": "Invalid ID"
+  },
+  "auth": {
+    "login": {
+      "success": "Login successful",
+      "error": "Invalid credentials",
+      "emailRequired": "Email is required",
+      "passwordRequired": "Password is required",
+      "emailInvalid": "Email format is invalid",
+      "accountDisabled": "Your account has been disabled",
+      "accountNotVerified": "Please verify your account"
+    },
+    "register": {
+      "success": "User registered successfully",
+      "error": "Error registering user",
+      "emailExists": "Email is already registered",
+      "weakPassword": "Password is too weak",
+      "passwordMismatch": "Passwords do not match",
+      "welcome": "Welcome to Padel Track, {{name}}!"
+    },
+    "logout": {
+      "success": "Successfully logged out"
+    },
+    "token": {
+      "invalid": "Invalid token",
+      "expired": "Your session has expired",
+      "refreshSuccess": "Token refreshed successfully",
+      "missing": "Token not provided"
+    },
+    "password": {
+      "resetRequest": "An email has been sent to reset your password",
+      "resetSuccess": "Password reset successfully",
+      "changeSuccess": "Password changed successfully",
+      "oldPasswordIncorrect": "Current password is incorrect",
+      "required": "Password is required",
+      "minLength": "Password must be at least {{length}} characters"
+    }
+  },
+  "users": {
+    "profile": {
+      "updated": "Profile updated successfully",
+      "photoUploaded": "Profile photo updated",
+      "notFound": "User not found",
+      "incomplete": "Incomplete profile"
+    },
+    "create": {
+      "success": "User created successfully",
+      "error": "Error creating user",
+      "adminCreated": "Admin user created successfully"
+    },
+    "update": {
+      "success": "User updated successfully",
+      "error": "Error updating user"
+    },
+    "delete": {
+      "success": "User deleted successfully",
+      "error": "Error deleting user",
+      "cannotDeleteSelf": "You cannot delete this user",
+      "cannotDelete": "You cannot delete this user"
+    },
+    "list": {
+      "empty": "No registered users",
+      "loaded": "Users loaded successfully",
+      "error": "Error getting users"
+    },
+    "role": {
+      "admin": "Administrator",
+      "coach": "Coach",
+      "student": "Student",
+      "invalid": "Invalid role",
+      "updated": "Role updated successfully"
+    },
+    "verification": {
+      "success": "User successfully marked as verified",
+      "error": "Error marking user as verified",
+      "memberSuccess": "User successfully marked as member",
+      "notFound": "Coach not found"
+    },
+    "validation": {
+      "nameRequired": "Name is required",
+      "emailRequired": "Email is required",
+      "emailInvalid": "Email format is invalid",
+      "phoneInvalid": "Phone format is invalid",
+      "idRequired": "User ID is required",
+      "alreadyExists": "User already exists"
+    }
+  },
+  "orders": {
+    "create": {
+      "success": "Order created successfully",
+      "error": "Error creating order",
+      "planRequired": "You must select a plan"
+    },
+    "payment": {
+      "pending": "Payment pending",
+      "completed": "Payment completed",
+      "failed": "Payment failed",
+      "processing": "Processing payment",
+      "verified": "Payment verified successfully",
+      "proofRequired": "You must upload a payment proof"
+    },
+    "status": {
+      "active": "Active",
+      "expired": "Expired",
+      "cancelled": "Cancelled",
+      "pending": "Pending",
+      "updated": "Status updated successfully",
+      "alreadyUpdated": "Status already updated",
+      "notApproved": "Order not approved"
+    },
+    "list": {
+      "empty": "You have no orders",
+      "loaded": "Orders loaded successfully",
+      "error": "Error getting orders"
+    },
+    "detail": {
+      "notFound": "Order not found",
+      "loaded": "Order details loaded",
+      "error": "Error getting order"
+    },
+    "cancel": {
+      "success": "Order cancelled successfully",
+      "error": "Error cancelling order",
+      "alreadyCancelled": "Order is already cancelled"
+    },
+    "update": {
+      "success": "Order updated successfully",
+      "error": "Error updating order"
+    },
+    "validation": {
+      "idRequired": "Order ID is required",
+      "planNotFound": "Plan not found",
+      "userNotFound": "User not found",
+      "hasPending": "You have a pending order",
+      "notCoach": "You are not a coach",
+      "rejectionRequired": "Rejection message is required",
+      "rejectionTooLong": "Rejection message cannot exceed 50 characters"
+    }
+  },
+  "plans": {
+    "list": {
+      "empty": "No plans available",
+      "loaded": "Plans loaded successfully"
+    },
+    "detail": {
+      "notFound": "Plan not found",
+      "loaded": "Plan details loaded"
+    },
+    "create": {
+      "success": "Plan created successfully",
+      "error": "Error creating plan"
+    },
+    "update": {
+      "success": "Plan updated successfully",
+      "error": "Error updating plan"
+    },
+    "delete": {
+      "success": "Plan deleted successfully",
+      "error": "Error deleting plan",
+      "hasActiveOrders": "Cannot delete a plan with active orders"
+    },
+    "validation": {
+      "nameRequired": "Plan name is required",
+      "priceRequired": "Price is required",
+      "priceInvalid": "Price must be greater than 0",
+      "durationRequired": "Duration is required",
+      "idRequired": "Plan ID is required"
+    }
+  },
+  "exams": {
+    "create": {
+      "success": "Exam created successfully",
+      "error": "Error creating exam"
+    },
+    "update": {
+      "success": "Exam updated successfully",
+      "error": "Error updating exam"
+    },
+    "delete": {
+      "success": "Exam deleted successfully",
+      "error": "Error deleting exam"
+    },
+    "submit": {
+      "success": "Answers submitted successfully",
+      "error": "Error submitting answers",
+      "alreadySubmitted": "You have already submitted answers for this exam"
+    },
+    "grade": {
+      "success": "Exam graded successfully",
+      "pending": "Pending grading",
+      "passed": "Congratulations! You passed with {{score}} points",
+      "failed": "You did not reach the minimum score. You got {{score}} points"
+    },
+    "list": {
+      "empty": "No exams available",
+      "loaded": "Exams loaded successfully",
+      "error": "Error getting exam questions"
+    },
+    "detail": {
+      "notFound": "Exam not found",
+      "loaded": "Exam details loaded"
+    },
+    "answer": {
+      "success": "Answer registered successfully",
+      "error": "Error registering exam answer",
+      "updated": "Answer updated successfully",
+      "updateError": "Error updating exam answers",
+      "deleted": "Questionnaire deleted successfully",
+      "deleteError": "Error deleting questionnaire"
+    },
+    "question": {
+      "notFound": "Question not found",
+      "fileRequired": "No file uploaded"
+    },
+    "validation": {
+      "titleRequired": "Title is required",
+      "questionsRequired": "You must add at least one question",
+      "answerRequired": "You must select an answer"
+    }
+  },
+  "videos": {
+    "upload": {
+      "success": "Video uploaded successfully",
+      "error": "Error uploading video",
+      "processing": "Video is being processed"
+    },
+    "update": {
+      "success": "Video updated successfully",
+      "error": "Error updating video",
+      "portalImageSuccess": "Portal image updated"
+    },
+    "delete": {
+      "success": "Video deleted successfully",
+      "error": "Error deleting video"
+    },
+    "list": {
+      "empty": "No videos available",
+      "loaded": "Videos loaded successfully",
+      "error": "Error getting videos"
+    },
+    "detail": {
+      "notFound": "Video not found",
+      "loaded": "Video details loaded",
+      "error": "Error getting video"
+    },
+    "validation": {
+      "titleRequired": "Title is required",
+      "fileRequired": "No file uploaded",
+      "invalidFormat": "Video format not supported",
+      "idRequired": "Video ID is required",
+      "planRequired": "Video plan is required",
+      "weeksRequired": "Video weeks is required"
+    }
+  },
+  "vimeo": {
+    "upload": {
+      "success": "Video uploaded successfully",
+      "error": "Error uploading video to Vimeo",
+      "fileRequired": "No file uploaded"
+    },
+    "fetch": {
+      "success": "Videos fetched successfully",
+      "error": "Error fetching videos from Vimeo"
+    },
+    "folders": {
+      "success": "Folders fetched successfully",
+      "error": "Error fetching folders from Vimeo"
+    },
+    "update": {
+      "success": "Video updated successfully",
+      "error": "Server error"
+    },
+    "delete": {
+      "success": "Video deleted successfully",
+      "error": "Server error"
+    },
+    "validation": {
+      "idRequired": "Video ID is required"
+    }
+  },
+  "matches": {
+    "create": {
+      "success": "Match created successfully",
+      "error": "Error creating match"
+    },
+    "update": {
+      "success": "Match updated successfully",
+      "error": "Error updating match"
+    },
+    "delete": {
+      "success": "Match deleted successfully",
+      "error": "Error deleting match"
+    },
+    "result": {
+      "win": "Win",
+      "loss": "Loss",
+      "draw": "Draw",
+      "recorded": "Result recorded successfully"
+    },
+    "list": {
+      "empty": "No matches recorded",
+      "loaded": "Matches loaded successfully"
+    },
+    "detail": {
+      "notFound": "Match not found",
+      "loaded": "Match details loaded"
+    },
+    "validation": {
+      "dateRequired": "Date is required",
+      "opponentRequired": "You must specify the opponent",
+      "scoreRequired": "You must record the score"
+    }
+  },
+  "onboarding": {
+    "welcome": "Welcome to Padel Track",
+    "step1": "Complete your profile",
+    "step2": "Select your plan",
+    "step3": "Start your training",
+    "completed": "Onboarding completed!",
+    "skip": "Skip",
+    "next": "Next",
+    "previous": "Previous",
+    "finish": "Finish"
+  },
+  "bank": {
+    "create": {
+      "success": "Bank information registered successfully",
+      "error": "Error registering bank information"
+    },
+    "update": {
+      "success": "Bank information updated successfully",
+      "error": "Error updating bank information"
+    },
+    "validation": {
+      "accountNumberRequired": "Account number is required",
+      "bankNameRequired": "Bank name is required",
+      "accountTypeRequired": "Account type is required"
+    }
+  },
+  "coaches": {
+    "assign": {
+      "success": "Coach assigned successfully",
+      "error": "Error assigning coach",
+      "alreadyAssigned": "This coach is already assigned"
+    },
+    "unassign": {
+      "success": "Coach unassigned successfully",
+      "error": "Error unassigning coach"
+    },
+    "list": {
+      "empty": "No coaches available",
+      "loaded": "Coaches loaded successfully",
+      "myStudents": "My students",
+      "myCoaches": "My coaches"
+    }
+  },
+  "ads": {
+    "create": {
+      "success": "Ad created successfully",
+      "error": "Error creating ad"
+    },
+    "update": {
+      "success": "Ad updated successfully",
+      "error": "Error updating ad"
+    },
+    "delete": {
+      "success": "Ad deleted successfully",
+      "error": "Error deleting ad"
+    },
+    "list": {
+      "empty": "No active ads",
+      "loaded": "Ads loaded successfully"
+    }
+  },
+  "emails": {
+    "sent": "Email sent successfully",
+    "error": "Error sending email",
+    "welcome": {
+      "subject": "Welcome to Padel Track!",
+      "title": "Welcome, {{name}}",
+      "message": "We're excited to have you on our platform"
+    },
+    "passwordReset": {
+      "subject": "Reset your password",
+      "title": "Password reset",
+      "message": "You have requested to reset your password"
+    },
+    "orderConfirmation": {
+      "subject": "Order confirmation",
+      "title": "Your order has been confirmed",
+      "message": "Thank you for your purchase"
+    }
+  },
+  "validation": {
+    "required": "This field is required",
+    "email": "Must be a valid email",
+    "minLength": "Must be at least {{length}} characters",
+    "maxLength": "Cannot exceed {{length}} characters",
+    "min": "Minimum value is {{min}}",
+    "max": "Maximum value is {{max}}",
+    "invalidFormat": "Invalid format",
+    "mustMatch": "Fields do not match",
+    "positive": "Must be a positive number",
+    "integer": "Must be an integer",
+    "url": "Must be a valid URL",
+    "phone": "Must be a valid phone number",
+    "date": "Must be a valid date",
+    "validationError": "Validation error"
+  },
+  "errors": {
+    "generic": "An unexpected error has occurred",
+    "network": "Connection error",
+    "timeout": "Request timeout",
+    "notFound": "The requested resource was not found",
+    "unauthorized": "You are not authorized to perform this action",
+    "forbidden": "Access forbidden",
+    "badRequest": "The request is incorrect",
+    "conflict": "Conflict with current resource state",
+    "tooManyRequests": "Too many requests, try again later",
+    "serverError": "Internal server error",
+    "serviceUnavailable": "Service temporarily unavailable",
+    "maintenance": "System is under maintenance",
+    "fetching": "Error fetching data",
+    "creating": "Error creating",
+    "updating": "Error updating",
+    "deleting": "Error deleting"
+  }
+}

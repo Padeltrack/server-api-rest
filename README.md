@@ -50,6 +50,10 @@ Padel Track es una plataforma backend completa que permite:
 - **Pino** - Sistema de logging de alto rendimiento
 - **CORS** - Manejo de Cross-Origin Resource Sharing
 
+### Internacionalización (i18n)
+- **i18next** - Framework de internacionalización
+- **i18next-http-middleware** - Middleware Express para i18n
+
 ### Development Tools
 - **Nodemon** - Hot-reload en desarrollo
 - **ts-node** - Ejecución directa de TypeScript
@@ -226,6 +230,40 @@ El proyecto sigue una arquitectura modular organizada por features:
 ```
 
 > **Nota**: La documentación completa de la API está disponible en `/api-docs` cuando el servidor está en ejecución (próximamente).
+
+## 🌍 Internacionalización (i18n)
+
+El proyecto soporta **múltiples idiomas**:
+- **es** (Español) - Idioma por defecto
+- **en** (English) - Inglés  
+- **pt** (Português) - Portugués
+
+### Uso en la API
+
+Los clientes pueden especificar el idioma de 3 formas:
+
+```bash
+# 1. Query parameter (recomendado)
+GET /api/users?lang=en
+
+# 2. Header personalizado
+X-Language: en
+
+# 3. Header Accept-Language
+Accept-Language: en-US,en;q=0.9
+```
+
+### Uso en Controllers
+
+```typescript
+export const getUsers = async (req: Request, res: Response) => {
+  return res.json({
+    message: req.t('users.list.loaded')  // Automáticamente en el idioma del cliente
+  });
+};
+```
+
+Para más información, consulta la [Guía de i18n](I18N_GUIDE.md).
 
 ## 🌍 Ambientes
 

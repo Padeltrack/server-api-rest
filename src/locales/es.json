@@ -1,0 +1,445 @@
+{
+  "common": {
+    "success": "Operación exitosa",
+    "error": "Ha ocurrido un error",
+    "notFound": "No encontrado",
+    "unauthorized": "No autorizado",
+    "forbidden": "Acceso denegado",
+    "badRequest": "Solicitud incorrecta",
+    "serverError": "Error del servidor",
+    "created": "Creado exitosamente",
+    "updated": "Actualizado exitosamente",
+    "deleted": "Eliminado exitosamente",
+    "welcome": "Bienvenido",
+    "goodbye": "Hasta luego",
+    "loading": "Cargando...",
+    "noData": "No hay datos disponibles",
+    "idRequired": "Se requiere identificación",
+    "invalidId": "Identificación inválida"
+  },
+  "auth": {
+    "login": {
+      "success": "Inicio de sesión exitoso",
+      "error": "Credenciales inválidas",
+      "emailRequired": "El email es requerido",
+      "passwordRequired": "La contraseña es requerida",
+      "emailInvalid": "El formato del email es inválido",
+      "accountDisabled": "Tu cuenta ha sido deshabilitada",
+      "accountNotVerified": "Por favor verifica tu cuenta"
+    },
+    "register": {
+      "success": "Usuario registrado exitosamente",
+      "error": "Error al registrar usuario",
+      "emailExists": "El email ya está registrado",
+      "weakPassword": "La contraseña es muy débil",
+      "passwordMismatch": "Las contraseñas no coinciden",
+      "welcome": "Bienvenido a Padel Track, {{name}}!"
+    },
+    "logout": {
+      "success": "Sesión cerrada exitosamente"
+    },
+    "token": {
+      "invalid": "Token inválido",
+      "expired": "Tu sesión ha expirado",
+      "refreshSuccess": "Token actualizado exitosamente",
+      "missing": "Token no proporcionado"
+    },
+    "password": {
+      "resetRequest": "Se ha enviado un email para restablecer tu contraseña",
+      "resetSuccess": "Contraseña restablecida exitosamente",
+      "changeSuccess": "Contraseña cambiada exitosamente",
+      "oldPasswordIncorrect": "La contraseña actual es incorrecta",
+      "required": "La contraseña es requerida",
+      "minLength": "La contraseña debe tener al menos {{length}} caracteres"
+    }
+  },
+  "users": {
+    "profile": {
+      "updated": "Perfil actualizado con éxito",
+      "photoUploaded": "Foto de perfil actualizada",
+      "notFound": "Usuario no encontrado",
+      "incomplete": "Perfil incompleto"
+    },
+    "create": {
+      "success": "Usuario creado exitosamente",
+      "error": "Error al crear usuario",
+      "adminCreated": "Usuario administrador creado exitosamente"
+    },
+    "update": {
+      "success": "Usuario actualizado con éxito",
+      "error": "Error al actualizar usuario"
+    },
+    "delete": {
+      "success": "Usuario eliminado exitosamente",
+      "error": "Error al eliminar usuario",
+      "cannotDeleteSelf": "No puedes eliminar a este usuario",
+      "cannotDelete": "No puedes eliminar a este usuario"
+    },
+    "list": {
+      "empty": "No hay usuarios registrados",
+      "loaded": "Usuarios cargados exitosamente",
+      "error": "Error al obtener usuarios"
+    },
+    "role": {
+      "admin": "Administrador",
+      "coach": "Entrenador",
+      "student": "Estudiante",
+      "invalid": "Rol inválido",
+      "updated": "Rol actualizado exitosamente"
+    },
+    "verification": {
+      "success": "Usuario marcado como verificado exitosamente",
+      "error": "Error al marcar usuario como verificado",
+      "memberSuccess": "Usuario marcado exitosamente como miembro",
+      "notFound": "Entrenador no encontrado"
+    },
+    "validation": {
+      "nameRequired": "El nombre es requerido",
+      "emailRequired": "El email es requerido",
+      "emailInvalid": "El formato del email es inválido",
+      "phoneInvalid": "El formato del teléfono es inválido",
+      "idRequired": "Se requiere identificación de usuario",
+      "alreadyExists": "El usuario ya existe"
+    }
+  },
+  "orders": {
+    "create": {
+      "success": "Orden creada exitosamente",
+      "error": "Error al crear la orden",
+      "planRequired": "Debes seleccionar un plan"
+    },
+    "payment": {
+      "pending": "Pago pendiente",
+      "completed": "Pago completado",
+      "failed": "Pago fallido",
+      "processing": "Procesando pago",
+      "verified": "Pago verificado exitosamente",
+      "proofRequired": "Debes subir un comprobante de pago"
+    },
+    "status": {
+      "active": "Activa",
+      "expired": "Expirada",
+      "cancelled": "Cancelada",
+      "pending": "Pendiente",
+      "updated": "Estado actualizado exitosamente",
+      "alreadyUpdated": "Estado ya actualizado",
+      "notApproved": "Pedido no aprobado"
+    },
+    "list": {
+      "empty": "No tienes órdenes",
+      "loaded": "Órdenes cargadas exitosamente",
+      "error": "Error al obtener órdenes"
+    },
+    "detail": {
+      "notFound": "Orden no encontrada",
+      "loaded": "Detalles de la orden cargados",
+      "error": "Error al obtener orden"
+    },
+    "cancel": {
+      "success": "Orden cancelada exitosamente",
+      "error": "Error al cancelar la orden",
+      "alreadyCancelled": "La orden ya está cancelada"
+    },
+    "update": {
+      "success": "Orden actualizada exitosamente",
+      "error": "Error al actualizar orden"
+    },
+    "validation": {
+      "idRequired": "Se requiere identificación de orden",
+      "planNotFound": "Plan no encontrado",
+      "userNotFound": "Usuario no encontrado",
+      "hasPending": "Tienes una orden pendiente",
+      "notCoach": "No eres un entrenador",
+      "rejectionRequired": "El mensaje de rechazo es requerido",
+      "rejectionTooLong": "El mensaje de rechazo no puede tener más de 50 caracteres"
+    }
+  },
+  "plans": {
+    "list": {
+      "empty": "No hay planes disponibles",
+      "loaded": "Planes cargados exitosamente"
+    },
+    "detail": {
+      "notFound": "Plan no encontrado",
+      "loaded": "Detalles del plan cargados"
+    },
+    "create": {
+      "success": "Plan creado exitosamente",
+      "error": "Error al crear el plan"
+    },
+    "update": {
+      "success": "Plan actualizado exitosamente",
+      "error": "Error al actualizar el plan"
+    },
+    "delete": {
+      "success": "Plan eliminado exitosamente",
+      "error": "Error al eliminar el plan",
+      "hasActiveOrders": "No se puede eliminar un plan con órdenes activas"
+    },
+    "validation": {
+      "nameRequired": "El nombre del plan es requerido",
+      "priceRequired": "El precio es requerido",
+      "priceInvalid": "El precio debe ser mayor a 0",
+      "durationRequired": "La duración es requerida",
+      "idRequired": "Se requiere identificación del plan"
+    }
+  },
+  "exams": {
+    "create": {
+      "success": "Examen creado exitosamente",
+      "error": "Error al crear el examen"
+    },
+    "update": {
+      "success": "Examen actualizado exitosamente",
+      "error": "Error al actualizar el examen"
+    },
+    "delete": {
+      "success": "Examen eliminado exitosamente",
+      "error": "Error al eliminar el examen"
+    },
+    "submit": {
+      "success": "Respuestas enviadas exitosamente",
+      "error": "Error al enviar las respuestas",
+      "alreadySubmitted": "Ya has enviado respuestas para este examen"
+    },
+    "grade": {
+      "success": "Examen calificado exitosamente",
+      "pending": "Pendiente de calificación",
+      "passed": "¡Felicitaciones! Has aprobado con {{score}} puntos",
+      "failed": "No has alcanzado el puntaje mínimo. Obtuviste {{score}} puntos"
+    },
+    "list": {
+      "empty": "No hay exámenes disponibles",
+      "loaded": "Exámenes cargados exitosamente",
+      "error": "Error al obtener las preguntas del examen"
+    },
+    "detail": {
+      "notFound": "Examen no encontrado",
+      "loaded": "Detalles del examen cargados"
+    },
+    "answer": {
+      "success": "Respuesta registrada exitosamente",
+      "error": "Error al registrar respuesta del examen",
+      "updated": "Respuesta actualizada exitosamente",
+      "updateError": "Error al actualizar respuestas del examen",
+      "deleted": "Cuestionario eliminado exitosamente",
+      "deleteError": "Error al eliminar cuestionario"
+    },
+    "question": {
+      "notFound": "Pregunta no encontrada",
+      "fileRequired": "No se ha subido ningún archivo"
+    },
+    "validation": {
+      "titleRequired": "El título es requerido",
+      "questionsRequired": "Debes agregar al menos una pregunta",
+      "answerRequired": "Debes seleccionar una respuesta"
+    }
+  },
+  "videos": {
+    "upload": {
+      "success": "Video subido exitosamente",
+      "error": "Error al subir el video",
+      "processing": "El video está siendo procesado"
+    },
+    "update": {
+      "success": "Video actualizado exitosamente",
+      "error": "Error al actualizar el video",
+      "portalImageSuccess": "Imagen de portal actualizada"
+    },
+    "delete": {
+      "success": "Video eliminado exitosamente",
+      "error": "Error al eliminar el video"
+    },
+    "list": {
+      "empty": "No hay videos disponibles",
+      "loaded": "Videos cargados exitosamente",
+      "error": "Error al obtener videos"
+    },
+    "detail": {
+      "notFound": "Video no encontrado",
+      "loaded": "Detalles del video cargados",
+      "error": "Error al obtener video"
+    },
+    "validation": {
+      "titleRequired": "El título es requerido",
+      "fileRequired": "No se ha subido ningún archivo",
+      "invalidFormat": "Formato de video no soportado",
+      "idRequired": "Se requiere identificación de video",
+      "planRequired": "Video plan es requerido",
+      "weeksRequired": "Video semanas es requerido"
+    }
+  },
+  "vimeo": {
+    "upload": {
+      "success": "Video subido exitosamente",
+      "error": "Error al subir video a Vimeo",
+      "fileRequired": "No se ha subido ningún archivo"
+    },
+    "fetch": {
+      "success": "Videos obtenidos correctamente",
+      "error": "Error al recuperar videos de Vimeo"
+    },
+    "folders": {
+      "success": "Carpetas recuperadas exitosamente",
+      "error": "Error al recuperar carpetas de Vimeo"
+    },
+    "update": {
+      "success": "Video actualizado con éxito",
+      "error": "Error del servidor"
+    },
+    "delete": {
+      "success": "Video eliminado con éxito",
+      "error": "Error del servidor"
+    },
+    "validation": {
+      "idRequired": "Se requiere identificación de video"
+    }
+  },
+  "matches": {
+    "create": {
+      "success": "Partido creado exitosamente",
+      "error": "Error al crear el partido"
+    },
+    "update": {
+      "success": "Partido actualizado exitosamente",
+      "error": "Error al actualizar el partido"
+    },
+    "delete": {
+      "success": "Partido eliminado exitosamente",
+      "error": "Error al eliminar el partido"
+    },
+    "result": {
+      "win": "Victoria",
+      "loss": "Derrota",
+      "draw": "Empate",
+      "recorded": "Resultado registrado exitosamente"
+    },
+    "list": {
+      "empty": "No hay partidos registrados",
+      "loaded": "Partidos cargados exitosamente"
+    },
+    "detail": {
+      "notFound": "Partido no encontrado",
+      "loaded": "Detalles del partido cargados"
+    },
+    "validation": {
+      "dateRequired": "La fecha es requerida",
+      "opponentRequired": "Debes especificar el oponente",
+      "scoreRequired": "Debes registrar el marcador"
+    }
+  },
+  "onboarding": {
+    "welcome": "Bienvenido a Padel Track",
+    "step1": "Completa tu perfil",
+    "step2": "Selecciona tu plan",
+    "step3": "Comienza tu entrenamiento",
+    "completed": "¡Onboarding completado!",
+    "skip": "Saltar",
+    "next": "Siguiente",
+    "previous": "Anterior",
+    "finish": "Finalizar"
+  },
+  "bank": {
+    "create": {
+      "success": "Información bancaria registrada exitosamente",
+      "error": "Error al registrar información bancaria"
+    },
+    "update": {
+      "success": "Información bancaria actualizada exitosamente",
+      "error": "Error al actualizar información bancaria"
+    },
+    "validation": {
+      "accountNumberRequired": "El número de cuenta es requerido",
+      "bankNameRequired": "El nombre del banco es requerido",
+      "accountTypeRequired": "El tipo de cuenta es requerido"
+    }
+  },
+  "coaches": {
+    "assign": {
+      "success": "Coach asignado exitosamente",
+      "error": "Error al asignar el coach",
+      "alreadyAssigned": "Este coach ya está asignado"
+    },
+    "unassign": {
+      "success": "Coach desasignado exitosamente",
+      "error": "Error al desasignar el coach"
+    },
+    "list": {
+      "empty": "No hay coaches disponibles",
+      "loaded": "Coaches cargados exitosamente",
+      "myStudents": "Mis estudiantes",
+      "myCoaches": "Mis coaches"
+    }
+  },
+  "ads": {
+    "create": {
+      "success": "Anuncio creado exitosamente",
+      "error": "Error al crear el anuncio"
+    },
+    "update": {
+      "success": "Anuncio actualizado exitosamente",
+      "error": "Error al actualizar el anuncio"
+    },
+    "delete": {
+      "success": "Anuncio eliminado exitosamente",
+      "error": "Error al eliminar el anuncio"
+    },
+    "list": {
+      "empty": "No hay anuncios activos",
+      "loaded": "Anuncios cargados exitosamente"
+    }
+  },
+  "emails": {
+    "sent": "Email enviado exitosamente",
+    "error": "Error al enviar el email",
+    "welcome": {
+      "subject": "¡Bienvenido a Padel Track!",
+      "title": "Bienvenido, {{name}}",
+      "message": "Estamos emocionados de tenerte en nuestra plataforma"
+    },
+    "passwordReset": {
+      "subject": "Restablece tu contraseña",
+      "title": "Restablecimiento de contraseña",
+      "message": "Has solicitado restablecer tu contraseña"
+    },
+    "orderConfirmation": {
+      "subject": "Confirmación de orden",
+      "title": "Tu orden ha sido confirmada",
+      "message": "Gracias por tu compra"
+    }
+  },
+  "validation": {
+    "required": "Este campo es requerido",
+    "email": "Debe ser un email válido",
+    "minLength": "Debe tener al menos {{length}} caracteres",
+    "maxLength": "No puede exceder {{length}} caracteres",
+    "min": "El valor mínimo es {{min}}",
+    "max": "El valor máximo es {{max}}",
+    "invalidFormat": "Formato inválido",
+    "mustMatch": "Los campos no coinciden",
+    "positive": "Debe ser un número positivo",
+    "integer": "Debe ser un número entero",
+    "url": "Debe ser una URL válida",
+    "phone": "Debe ser un número de teléfono válido",
+    "date": "Debe ser una fecha válida",
+    "validationError": "Error de validación"
+  },
+  "errors": {
+    "generic": "Ha ocurrido un error inesperado",
+    "network": "Error de conexión",
+    "timeout": "La solicitud ha excedido el tiempo de espera",
+    "notFound": "El recurso solicitado no fue encontrado",
+    "unauthorized": "No tienes autorización para realizar esta acción",
+    "forbidden": "Acceso prohibido",
+    "badRequest": "La solicitud es incorrecta",
+    "conflict": "Conflicto con el estado actual del recurso",
+    "tooManyRequests": "Demasiadas solicitudes, intenta más tarde",
+    "serverError": "Error interno del servidor",
+    "serviceUnavailable": "Servicio no disponible temporalmente",
+    "maintenance": "El sistema está en mantenimiento",
+    "fetching": "Error al obtener datos",
+    "creating": "Error al crear",
+    "updating": "Error al actualizar",
+    "deleting": "Error al eliminar"
+  }
+}
