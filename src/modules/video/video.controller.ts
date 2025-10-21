@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
+import { ZodError } from 'zod';
 import { VideoMongoModel } from './video.model';
 import { CreateVideoSchemaZod, UpdateVideoSchemaZod } from './video.dto';
 import {
@@ -13,6 +14,7 @@ import {
 } from '../vimeo/vimeo.helper';
 import { planVideoFolder } from '../vimeo/viemo.constant';
 import { cleanUploadedFiles } from '../../middleware/multer.middleware';
+import { formatZodErrorResponse } from '../../shared/util/zod.util';
 
 export const getVideos = async (req: Request, res: Response) => {
   req.logger = req.logger.child({ service: 'videos', serviceHandler: 'getVideos' });
@@ -161,6 +163,9 @@ export const addVideo = async (req: Request, res: Response) => {
       message: req.t('videos.upload.success'),
     });
   } catch (error) {
+    if (error instanceof ZodError) {
+      return res.status(400).json(formatZodErrorResponse(error, req.t));
+    }
     req.logger.error({ status: 'error', code: 500, error: error.message });
     return res.status(401).json({ message: req.t('videos.upload.error') });
   }
@@ -291,6 +296,9 @@ export const updateVideo = async (req: Request, res: Response) => {
       video,
     });
   } catch (error) {
+    if (error instanceof ZodError) {
+      return res.status(400).json(formatZodErrorResponse(error, req.t));
+    }
     req.logger.error({ status: 'error', code: 500, error: error.message });
     return res.status(401).json({ message: req.t('videos.update.error') });
   }

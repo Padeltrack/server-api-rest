@@ -1,14 +1,16 @@
 import { z } from 'zod';
 
 export const AdsRegisterSchemaZod = z.object({
-  imageBase64: z.string().min(3),
-  link: z.string().url().optional(),
+  imageBase64: z
+    .string({ required_error: 'ads.validation.imageRequired' })
+    .min(3, { message: 'ads.validation.imageInvalid' }),
+  link: z.string().url({ message: 'validation.url' }).optional(),
   active: z.boolean().optional(),
 });
 
 export const AdsUpdateSchemaZod = z.object({
-  imageBase64: z.string().min(3).optional(),
-  link: z.string().url().optional(),
+  imageBase64: z.string().min(3, { message: 'ads.validation.imageInvalid' }).optional(),
+  link: z.string().url({ message: 'validation.url' }).optional(),
   active: z.boolean().optional(),
 });
 

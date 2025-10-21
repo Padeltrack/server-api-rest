@@ -42,7 +42,8 @@
       "invalid": "Token inválido",
       "expired": "Sua sessão expirou",
       "refreshSuccess": "Token atualizado com sucesso",
-      "missing": "Token não fornecido"
+      "missing": "Token não fornecido",
+      "required": "O token é obrigatório"
     },
     "password": {
       "resetRequest": "Um email foi enviado para redefinir sua senha",
@@ -51,6 +52,15 @@
       "oldPasswordIncorrect": "A senha atual está incorreta",
       "required": "A senha é obrigatória",
       "minLength": "A senha deve ter pelo menos {{length}} caracteres"
+    },
+    "validation": {
+      "tokenRequired": "O token é obrigatório",
+      "genderRequired": "O sexo é obrigatório",
+      "roleRequired": "O papel é obrigatório",
+      "questionRequired": "A pergunta é obrigatória",
+      "answerRequired": "A resposta é obrigatória",
+      "onboardingRequired": "O onboarding é obrigatório",
+      "codeRequired": "O código de verificação é obrigatório"
     }
   },
   "users": {
@@ -147,9 +157,11 @@
     "validation": {
       "idRequired": "Identificação do pedido é obrigatória",
       "planNotFound": "Plano não encontrado",
+      "planRequired": "O identificador do plano é obrigatório",
       "userNotFound": "Usuário não encontrado",
       "hasPending": "Você tem um pedido pendente",
       "notCoach": "Você não é um treinador",
+      "statusRequired": "O status é obrigatório",
       "rejectionRequired": "A mensagem de rejeição é obrigatória",
       "rejectionTooLong": "A mensagem de rejeição não pode exceder 50 caracteres"
     }
@@ -231,8 +243,11 @@
     },
     "validation": {
       "titleRequired": "O título é obrigatório",
+      "descriptionRequired": "A descrição é obrigatória",
+      "questionRequired": "O identificador da pergunta é obrigatório",
       "questionsRequired": "Você deve adicionar pelo menos uma pergunta",
-      "answerRequired": "Você deve selecionar uma resposta"
+      "answerRequired": "Você deve selecionar uma resposta",
+      "examIdRequired": "O identificador do exame é obrigatório"
     }
   },
   "videos": {
@@ -262,11 +277,32 @@
     },
     "validation": {
       "titleRequired": "O título é obrigatório",
+      "nameRequired": "O nome é obrigatório",
+      "descriptionRequired": "A descrição é obrigatória",
       "fileRequired": "Nenhum arquivo foi enviado",
       "invalidFormat": "Formato de vídeo não suportado",
       "idRequired": "Identificação do vídeo é obrigatória",
       "planRequired": "Plano do vídeo é obrigatório",
-      "weeksRequired": "Semanas do vídeo é obrigatório"
+      "plansRequired": "Os planos são obrigatórios",
+      "weeksRequired": "Semanas do vídeo é obrigatório",
+      "physicalLevelRequired": "O nível físico é obrigatório",
+      "objectivesRequired": "Os objetivos são obrigatórios",
+      "usageTimeRequired": "O momento de uso é obrigatório",
+      "contractionRequired": "A contração é obrigatória",
+      "stimulusTypeRequired": "O tipo de estímulo é obrigatório",
+      "bodyZoneRequired": "A zona do corpo é obrigatória",
+      "musclesRequired": "Os músculos são obrigatórios",
+      "controlSystemRequired": "O sistema de controle é obrigatório",
+      "seriesRequired": "As séries são obrigatórias",
+      "repetitionsRequired": "As repetições são obrigatórias",
+      "contentAreaRequired": "A área de conteúdo é obrigatória",
+      "courtZoneRequired": "A zona da quadra é obrigatória",
+      "gameLevelRequired": "O nível de jogo é obrigatório",
+      "spaceRequired": "O espaço é obrigatório",
+      "materialRequired": "O material é obrigatório",
+      "strokeTypeRequired": "O tipo de golpe é obrigatório",
+      "observationRequired": "A observação é obrigatória",
+      "recommendationsRequired": "As recomendações são obrigatórias"
     }
   },
   "vimeo": {
@@ -292,7 +328,9 @@
       "error": "Erro do servidor"
     },
     "validation": {
-      "idRequired": "Identificação do vídeo é obrigatória"
+      "idRequired": "Identificação do vídeo é obrigatória",
+      "nameRequired": "O nome é obrigatório",
+      "folderIdRequired": "O identificador da pasta é obrigatório"
     }
   },
   "matches": {
@@ -330,9 +368,16 @@
       "scoreRequired": "Você deve registrar o placar",
       "playersRequired": "Jogadores são obrigatórios",
       "twoPlayersRequired": "Dois jogadores são obrigatórios",
+      "playersNameRequired": "Os nomes dos jogadores são obrigatórios",
+      "screenshotNameRequired": "O nome da captura é obrigatório",
+      "screenshotImageRequired": "A imagem da captura é obrigatória",
       "finalPointsRequired": "Pontos finais são obrigatórios",
       "tiebreaksRequired": "Desempate é obrigatório",
       "superTiebreaksRequired": "Super tie breaks são obrigatórios",
+      "setsNumberRequired": "O número de sets é obrigatório",
+      "tournamentNameRequired": "O nome do torneio é obrigatório",
+      "placeRequired": "O local é obrigatório",
+      "totalTimeRequired": "O tempo é obrigatório",
       "differentPlayers": "Os jogadores devem ser diferentes"
     }
   },
@@ -356,7 +401,10 @@
     },
     "validation": {
       "idRequired": "Identificação é obrigatória",
-      "optionsRequired": "Opções são obrigatórias"
+      "optionsRequired": "Opções são obrigatórias",
+      "questionTextRequired": "O texto da pergunta é obrigatório",
+      "optionTextRequired": "O texto da opção é obrigatório",
+      "optionCorrectRequired": "O campo 'isCorrect' é obrigatório"
     }
   },
   "bank": {
@@ -395,7 +443,8 @@
     },
     "validation": {
       "notFound": "Treinador não encontrado ou não é um treinador",
-      "studentIdRequired": "Identificação do estudante é obrigatória"
+      "studentIdRequired": "Identificação do estudante é obrigatória",
+      "coachIdRequired": "O identificador do treinador é obrigatório"
     }
   },
   "ads": {
@@ -414,6 +463,11 @@
     "list": {
       "empty": "Não há anúncios ativos",
       "loaded": "Anúncios carregados com sucesso"
+    },
+    "validation": {
+      "imageRequired": "A imagem é obrigatória",
+      "imageInvalid": "A imagem deve ser válida (base64)",
+      "linkInvalid": "O link deve ser uma URL válida"
     }
   },
   "weeklyVideo": {
@@ -427,6 +481,9 @@
     "check": {
       "success": "Verificação de vídeo semanal atualizada com sucesso",
       "error": "Erro ao atualizar verificação de vídeo semanal"
+    },
+    "validation": {
+      "videoIdRequired": "O identificador do vídeo é obrigatório"
     }
   },
   "emails": {

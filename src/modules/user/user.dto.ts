@@ -3,12 +3,14 @@ import { SelectCategoryUserModel, SelectGenderUserModel } from './user.model';
 
 export const CreateAdminSchemaZod = z.object({
   gender: z.enum([SelectGenderUserModel.MAN, SelectGenderUserModel.WOMAN], {
-    required_error: 'El sexo es requerido',
+    required_error: 'auth.validation.genderRequired',
   }),
-  email: z.string({ required_error: 'El email es requerido' }).email('El email es invalido'),
+  email: z
+    .string({ required_error: 'users.validation.emailRequired' })
+    .email({ message: 'users.validation.emailInvalid' }),
   displayName: z
-    .string({ required_error: 'El nombre es requerido' })
-    .min(1, 'El nombre es requerido'),
+    .string({ required_error: 'users.validation.nameRequired' })
+    .min(1, { message: 'users.validation.nameRequired' }),
 });
 
 export const UpdateUserSchemaZod = z.object({

@@ -42,7 +42,8 @@
       "invalid": "Invalid token",
       "expired": "Your session has expired",
       "refreshSuccess": "Token refreshed successfully",
-      "missing": "Token not provided"
+      "missing": "Token not provided",
+      "required": "Token is required"
     },
     "password": {
       "resetRequest": "An email has been sent to reset your password",
@@ -51,6 +52,15 @@
       "oldPasswordIncorrect": "Current password is incorrect",
       "required": "Password is required",
       "minLength": "Password must be at least {{length}} characters"
+    },
+    "validation": {
+      "tokenRequired": "Token is required",
+      "genderRequired": "Gender is required",
+      "roleRequired": "Role is required",
+      "questionRequired": "Question is required",
+      "answerRequired": "Answer is required",
+      "onboardingRequired": "Onboarding is required",
+      "codeRequired": "Verification code is required"
     }
   },
   "users": {
@@ -147,9 +157,11 @@
     "validation": {
       "idRequired": "Order ID is required",
       "planNotFound": "Plan not found",
+      "planRequired": "Plan identifier is required",
       "userNotFound": "User not found",
       "hasPending": "You have a pending order",
       "notCoach": "You are not a coach",
+      "statusRequired": "Status is required",
       "rejectionRequired": "Rejection message is required",
       "rejectionTooLong": "Rejection message cannot exceed 50 characters"
     }
@@ -231,8 +243,11 @@
     },
     "validation": {
       "titleRequired": "Title is required",
+      "descriptionRequired": "Description is required",
+      "questionRequired": "Question identifier is required",
       "questionsRequired": "You must add at least one question",
-      "answerRequired": "You must select an answer"
+      "answerRequired": "You must select an answer",
+      "examIdRequired": "Exam ID is required"
     }
   },
   "videos": {
@@ -262,11 +277,32 @@
     },
     "validation": {
       "titleRequired": "Title is required",
+      "nameRequired": "Name is required",
+      "descriptionRequired": "Description is required",
       "fileRequired": "No file uploaded",
       "invalidFormat": "Video format not supported",
       "idRequired": "Video ID is required",
       "planRequired": "Video plan is required",
-      "weeksRequired": "Video weeks is required"
+      "plansRequired": "Plans are required",
+      "weeksRequired": "Video weeks is required",
+      "physicalLevelRequired": "Physical level is required",
+      "objectivesRequired": "Objectives are required",
+      "usageTimeRequired": "Usage time is required",
+      "contractionRequired": "Contraction is required",
+      "stimulusTypeRequired": "Stimulus type is required",
+      "bodyZoneRequired": "Body zone is required",
+      "musclesRequired": "Muscles are required",
+      "controlSystemRequired": "Control system is required",
+      "seriesRequired": "Series are required",
+      "repetitionsRequired": "Repetitions are required",
+      "contentAreaRequired": "Content area is required",
+      "courtZoneRequired": "Court zone is required",
+      "gameLevelRequired": "Game level is required",
+      "spaceRequired": "Space is required",
+      "materialRequired": "Material is required",
+      "strokeTypeRequired": "Stroke type is required",
+      "observationRequired": "Observation is required",
+      "recommendationsRequired": "Recommendations are required"
     }
   },
   "vimeo": {
@@ -292,7 +328,9 @@
       "error": "Server error"
     },
     "validation": {
-      "idRequired": "Video ID is required"
+      "idRequired": "Video ID is required",
+      "nameRequired": "Name is required",
+      "folderIdRequired": "Folder ID is required"
     }
   },
   "matches": {
@@ -330,9 +368,16 @@
       "scoreRequired": "You must record the score",
       "playersRequired": "Players are required",
       "twoPlayersRequired": "Two players are required",
+      "playersNameRequired": "Players names are required",
+      "screenshotNameRequired": "Screenshot name is required",
+      "screenshotImageRequired": "Screenshot image is required",
       "finalPointsRequired": "Final points are required",
       "tiebreaksRequired": "Tiebreaks are required",
       "superTiebreaksRequired": "Super tiebreaks are required",
+      "setsNumberRequired": "Sets number is required",
+      "tournamentNameRequired": "Tournament name is required",
+      "placeRequired": "Place is required",
+      "totalTimeRequired": "Total time is required",
       "differentPlayers": "Players must be different"
     }
   },
@@ -356,7 +401,10 @@
     },
     "validation": {
       "idRequired": "ID is required",
-      "optionsRequired": "Options are required"
+      "optionsRequired": "Options are required",
+      "questionTextRequired": "Question text is required",
+      "optionTextRequired": "Option text is required",
+      "optionCorrectRequired": "isCorrect field is required"
     }
   },
   "bank": {
@@ -395,7 +443,8 @@
     },
     "validation": {
       "notFound": "Coach not found or not a coach",
-      "studentIdRequired": "Student ID is required"
+      "studentIdRequired": "Student ID is required",
+      "coachIdRequired": "Coach ID is required"
     }
   },
   "ads": {
@@ -414,6 +463,11 @@
     "list": {
       "empty": "No active ads",
       "loaded": "Ads loaded successfully"
+    },
+    "validation": {
+      "imageRequired": "Image is required",
+      "imageInvalid": "Image must be valid (base64)",
+      "linkInvalid": "Link must be a valid URL"
     }
   },
   "weeklyVideo": {
@@ -427,6 +481,9 @@
     "check": {
       "success": "Weekly video check updated successfully",
       "error": "Error updating weekly video check"
+    },
+    "validation": {
+      "videoIdRequired": "Video ID is required"
     }
   },
   "emails": {

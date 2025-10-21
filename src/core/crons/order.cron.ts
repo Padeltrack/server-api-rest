@@ -29,7 +29,7 @@ const cronOrderProgressWeek = async () => {
         const days = daysBetween(progress.lastProgressDate, new Date());
         let week = progress.currentWeek;
 
-        console.log("days between", days);
+        console.log('days between', days);
         if (days >= 7) {
           // Avanzar la semana actual
           const semanasAvance = Math.floor(days / 7);
@@ -51,7 +51,7 @@ const cronOrderProgressWeek = async () => {
           );
         } else {
           // Reiniciar los videos de la semana actual
-          console.log("Reiniciar ", {
+          console.log('Reiniciar ', {
             orderId: progress._id,
             week,
           });

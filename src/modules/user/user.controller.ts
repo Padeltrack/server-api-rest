@@ -5,6 +5,7 @@ import { CreateAdminSchemaZod, UpdateUserSchemaZod } from './user.dto';
 import { ZodError } from 'zod';
 import { PlanMongoModel } from '../plan/plan.model';
 import { OrderMongoModel } from '../order/order.model';
+import { formatZodErrorResponse } from '../../shared/util/zod.util';
 import {
   generateUniqueUserName,
   removeRelationUserModel,
@@ -419,10 +420,7 @@ export const updateMe = async (req: Request, res: Response) => {
     });
   } catch (error) {
     if (error instanceof ZodError) {
-      return res.status(400).json({
-        message: req.t('validation.validationError'),
-        issues: error.errors,
-      });
+      return res.status(400).json(formatZodErrorResponse(error, req.t));
     }
     req.logger.error({ status: 'error', code: 500, error: error.message });
     return res.status(401).json({ message: req.t('users.update.error') });

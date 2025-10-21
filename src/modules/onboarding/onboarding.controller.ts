@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { OnboardingQuestionMongoModel } from './onboarding.model';
 import { updateOnboardingSchema } from './onboarding.dto';
 import { ZodError } from 'zod';
+import { formatZodErrorResponse } from '../../shared/util/zod.util';
 
 export const getQuestionsOnboarding = async (req: Request, res: Response) => {
   req.logger = req.logger.child({
@@ -12,9 +13,9 @@ export const getQuestionsOnboarding = async (req: Request, res: Response) => {
 
   try {
     const questions = await OnboardingQuestionMongoModel.find().sort({ order: 1 });
-    return res.status(200).json({ 
+    return res.status(200).json({
       questions,
-      message: req.t('onboarding.questions.loaded')
+      message: req.t('onboarding.questions.loaded'),
     });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
@@ -50,16 +51,13 @@ export const updateQuestionOnboarding = async (req: Request, res: Response) => {
       { question, options },
       { new: true },
     );
-    return res.status(200).json({ 
+    return res.status(200).json({
       question: questionUpdated,
-      message: req.t('onboarding.questions.updated')
+      message: req.t('onboarding.questions.updated'),
     });
   } catch (error) {
     if (error instanceof ZodError) {
-      return res.status(400).json({
-        message: req.t('validation.validationError'),
-        issues: error.errors,
-      });
+      return res.status(400).json(formatZodErrorResponse(error, req.t));
     }
 
     req.logger.error({ status: 'error', code: 500, error: error.message });

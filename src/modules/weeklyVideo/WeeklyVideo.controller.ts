@@ -1,8 +1,10 @@
 import { Request, Response } from 'express';
+import { ZodError } from 'zod';
 import { ItemVideoWeekly, WeeklyVideoMongoModel } from './weeklyVideo.model';
 import { VideoMongoModel } from '../video/video.model';
 import { getUrlTokenExtractVimeoVideoById, getVimeoVideoById } from '../vimeo/vimeo.helper';
 import { MarkCheckMeVideoSchemaZod } from './weeklyVideo.dto';
+import { formatZodErrorResponse } from '../../shared/util/zod.util';
 
 export const getWeeklyVideos = async (req: Request, res: Response) => {
   req.logger = req.logger.child({ service: 'weeklyVideo', serviceHandler: 'getWeeklyVideos' });
@@ -50,9 +52,9 @@ export const getWeeklyVideos = async (req: Request, res: Response) => {
 
     weeklyVideo._doc.videos = weeklyVideoData.filter(video => video !== null);
 
-    return res.status(200).json({ 
+    return res.status(200).json({
       weeklyVideo,
-      message: req.t('weeklyVideo.list.loaded')
+      message: req.t('weeklyVideo.list.loaded'),
     });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
@@ -109,9 +111,10 @@ export const markCheckMeVideo = async (req: Request, res: Response) => {
       message: req.t('weeklyVideo.check.success'),
     });
   } catch (error) {
+    if (error instanceof ZodError) {
+      return res.status(400).json(formatZodErrorResponse(error, req.t));
+    }
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res
-      .status(500)
-      .json({ message: req.t('weeklyVideo.check.error') });
+    return res.status(500).json({ message: req.t('weeklyVideo.check.error') });
   }
 };

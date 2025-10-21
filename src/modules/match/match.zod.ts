@@ -7,16 +7,26 @@ import {
 } from './match.model';
 
 export const createMatchSchemaZod = z.object({
-  playersId: z.array(z.string()).min(2),
-  playersName: z.array(z.string()).min(2),
+  playersId: z
+    .array(z.string(), { required_error: 'matches.validation.playersRequired' })
+    .min(2, { message: 'matches.validation.twoPlayersRequired' })
+    .max(2, { message: 'matches.validation.twoPlayersRequired' }),
+  playersName: z
+    .array(z.string(), { required_error: 'matches.validation.playersNameRequired' })
+    .min(2, { message: 'matches.validation.twoPlayersRequired' })
+    .max(2, { message: 'matches.validation.twoPlayersRequired' }),
   screenshots: z
     .array(
       z.object({
-        name: z.string().min(1),
-        image: z.string().min(1),
+        name: z
+          .string({ required_error: 'matches.validation.screenshotNameRequired' })
+          .min(1, { message: 'matches.validation.screenshotNameRequired' }),
+        image: z
+          .string({ required_error: 'matches.validation.screenshotImageRequired' })
+          .min(1, { message: 'matches.validation.screenshotImageRequired' }),
       }),
     )
-    .min(1),
+    .optional(),
   winners: z
     .array(
       z.object({
@@ -54,21 +64,44 @@ export const createMatchSchemaZod = z.object({
       }),
     )
     .optional(),
-  totalTime: z.string({ required_error: 'El tiempo es requerido' }),
-  place: z.string({ required_error: 'El lugar es requerido' }).min(1),
-  tournamentName: z.string({ required_error: 'El nombre del torneo es requerido' }).min(1),
+  totalTime: z
+    .string({ required_error: 'matches.validation.totalTimeRequired' })
+    .min(1, { message: 'matches.validation.totalTimeRequired' }),
+  place: z
+    .string({ required_error: 'matches.validation.placeRequired' })
+    .min(1, { message: 'matches.validation.placeRequired' }),
+  tournamentName: z
+    .string({ required_error: 'matches.validation.tournamentNameRequired' })
+    .min(1, { message: 'matches.validation.tournamentNameRequired' }),
   finalPoints: z.array(
-    z.array(z.number({ required_error: 'El valor de punto final es requerido' }).min(0)),
+    z.array(
+      z
+        .number({ required_error: 'matches.validation.finalPointsRequired' })
+        .min(0, { message: 'matches.validation.finalPointsRequired' }),
+    ),
+    { required_error: 'matches.validation.finalPointsRequired' },
   ),
   tiebreaks: z.array(
-    z.array(z.number({ required_error: 'El valor de tie breaks es requerido' }).min(0)),
+    z.array(
+      z
+        .number({ required_error: 'matches.validation.tiebreaksRequired' })
+        .min(0, { message: 'matches.validation.tiebreaksRequired' }),
+    ),
+    { required_error: 'matches.validation.tiebreaksRequired' },
   ),
   superTiebreaks: z.array(
-    z.array(z.number({ required_error: 'El valor de super tie breaks es requerido' }).min(0)),
+    z.array(
+      z
+        .number({ required_error: 'matches.validation.superTiebreaksRequired' })
+        .min(0, { message: 'matches.validation.superTiebreaksRequired' }),
+    ),
+    { required_error: 'matches.validation.superTiebreaksRequired' },
   ),
-  setsNumber: z.number({ required_error: 'El numero de sets es requerido' }),
+  setsNumber: z
+    .number({ required_error: 'matches.validation.setsNumberRequired' })
+    .min(1, { message: 'matches.validation.setsNumberRequired' }),
   notes: z.string().optional(),
-  isAD: z.boolean(),
+  isAD: z.boolean().optional(),
 });
 
 export type CreateMatchDto = z.infer<typeof createMatchSchemaZod>;

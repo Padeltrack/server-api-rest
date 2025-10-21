@@ -1,8 +1,10 @@
 import { Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
+import { ZodError } from 'zod';
 import { StudentCoachesMongoModel } from './studentCoaches.model';
 import { SelectRoleModel, UserMongoModel } from '../user/user.model';
 import { studentCoachesAssignSchemaZod } from './studentCoaches.zod';
+import { formatZodErrorResponse } from '../../shared/util/zod.util';
 
 export const getMyAssignments = async (req: Request, res: Response) => {
   req.logger = req.logger.child({ service: 'studentCoaches', serviceHandler: 'getMyCoaches' });
@@ -57,10 +59,10 @@ export const getMyAssignments = async (req: Request, res: Response) => {
       };
     });
 
-    return res.status(200).json({ 
-      users: formatted, 
+    return res.status(200).json({
+      users: formatted,
       count,
-      message: req.t('coaches.list.loaded')
+      message: req.t('coaches.list.loaded'),
     });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
@@ -95,10 +97,10 @@ export const getCoachesByStudent = async (req: Request, res: Response) => {
       .skip(skip)
       .limit(limit)
       .sort({ createdAt: -1 });
-    return res.status(200).json({ 
-      coaches, 
+    return res.status(200).json({
+      coaches,
       count,
-      message: req.t('coaches.list.loaded')
+      message: req.t('coaches.list.loaded'),
     });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
@@ -150,6 +152,9 @@ export const assignCoach = async (req: Request, res: Response) => {
       });
     }
   } catch (error) {
+    if (error instanceof ZodError) {
+      return res.status(400).json(formatZodErrorResponse(error, req.t));
+    }
     req.logger.error({ status: 'error', code: 500, error: error.message });
     return res.status(500).json({ message: req.t('coaches.assign.error'), error });
   }

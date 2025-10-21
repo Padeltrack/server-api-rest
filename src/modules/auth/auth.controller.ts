@@ -13,6 +13,7 @@ import { HOST_ADMINS } from '../../shared/util/url.util';
 import { getTextBeforeAtEmail } from '../../shared/util/string.util';
 import { generateEmail } from '../mail/loadTemplate.mail';
 import { sendEMail } from '../mail/sendTemplate.mail';
+import { formatZodErrorResponse } from '../../shared/util/zod.util';
 
 export const registerUserWithGoogle = async (req: Request, res: Response) => {
   req.logger = req.logger.child({ service: 'auth', serviceHandler: 'registerUserWithGoogle' });
@@ -100,10 +101,7 @@ export const registerUserWithGoogle = async (req: Request, res: Response) => {
     });
   } catch (error) {
     if (error instanceof ZodError) {
-      return res.status(400).json({
-        message: req.t('validation.validationError'),
-        issues: error.errors,
-      });
+      return res.status(400).json(formatZodErrorResponse(error, req.t));
     }
 
     req.logger.error({ status: 'error', code: 500, error: error.message });

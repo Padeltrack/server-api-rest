@@ -7,6 +7,7 @@ import { uploadImagePhotoUser } from './ads.helper';
 import { removeFileFirebaseStorage } from '../firebase/firebase.service';
 import { StorageFirebaseModel } from '../firebase/firebase.model';
 import { getExtensionFromUrl } from '../../shared/util/string.util';
+import { formatZodErrorResponse } from '../../shared/util/zod.util';
 
 export const getAds = async (req: Request, res: Response) => {
   req.logger = req.logger.child({ service: 'ads', serviceHandler: 'getAds' });
@@ -15,9 +16,9 @@ export const getAds = async (req: Request, res: Response) => {
   try {
     const ads = await AdsMongoModel.find().sort({ createdAt: 1 });
 
-    return res.status(200).json({ 
+    return res.status(200).json({
       ads,
-      message: req.t('ads.list.loaded')
+      message: req.t('ads.list.loaded'),
     });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
@@ -49,16 +50,13 @@ export const createAds = async (req: Request, res: Response) => {
       active: active || false,
     });
 
-    return res.status(200).json({ 
+    return res.status(200).json({
       ads,
-      message: req.t('ads.create.success')
+      message: req.t('ads.create.success'),
     });
   } catch (error) {
     if (error instanceof ZodError) {
-      return res.status(400).json({
-        message: req.t('validation.validationError'),
-        issues: error.errors,
-      });
+      return res.status(400).json(formatZodErrorResponse(error, req.t));
     }
     req.logger.error({ status: 'error', code: 500, error: error.message });
     return res.status(500).json({ message: req.t('ads.create.error'), error });
@@ -117,10 +115,7 @@ export const updateAds = async (req: Request, res: Response) => {
     });
   } catch (error) {
     if (error instanceof ZodError) {
-      return res.status(400).json({
-        message: req.t('validation.validationError'),
-        issues: error.errors,
-      });
+      return res.status(400).json(formatZodErrorResponse(error, req.t));
     }
     req.logger.error({ status: 'error', code: 500, error: error.message });
     return res.status(500).json({ message: req.t('ads.update.error'), error });

@@ -1,9 +1,11 @@
 import { Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
+import { ZodError } from 'zod';
 import { MatchMongoModel } from './match.model';
 import { createMatchSchemaZod } from './match.zod';
 import { SelectRoleModel, UserMongoModel } from '../user/user.model';
 import { uploadImageScreenshotMatch } from './match.helper';
+import { formatZodErrorResponse } from '../../shared/util/zod.util';
 
 export const getMatches = async (req: Request, res: Response) => {
   req.logger = req.logger.child({ service: 'match', serviceHandler: 'getMatches' });
@@ -83,10 +85,10 @@ export const getMatches = async (req: Request, res: Response) => {
       },
     ]);
 
-    return res.status(200).json({ 
-      matches, 
+    return res.status(200).json({
+      matches,
       count,
-      message: req.t('matches.list.loaded')
+      message: req.t('matches.list.loaded'),
     });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
@@ -212,21 +214,23 @@ export const createMatch = async (req: Request, res: Response) => {
       });
     }
 
-    const screenshotsData = await Promise.all(
-      screenshots.map(async itemBase64 => {
-        const idScreenshot = new ObjectId().toHexString();
-        const urlScreenshot = await uploadImageScreenshotMatch({
-          imageBase64: itemBase64.image,
-          idScreenshot,
-        });
+    const screenshotsData = screenshots
+      ? await Promise.all(
+          screenshots.map(async itemBase64 => {
+            const idScreenshot = new ObjectId().toHexString();
+            const urlScreenshot = await uploadImageScreenshotMatch({
+              imageBase64: itemBase64.image,
+              idScreenshot,
+            });
 
-        return {
-          _id: idScreenshot,
-          name: itemBase64.name,
-          image: urlScreenshot,
-        };
-      }),
-    );
+            return {
+              _id: idScreenshot,
+              name: itemBase64.name,
+              image: urlScreenshot,
+            };
+          }),
+        )
+      : [];
 
     const match = await MatchMongoModel.create({
       _id: new ObjectId().toHexString(),
@@ -235,11 +239,14 @@ export const createMatch = async (req: Request, res: Response) => {
       coachId: me._id,
     });
 
-    return res.status(200).json({ 
+    return res.status(200).json({
       match,
-      message: req.t('matches.create.success')
+      message: req.t('matches.create.success'),
     });
   } catch (error) {
+    if (error instanceof ZodError) {
+      return res.status(400).json(formatZodErrorResponse(error, req.t));
+    }
     req.logger.error({ status: 'error', code: 500, error: error.message });
     return res.status(500).json({ message: req.t('matches.create.error'), error });
   }

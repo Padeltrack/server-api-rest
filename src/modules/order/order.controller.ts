@@ -12,6 +12,7 @@ import { generateEmail } from '../mail/loadTemplate.mail';
 import { sendEMail } from '../mail/sendTemplate.mail';
 import { CounterMongoModel } from '../counter/counter.model';
 import { HOST_CLIENT_ADMIN_PROD } from '../../shared/util/url.util';
+import { formatZodErrorResponse } from '../../shared/util/zod.util';
 
 export const getOrders = async (req: Request, res: Response) => {
   req.logger = req.logger.child({ service: 'order', serviceHandler: 'getOrders' });
@@ -234,16 +235,13 @@ export const createOrder = async (req: Request, res: Response) => {
 
     sendEMail({ data: msgAdmin });
 
-    return res.status(200).json({ 
+    return res.status(200).json({
       order,
-      message: req.t('orders.create.success')
+      message: req.t('orders.create.success'),
     });
   } catch (error) {
     if (error instanceof ZodError) {
-      return res.status(400).json({
-        message: req.t('validation.validationError'),
-        issues: error.errors,
-      });
+      return res.status(400).json(formatZodErrorResponse(error, req.t));
     }
     req.logger.error({ status: 'error', code: 500, error: error.message });
     return res.status(500).json({ message: req.t('orders.create.error'), error });
@@ -306,9 +304,7 @@ export const updateOrderStatus = async (req: Request, res: Response) => {
       });
     }
     if (isStatusForMessageRejected && (messageRejected ?? '').length > 50) {
-      return res
-        .status(400)
-        .json({ message: req.t('orders.validation.rejectionTooLong') });
+      return res.status(400).json({ message: req.t('orders.validation.rejectionTooLong') });
     }
 
     if (status === SelectStatusOrderModel.Approved) {
@@ -321,12 +317,15 @@ export const updateOrderStatus = async (req: Request, res: Response) => {
 
         // Obtener orden aprobada mas reciente para continuar con la semana para usuarios no coaches.
         if (!getOrder.isCoach) {
-          const lastOrderApproved = await OrderMongoModel.findOne({
-            userId: getUser._id,
-            status: SelectStatusOrderModel.Approved,
-            isCoach: false,
-            currentWeek: { $exists: true }
-          }, { sort: { createdAt: -1 } });
+          const lastOrderApproved = await OrderMongoModel.findOne(
+            {
+              userId: getUser._id,
+              status: SelectStatusOrderModel.Approved,
+              isCoach: false,
+              currentWeek: { $exists: true },
+            },
+            { sort: { createdAt: -1 } },
+          );
 
           if (lastOrderApproved?.currentWeek) {
             fieldsUpdated.currentWeek = lastOrderApproved.currentWeek + 1;
@@ -408,16 +407,13 @@ export const updateOrderStatus = async (req: Request, res: Response) => {
 
     sendEMail({ data: msg });
 
-    return res.status(200).json({ 
+    return res.status(200).json({
       order: updated,
-      message: req.t('orders.update.success')
+      message: req.t('orders.update.success'),
     });
   } catch (error) {
     if (error instanceof ZodError) {
-      return res.status(400).json({
-        message: req.t('validation.validationError'),
-        issues: error.errors,
-      });
+      return res.status(400).json(formatZodErrorResponse(error, req.t));
     }
 
     req.logger.error({ status: 'error', code: 500, error: error.message });

@@ -3,6 +3,7 @@ import { ObjectId } from 'mongodb';
 import { ZodError } from 'zod';
 import { BankMongoModel } from './bank.model';
 import { BankRegisterSchemaZod, BankUpdateSchemaZod } from './bank.zod';
+import { formatZodErrorResponse } from '../../shared/util/zod.util';
 
 export const getBanks = async (req: Request, res: Response) => {
   req.logger = req.logger.child({ service: 'bank', serviceHandler: 'getBanks' });
@@ -11,9 +12,9 @@ export const getBanks = async (req: Request, res: Response) => {
   try {
     const banks = await BankMongoModel.find().sort({ createdAt: 1 });
 
-    return res.status(200).json({ 
+    return res.status(200).json({
       banks,
-      message: req.t('common.success')
+      message: req.t('common.success'),
     });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
@@ -45,16 +46,13 @@ export const createBank = async (req: Request, res: Response) => {
       dniAccount,
     });
 
-    return res.status(200).json({ 
+    return res.status(200).json({
       bank,
-      message: req.t('bank.create.success')
+      message: req.t('bank.create.success'),
     });
   } catch (error) {
     if (error instanceof ZodError) {
-      return res.status(400).json({
-        message: req.t('validation.validationError'),
-        issues: error.errors,
-      });
+      return res.status(400).json(formatZodErrorResponse(error, req.t));
     }
 
     req.logger.error({ status: 'error', code: 500, error: error.message });
@@ -96,16 +94,13 @@ export const updateBank = async (req: Request, res: Response) => {
       });
     }
 
-    return res.status(200).json({ 
+    return res.status(200).json({
       bank,
-      message: req.t('bank.update.success')
+      message: req.t('bank.update.success'),
     });
   } catch (error) {
     if (error instanceof ZodError) {
-      return res.status(400).json({
-        message: req.t('validation.validationError'),
-        issues: error.errors,
-      });
+      return res.status(400).json(formatZodErrorResponse(error, req.t));
     }
 
     req.logger.error({ status: 'error', code: 500, error: error.message });

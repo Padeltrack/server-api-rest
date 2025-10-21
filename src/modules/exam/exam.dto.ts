@@ -2,32 +2,34 @@ import { z } from 'zod';
 
 export const ExamAnswerRegisterSchemaZod = z.object({
   questionnaireId: z
-    .string({ required_error: 'El identificador de la pregunta es requerido' })
-    .min(1, 'El identificador de la pregunta es requerido'),
+    .string({ required_error: 'exams.validation.questionRequired' })
+    .min(1, { message: 'exams.validation.questionRequired' }),
   answerText: z.string().optional(),
 });
 
 export const ExamAnswerFinalizeSchemaZod = z.object({
   questionnaireId: z
-    .string({ required_error: 'El identificador de la pregunta es requerido' })
-    .min(1, 'El identificador de la pregunta es requerido'),
+    .string({ required_error: 'exams.validation.questionRequired' })
+    .min(1, { message: 'exams.validation.questionRequired' }),
 });
 
 export const addQuestionnaireSchemaZod = z.object({
-  title: z.string({ required_error: 'El titulo es requerido' }).min(1, 'El titulo es requerido'),
+  title: z
+    .string({ required_error: 'exams.validation.titleRequired' })
+    .min(1, { message: 'exams.validation.titleRequired' }),
   description: z
-    .string({ required_error: 'La descripción es requerida' })
-    .min(1, 'La descripción es requerida'),
+    .string({ required_error: 'exams.validation.descriptionRequired' })
+    .min(1, { message: 'exams.validation.descriptionRequired' }),
 });
 
 export const updateQuestionnaireSchemaZod = z.object({
   title: z
-    .string({ required_error: 'El titulo es requerido' })
-    .min(1, 'El titulo es requerido')
+    .string({ required_error: 'exams.validation.titleRequired' })
+    .min(1, { message: 'exams.validation.titleRequired' })
     .optional(),
   description: z
-    .string({ required_error: 'La descripción es requerida' })
-    .min(1, 'La descripción es requerida')
+    .string({ required_error: 'exams.validation.descriptionRequired' })
+    .min(1, { message: 'exams.validation.descriptionRequired' })
     .optional(),
 });
 

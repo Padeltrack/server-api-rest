@@ -1,102 +1,36 @@
 import { z } from 'zod';
 
 export const CreateVideoSchemaZod = z.object({
-  nombre: z.string({ required_error: 'El nombre es requerido' }).min(1, 'El nombre es requerido'),
+  nombre: z
+    .string({ required_error: 'videos.validation.nameRequired' })
+    .min(1, { message: 'videos.validation.nameRequired' }),
   descripcion: z
-    .string({ required_error: 'La descripción es requerida' })
-    .min(1, 'La descripción es requerida'),
-  nivelFisico: z
-    .string({
-      required_error: 'El nivel físico es requerido',
-    })
-    .optional(),
-  objetivos: z
-    .string({
-      required_error: 'Los objetivos son requeridos',
-    })
-    .optional(),
-  momentoDeUso: z
-    .string({
-      required_error: 'El momento de uso es requerido',
-    })
-    .optional(),
-  contraccion: z
-    .string({
-      required_error: 'La contracción es requerida',
-    })
-    .optional(),
-  tipoEstimulo: z
-    .string({
-      required_error: 'El tipo de estímulo es requerido',
-    })
-    .optional(),
-  zonaCuerpo: z
-    .string({
-      required_error: 'La zona del cuerpo es requerida',
-    })
-    .optional(),
-  musculos: z
-    .string({
-      required_error: 'Los músculos son requeridos',
-    })
-    .optional(),
+    .string({ required_error: 'videos.validation.descriptionRequired' })
+    .min(1, { message: 'videos.validation.descriptionRequired' }),
+  nivelFisico: z.string({ required_error: 'videos.validation.physicalLevelRequired' }).optional(),
+  objetivos: z.string({ required_error: 'videos.validation.objectivesRequired' }).optional(),
+  momentoDeUso: z.string({ required_error: 'videos.validation.usageTimeRequired' }).optional(),
+  contraccion: z.string({ required_error: 'videos.validation.contractionRequired' }).optional(),
+  tipoEstimulo: z.string({ required_error: 'videos.validation.stimulusTypeRequired' }).optional(),
+  zonaCuerpo: z.string({ required_error: 'videos.validation.bodyZoneRequired' }).optional(),
+  musculos: z.string({ required_error: 'videos.validation.musclesRequired' }).optional(),
   sistemaControl: z
-    .string({
-      required_error: 'El sistema de control es requerido',
-    })
+    .string({ required_error: 'videos.validation.controlSystemRequired' })
     .optional(),
-  series: z
-    .string({
-      required_error: 'Las series son requeridas',
-    })
-    .optional(),
-  repeticiones: z
-    .string({
-      required_error: 'Las repeticiones son requeridas',
-    })
-    .optional(),
-  areaContenido: z
-    .string({
-      required_error: 'El área de contenido es requerida',
-    })
-    .optional(),
-  zonaPista: z
-    .string({
-      required_error: 'La zona es requerida',
-    })
-    .optional(),
-  nivelJuego: z
-    .string({
-      required_error: 'El nivel de juego es requerido',
-    })
-    .optional(),
-  espacio: z
-    .string({
-      required_error: 'El espacio es requerido',
-    })
-    .optional(),
-  material: z
-    .string({
-      required_error: 'El material es requerido',
-    })
-    .optional(),
-  tipoGolpe: z
-    .string({
-      required_error: 'El formato es requerido',
-    })
-    .optional(),
-  observacion: z
-    .string({
-      required_error: 'La observación es requerida',
-    })
-    .optional(),
+  series: z.string({ required_error: 'videos.validation.seriesRequired' }).optional(),
+  repeticiones: z.string({ required_error: 'videos.validation.repetitionsRequired' }).optional(),
+  areaContenido: z.string({ required_error: 'videos.validation.contentAreaRequired' }).optional(),
+  zonaPista: z.string({ required_error: 'videos.validation.courtZoneRequired' }).optional(),
+  nivelJuego: z.string({ required_error: 'videos.validation.gameLevelRequired' }).optional(),
+  espacio: z.string({ required_error: 'videos.validation.spaceRequired' }).optional(),
+  material: z.string({ required_error: 'videos.validation.materialRequired' }).optional(),
+  tipoGolpe: z.string({ required_error: 'videos.validation.strokeTypeRequired' }).optional(),
+  observacion: z.string({ required_error: 'videos.validation.observationRequired' }).optional(),
   recomendaciones: z
-    .string({
-      required_error: 'Las recomendaciones son requeridas',
-    })
+    .string({ required_error: 'videos.validation.recommendationsRequired' })
     .optional(),
-  plan: z.array(z.string({ required_error: 'Los planes son requeridos' })),
-  semanas: z.array(z.number({ required_error: 'Las semanas son requeridas' })),
+  plan: z.array(z.string(), { required_error: 'videos.validation.plansRequired' }),
+  semanas: z.array(z.number(), { required_error: 'videos.validation.weeksRequired' }),
 });
 
 export const UpdateVideoSchemaZod = z.object({

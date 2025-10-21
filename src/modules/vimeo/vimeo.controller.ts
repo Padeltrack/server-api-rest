@@ -13,6 +13,7 @@ import { updateVideoToFolderVimeoSchemaZod, uploadVideoToFolderVimeoSchemaZod } 
 import { ZodError } from 'zod';
 import { VideoMongoModel } from '../video/video.model';
 import { freeFolder } from './viemo.constant';
+import { formatZodErrorResponse } from '../../shared/util/zod.util';
 import { cleanUploadedFiles } from '../../middleware/multer.middleware';
 
 export const uploadVideoToFolderVimeo = async (req: Request, res: Response) => {
@@ -59,10 +60,7 @@ export const uploadVideoToFolderVimeo = async (req: Request, res: Response) => {
   } catch (error) {
     await cleanUploadedFiles(req);
     if (error instanceof ZodError) {
-      return res.status(400).json({
-        message: req.t('validation.validationError'),
-        issues: error.errors,
-      });
+      return res.status(400).json(formatZodErrorResponse(error, req.t));
     }
 
     req.logger.error({ status: 'error', code: 500, error: error.message });

@@ -46,10 +46,10 @@ export const isSupportedLanguage = (language: string): boolean => {
  */
 export const getValidLanguage = (language?: string): string => {
   if (!language) return 'es';
-  
+
   // Extraer código de idioma si viene con región (ej: "es-MX" -> "es")
   const langCode = language.split('-')[0].toLowerCase();
-  
+
   return isSupportedLanguage(langCode) ? langCode : 'es';
 };
 
@@ -69,17 +69,17 @@ export const detectLanguage = (
   if (queryLang) {
     return getValidLanguage(queryLang);
   }
-  
+
   if (customHeader) {
     return getValidLanguage(customHeader);
   }
-  
+
   if (acceptLanguage) {
     // Parsear Accept-Language (ej: "en-US,en;q=0.9,es;q=0.8")
     const primaryLang = acceptLanguage.split(',')[0].split(';')[0];
     return getValidLanguage(primaryLang);
   }
-  
+
   return 'es'; // Fallback
 };
 
@@ -137,4 +137,3 @@ export const getLanguageInfo = (
     nativeName: languages[code]?.nativeName || 'Unknown',
   };
 };
-

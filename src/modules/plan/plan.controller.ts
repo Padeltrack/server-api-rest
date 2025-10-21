@@ -3,6 +3,7 @@ import { PlanMongoModel } from './plan.model';
 import { createPlanSchema, updatePlanSchema } from './plan.dto';
 import { ZodError } from 'zod';
 import { HOST_ADMINS } from '../../shared/util/url.util';
+import { formatZodErrorResponse } from '../../shared/util/zod.util';
 
 export const getPlans = async (req: Request, res: Response) => {
   req.logger = req.logger.child({ service: 'plans', serviceHandler: 'getPlans' });
@@ -17,15 +18,15 @@ export const getPlans = async (req: Request, res: Response) => {
     }
 
     const plans = await PlanMongoModel.find(query).sort({ createdAt: -1 });
-    return res.status(200).json({ 
-      plans, 
-      message: req.t('plans.list.loaded')
+    return res.status(200).json({
+      plans,
+      message: req.t('plans.list.loaded'),
     });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(500).json({ 
-      message: req.t('errors.serverError'), 
-      error 
+    return res.status(500).json({
+      message: req.t('errors.serverError'),
+      error,
     });
   }
 };
@@ -43,15 +44,15 @@ export const getCoachPlans = async (req: Request, res: Response) => {
     }
 
     const plans = await PlanMongoModel.find(query).sort({ createdAt: -1 });
-    return res.status(200).json({ 
+    return res.status(200).json({
       plans,
-      message: req.t('plans.list.loaded')
+      message: req.t('plans.list.loaded'),
     });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(500).json({ 
-      message: req.t('errors.serverError'), 
-      error 
+    return res.status(500).json({
+      message: req.t('errors.serverError'),
+      error,
     });
   }
 };
@@ -63,22 +64,22 @@ export const createPlan = async (req: Request, res: Response) => {
   try {
     const parsed = createPlanSchema.safeParse(req.body);
     if (!parsed.success) {
-      return res.status(400).json({ 
+      return res.status(400).json({
         message: req.t('errors.badRequest'),
-        errors: parsed.error.flatten() 
+        errors: parsed.error.flatten(),
       });
     }
 
     const newPlan = await PlanMongoModel.create(parsed.data);
-    return res.status(201).json({ 
+    return res.status(201).json({
       plan: newPlan,
-      message: req.t('plans.create.success')
+      message: req.t('plans.create.success'),
     });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(500).json({ 
-      message: req.t('errors.serverError'), 
-      error 
+    return res.status(500).json({
+      message: req.t('errors.serverError'),
+      error,
     });
   }
 };
@@ -105,29 +106,26 @@ export const updatePlan = async (req: Request, res: Response) => {
     }
 
     const plan = await PlanMongoModel.findOneAndUpdate({ _id: id }, fields, { new: true });
-    
+
     if (!plan) {
-      return res.status(404).json({ 
-        message: req.t('plans.detail.notFound') 
-      });
-    }
-    
-    return res.status(200).json({ 
-      plan,
-      message: req.t('plans.update.success')
-    });
-  } catch (error) {
-    if (error instanceof ZodError) {
-      return res.status(400).json({
-        message: req.t('errors.badRequest'),
-        issues: error.errors,
+      return res.status(404).json({
+        message: req.t('plans.detail.notFound'),
       });
     }
 
+    return res.status(200).json({
+      plan,
+      message: req.t('plans.update.success'),
+    });
+  } catch (error) {
+    if (error instanceof ZodError) {
+      return res.status(400).json(formatZodErrorResponse(error, req.t));
+    }
+
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(500).json({ 
-      message: req.t('errors.serverError'), 
-      error 
+    return res.status(500).json({
+      message: req.t('errors.serverError'),
+      error,
     });
   }
 };
