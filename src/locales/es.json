@@ -316,16 +316,24 @@
     },
     "list": {
       "empty": "No hay partidos registrados",
-      "loaded": "Partidos cargados exitosamente"
+      "loaded": "Partidos cargados exitosamente",
+      "error": "Error al obtener partidos"
     },
     "detail": {
       "notFound": "Partido no encontrado",
-      "loaded": "Detalles del partido cargados"
+      "loaded": "Detalles del partido cargados",
+      "error": "Error al obtener partido"
     },
     "validation": {
       "dateRequired": "La fecha es requerida",
       "opponentRequired": "Debes especificar el oponente",
-      "scoreRequired": "Debes registrar el marcador"
+      "scoreRequired": "Debes registrar el marcador",
+      "playersRequired": "Se requieren jugadores",
+      "twoPlayersRequired": "Se requieren dos jugadoras",
+      "finalPointsRequired": "Se requieren puntos finales",
+      "tiebreaksRequired": "Se requiere desempate",
+      "superTiebreaksRequired": "Se requieren súper tie breaks",
+      "differentPlayers": "Las jugadoras deben ser diferentes"
     }
   },
   "onboarding": {
@@ -337,7 +345,19 @@
     "skip": "Saltar",
     "next": "Siguiente",
     "previous": "Anterior",
-    "finish": "Finalizar"
+    "finish": "Finalizar",
+    "questions": {
+      "loaded": "Preguntas cargadas exitosamente",
+      "error": "Error al obtener preguntas de onboarding",
+      "updated": "Pregunta actualizada exitosamente",
+      "updateError": "Error al actualizar pregunta de onboarding",
+      "deleted": "Pregunta eliminada exitosamente",
+      "deleteError": "Error al eliminar pregunta de onboarding"
+    },
+    "validation": {
+      "idRequired": "Se requiere identificación",
+      "optionsRequired": "Se requieren opciones"
+    }
   },
   "bank": {
     "create": {
@@ -356,19 +376,26 @@
   },
   "coaches": {
     "assign": {
-      "success": "Coach asignado exitosamente",
+      "success": "Entrenador asignado con éxito",
       "error": "Error al asignar el coach",
       "alreadyAssigned": "Este coach ya está asignado"
     },
     "unassign": {
-      "success": "Coach desasignado exitosamente",
-      "error": "Error al desasignar el coach"
+      "success": "Entrenador desasignado exitosamente",
+      "error": "Error al desasignar el coach",
+      "notFound": "No se encontró la asignación de entrenador",
+      "removed": "Asignación de entrenador eliminada con éxito"
     },
     "list": {
       "empty": "No hay coaches disponibles",
       "loaded": "Coaches cargados exitosamente",
       "myStudents": "Mis estudiantes",
-      "myCoaches": "Mis coaches"
+      "myCoaches": "Mis coaches",
+      "error": "Error al obtener coaches"
+    },
+    "validation": {
+      "notFound": "Entrenador no encontrado o no es un entrenador",
+      "studentIdRequired": "Se requiere identificación de estudiante"
     }
   },
   "ads": {
@@ -387,6 +414,19 @@
     "list": {
       "empty": "No hay anuncios activos",
       "loaded": "Anuncios cargados exitosamente"
+    }
+  },
+  "weeklyVideo": {
+    "list": {
+      "loaded": "Videos semanales cargados exitosamente",
+      "error": "Error al obtener el video semanal"
+    },
+    "detail": {
+      "notFound": "Video semanal no encontrado"
+    },
+    "check": {
+      "success": "La verificación de video semanal se actualizó correctamente",
+      "error": "Error al actualizar la verificación de video semanal"
     }
   },
   "emails": {

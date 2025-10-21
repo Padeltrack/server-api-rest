@@ -5,7 +5,7 @@ export const authorize =
   (req: Request, res: Response, next: NextFunction) => {
     const role = req.user?.role;
     if (!allowedRoles.includes(role)) {
-      return res.status(403).json({ message: 'Access denied' });
+      return res.status(403).json({ message: req.t('errors.forbidden') });
     }
     next();
   };

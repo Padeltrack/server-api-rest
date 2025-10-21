@@ -12,10 +12,13 @@ export const getQuestionsOnboarding = async (req: Request, res: Response) => {
 
   try {
     const questions = await OnboardingQuestionMongoModel.find().sort({ order: 1 });
-    return res.status(200).json({ questions });
+    return res.status(200).json({ 
+      questions,
+      message: req.t('onboarding.questions.loaded')
+    });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(500).json({ message: 'Error fetching questions onboarding', error });
+    return res.status(500).json({ message: req.t('onboarding.questions.error'), error });
   }
 };
 
@@ -32,13 +35,13 @@ export const updateQuestionOnboarding = async (req: Request, res: Response) => {
 
     if (!id) {
       return res.status(400).json({
-        message: 'Se requiere identificación',
+        message: req.t('onboarding.validation.idRequired'),
       });
     }
 
     if (!options.length) {
       return res.status(400).json({
-        message: 'Se requieren opciones',
+        message: req.t('onboarding.validation.optionsRequired'),
       });
     }
 
@@ -47,17 +50,20 @@ export const updateQuestionOnboarding = async (req: Request, res: Response) => {
       { question, options },
       { new: true },
     );
-    return res.status(200).json({ question: questionUpdated });
+    return res.status(200).json({ 
+      question: questionUpdated,
+      message: req.t('onboarding.questions.updated')
+    });
   } catch (error) {
     if (error instanceof ZodError) {
       return res.status(400).json({
-        message: 'Error de validación',
+        message: req.t('validation.validationError'),
         issues: error.errors,
       });
     }
 
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(500).json({ message: 'Error updating questions onboarding', error });
+    return res.status(500).json({ message: req.t('onboarding.questions.updateError'), error });
   }
 };
 
@@ -73,16 +79,16 @@ export const deleteQuestionOnboarding = async (req: Request, res: Response) => {
 
     if (!id) {
       return res.status(400).json({
-        message: 'Se requiere identificación',
+        message: req.t('onboarding.validation.idRequired'),
       });
     }
 
     await OnboardingQuestionMongoModel.deleteOne({ _id: id });
     return res.status(200).json({
-      message: 'Pregunta eliminada exitosamente',
+      message: req.t('onboarding.questions.deleted'),
     });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(500).json({ message: 'Error fetching questions onboarding', error });
+    return res.status(500).json({ message: req.t('onboarding.questions.deleteError'), error });
   }
 };

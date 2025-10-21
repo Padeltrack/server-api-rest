@@ -26,14 +26,14 @@ export const activeOrder = async (req: Request, res: Response, next: NextFunctio
 
     if (!orderActive && (isStudent || isCoach)) {
       return res.status(403).json({
-        message: 'Access denied',
+        message: req.t('errors.forbidden'),
       });
     }
 
     req.order = orderActive as IOrderModel;
     next();
   } catch (error) {
-    res.status(401).json({ message: 'Order not active' });
+    res.status(401).json({ message: req.t('errors.unauthorized') });
   }
 };
 
@@ -44,7 +44,7 @@ export const activeOrderCoachCenter = async (req: Request, res: Response, next: 
 
     if (!isCoach) {
       return res.status(403).json({
-        message: 'Access denied',
+        message: req.t('errors.forbidden'),
       });
     }
 
@@ -61,13 +61,13 @@ export const activeOrderCoachCenter = async (req: Request, res: Response, next: 
 
     if (!orderActive && isCoach) {
       return res.status(403).json({
-        message: 'Access denied',
+        message: req.t('errors.forbidden'),
       });
     }
 
     req.order = orderActive as IOrderModel;
     next();
   } catch (error) {
-    res.status(401).json({ message: 'Order not active' });
+    res.status(401).json({ message: req.t('errors.unauthorized') });
   }
 };

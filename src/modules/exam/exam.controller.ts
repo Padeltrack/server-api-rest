@@ -52,7 +52,7 @@ export const getQuestionnaireExam = async (req: Request, res: Response) => {
     return res.status(200).json({ questionnaires });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(500).json({ message: 'Error al obtener las preguntas del examen', error });
+    return res.status(500).json({ message: req.t('exams.list.error'), error });
   }
 };
 
@@ -285,7 +285,7 @@ export const registerAnswerExam = async (req: Request, res: Response) => {
 
     const getExistQuestionExam = await ExamQuestionnaireMongoModel.exists({ _id: questionnaireId });
     if (!getExistQuestionExam) {
-      return res.status(404).json({ message: 'Pregunta no encontrada' });
+      return res.status(404).json({ message: req.t('exams.question.notFound') });
     }
 
     const currentExam = await ExamAnswerMongoModel.findOne({ userId }).sort({ createdAt: -1 });
@@ -298,7 +298,7 @@ export const registerAnswerExam = async (req: Request, res: Response) => {
     }
 
     if (!filePath) {
-      return res.status(400).json({ message: 'No se ha subido ningún archivo' });
+      return res.status(400).json({ message: req.t('exams.question.fileRequired') });
     }
 
     const result: any = await uploadVideoToVimeo({
@@ -412,7 +412,7 @@ export const registerAnswerExam = async (req: Request, res: Response) => {
     }
 
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(500).json({ message: 'Error register answer exam', error });
+    return res.status(500).json({ message: req.t('exams.answer.error'), error });
   }
 };
 
@@ -489,7 +489,7 @@ export const addQuestionnaire = async (req: Request, res: Response) => {
     const filePath = req.file?.path;
 
     if (!filePath) {
-      return res.status(400).json({ message: 'No se ha subido ningún archivo' });
+      return res.status(400).json({ message: req.t('exams.question.fileRequired') });
     }
 
     const result: any = await uploadVideoToVimeo({
@@ -847,7 +847,7 @@ export const updateQuestionnaire = async (req: Request, res: Response) => {
     }
 
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(500).json({ message: 'Error al actualizar respuestas del examen', error });
+    return res.status(500).json({ message: req.t('exams.answer.updateError'), error });
   }
 };
 
@@ -883,6 +883,6 @@ export const deleteQuestionnaire = async (req: Request, res: Response) => {
     }
 
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(500).json({ message: 'Error al eliminar cuestionario', error });
+    return res.status(500).json({ message: req.t('exams.answer.deleteError'), error });
   }
 };

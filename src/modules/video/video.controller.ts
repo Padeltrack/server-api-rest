@@ -75,7 +75,7 @@ export const getVideos = async (req: Request, res: Response) => {
     return res.status(200).json({ videos: videosLinks, count });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(401).json({ message: 'Error getting videos' });
+    return res.status(401).json({ message: req.t('videos.list.error') });
   }
 };
 
@@ -87,7 +87,7 @@ export const getVideoById = async (req: Request, res: Response) => {
     const _id = req.params.id;
 
     if (!_id) {
-      return res.status(400).json({ message: 'Se requiere identificación de video' });
+      return res.status(400).json({ message: req.t('videos.validation.idRequired') });
     }
 
     const video: any = await VideoMongoModel.findOne({ _id });
@@ -104,7 +104,7 @@ export const getVideoById = async (req: Request, res: Response) => {
     return res.status(200).json({ video });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(401).json({ message: 'Error getting video' });
+    return res.status(401).json({ message: req.t('videos.detail.error') });
   }
 };
 
@@ -122,20 +122,20 @@ export const addVideo = async (req: Request, res: Response) => {
 
     if (!videoData.plan.length) {
       return res.status(400).json({
-        message: 'Video plan is required',
+        message: req.t('videos.validation.planRequired'),
       });
     }
 
     if (!videoData.semanas.length) {
       return res.status(400).json({
-        message: 'Video semanas is required',
+        message: req.t('videos.validation.weeksRequired'),
       });
     }
 
     const filePath = req.file?.path;
 
     if (!filePath) {
-      return res.status(400).json({ message: 'No se ha subido ningún archivo' });
+      return res.status(400).json({ message: req.t('videos.validation.fileRequired') });
     }
 
     const result: any = await uploadVideoToVimeo({
@@ -158,11 +158,11 @@ export const addVideo = async (req: Request, res: Response) => {
     });
 
     return res.status(200).json({
-      message: 'Video added successfully',
+      message: req.t('videos.upload.success'),
     });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(401).json({ message: 'Error adding video' });
+    return res.status(401).json({ message: req.t('videos.upload.error') });
   }
 };
 
@@ -176,12 +176,12 @@ export const updateFileVideo = async (req: Request, res: Response) => {
     const videoPath = videoFile?.path;
 
     if (!videoId) {
-      return res.status(400).json({ message: 'Se requiere identificación de video' });
+      return res.status(400).json({ message: req.t('videos.validation.idRequired') });
     }
 
     const getVideo = await VideoMongoModel.findOne({ _id: videoId });
     if (!getVideo) {
-      return res.status(404).json({ message: 'Vídeo no encontrado' });
+      return res.status(404).json({ message: req.t('videos.detail.notFound') });
     }
     const idVideoVimeo = getVideo?.idVideoVimeo;
 
@@ -189,12 +189,12 @@ export const updateFileVideo = async (req: Request, res: Response) => {
     if (!videoPath && thumbnailBuffer) {
       await setThumbnailToVimeo({ idVideoVimeo, thumbnailBuffer });
       return res.status(200).json({
-        message: 'Imagen de portal actualizada',
+        message: req.t('videos.update.portalImageSuccess'),
       });
     }
 
     if (!videoPath) {
-      return res.status(400).json({ message: 'No se ha subido ningún archivo' });
+      return res.status(400).json({ message: req.t('videos.validation.fileRequired') });
     }
 
     if (idVideoVimeo) {
@@ -221,11 +221,11 @@ export const updateFileVideo = async (req: Request, res: Response) => {
     );
 
     return res.status(200).json({
-      message: 'Vídeo actualizado con éxito',
+      message: req.t('videos.update.success'),
     });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(401).json({ message: 'Error al actualizar el vídeo' });
+    return res.status(401).json({ message: req.t('videos.update.error') });
   }
 };
 
@@ -287,12 +287,12 @@ export const updateVideo = async (req: Request, res: Response) => {
     );
 
     return res.status(200).json({
-      message: 'Vídeo actualizado con éxito',
+      message: req.t('videos.update.success'),
       video,
     });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(401).json({ message: 'Error al actualizar el vídeo' });
+    return res.status(401).json({ message: req.t('videos.update.error') });
   }
 };
 

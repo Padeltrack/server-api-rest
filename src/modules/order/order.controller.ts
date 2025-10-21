@@ -64,7 +64,7 @@ export const getOrders = async (req: Request, res: Response) => {
     return res.status(200).json({ orders, count });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(500).json({ message: 'Error fetching orders', error });
+    return res.status(500).json({ message: req.t('orders.list.error'), error });
   }
 };
 
@@ -75,7 +75,9 @@ export const getOrdersById = async (req: Request, res: Response) => {
   try {
     const orderId = req.params.id;
 
-    if (!orderId) return res.status(400).json({ message: 'Order Se requiere identificación' });
+    if (!orderId) {
+      return res.status(400).json({ message: req.t('orders.validation.idRequired') });
+    }
 
     const order = await OrderMongoModel.findOne({ _id: orderId })
       .populate('planId')
@@ -84,7 +86,7 @@ export const getOrdersById = async (req: Request, res: Response) => {
     return res.status(200).json({ order });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(500).json({ message: 'Error fetching orders', error });
+    return res.status(500).json({ message: req.t('orders.detail.error'), error });
   }
 };
 
@@ -101,13 +103,13 @@ export const createOrder = async (req: Request, res: Response) => {
     const getPlan = await PlanMongoModel.findOne({ _id: planId, active: true });
     if (!getPlan) {
       return res.status(400).json({
-        message: 'Plan no encontrado',
+        message: req.t('orders.validation.planNotFound'),
       });
     }
 
     if (getPlan.isCoach && !isCoach) {
       return res.status(400).json({
-        message: 'You are not a coach',
+        message: req.t('orders.validation.notCoach'),
       });
     }
 
@@ -140,7 +142,7 @@ export const createOrder = async (req: Request, res: Response) => {
 
       if (isOrderCoachPending.length) {
         return res.status(400).json({
-          message: 'You have a pending order',
+          message: req.t('orders.validation.hasPending'),
         });
       }
     } else {
@@ -155,7 +157,7 @@ export const createOrder = async (req: Request, res: Response) => {
 
       if (isOrderPending) {
         return res.status(400).json({
-          message: 'You have a pending order',
+          message: req.t('orders.validation.hasPending'),
         });
       }
     }
@@ -232,16 +234,19 @@ export const createOrder = async (req: Request, res: Response) => {
 
     sendEMail({ data: msgAdmin });
 
-    return res.status(200).json({ order });
+    return res.status(200).json({ 
+      order,
+      message: req.t('orders.create.success')
+    });
   } catch (error) {
     if (error instanceof ZodError) {
       return res.status(400).json({
-        message: 'Error de validación',
+        message: req.t('validation.validationError'),
         issues: error.errors,
       });
     }
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(500).json({ message: 'Error creating order', error });
+    return res.status(500).json({ message: req.t('orders.create.error'), error });
   }
 };
 
@@ -257,13 +262,13 @@ export const updateOrderStatus = async (req: Request, res: Response) => {
     const getOrder = await OrderMongoModel.findOne({ _id: orderId });
     if (!getOrder) {
       return res.status(404).json({
-        message: 'Pedido no encontrado',
+        message: req.t('orders.detail.notFound'),
       });
     }
 
     if (status === getOrder.status) {
       return res.status(400).json({
-        message: 'Estado ya actualizado',
+        message: req.t('orders.status.alreadyUpdated'),
       });
     }
 
@@ -272,14 +277,14 @@ export const updateOrderStatus = async (req: Request, res: Response) => {
       getOrder.status !== SelectStatusOrderModel.Approved
     ) {
       return res.status(400).json({
-        message: 'Pedido no aprobado',
+        message: req.t('orders.status.notApproved'),
       });
     }
 
     const getPlan = await PlanMongoModel.findOne({ _id: getOrder.planId });
     if (!getPlan) {
       return res.status(404).json({
-        message: 'Plan no encontrado',
+        message: req.t('orders.validation.planNotFound'),
       });
     }
     const isPlanNotCoach = getPlan.isCoach === false;
@@ -287,7 +292,7 @@ export const updateOrderStatus = async (req: Request, res: Response) => {
     const getUser = await UserMongoModel.findOne({ _id: getOrder.userId });
     if (!getUser) {
       return res.status(404).json({
-        message: 'Usuario no encontrado',
+        message: req.t('orders.validation.userNotFound'),
       });
     }
 
@@ -297,13 +302,13 @@ export const updateOrderStatus = async (req: Request, res: Response) => {
     ].includes(status);
     if (isStatusForMessageRejected && !messageRejected) {
       return res.status(400).json({
-        message: 'El mensaje de rechazo es requerido',
+        message: req.t('orders.validation.rejectionRequired'),
       });
     }
     if (isStatusForMessageRejected && (messageRejected ?? '').length > 50) {
       return res
         .status(400)
-        .json({ message: 'El mensaje de rechazo no puede tener mas de 50 caracteres' });
+        .json({ message: req.t('orders.validation.rejectionTooLong') });
     }
 
     if (status === SelectStatusOrderModel.Approved) {
@@ -347,7 +352,9 @@ export const updateOrderStatus = async (req: Request, res: Response) => {
     const updated = await OrderMongoModel.findByIdAndUpdate({ _id: orderId }, fieldsUpdated, {
       new: true,
     });
-    if (!updated) return res.status(404).json({ message: 'Pedido no encontrado' });
+    if (!updated) {
+      return res.status(404).json({ message: req.t('orders.detail.notFound') });
+    }
 
     const isApproved = fieldsUpdated.status === SelectStatusOrderModel.Approved;
     const isCancel = fieldsUpdated.status === SelectStatusOrderModel.Cancelled;
@@ -401,16 +408,19 @@ export const updateOrderStatus = async (req: Request, res: Response) => {
 
     sendEMail({ data: msg });
 
-    return res.status(200).json({ order: updated });
+    return res.status(200).json({ 
+      order: updated,
+      message: req.t('orders.update.success')
+    });
   } catch (error) {
     if (error instanceof ZodError) {
       return res.status(400).json({
-        message: 'Error de validación',
+        message: req.t('validation.validationError'),
         issues: error.errors,
       });
     }
 
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(500).json({ message: 'Error updating order', error });
+    return res.status(500).json({ message: req.t('orders.update.error'), error });
   }
 };

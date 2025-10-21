@@ -316,16 +316,24 @@
     },
     "list": {
       "empty": "No matches recorded",
-      "loaded": "Matches loaded successfully"
+      "loaded": "Matches loaded successfully",
+      "error": "Error fetching matches"
     },
     "detail": {
       "notFound": "Match not found",
-      "loaded": "Match details loaded"
+      "loaded": "Match details loaded",
+      "error": "Error fetching match"
     },
     "validation": {
       "dateRequired": "Date is required",
       "opponentRequired": "You must specify the opponent",
-      "scoreRequired": "You must record the score"
+      "scoreRequired": "You must record the score",
+      "playersRequired": "Players are required",
+      "twoPlayersRequired": "Two players are required",
+      "finalPointsRequired": "Final points are required",
+      "tiebreaksRequired": "Tiebreaks are required",
+      "superTiebreaksRequired": "Super tiebreaks are required",
+      "differentPlayers": "Players must be different"
     }
   },
   "onboarding": {
@@ -337,7 +345,19 @@
     "skip": "Skip",
     "next": "Next",
     "previous": "Previous",
-    "finish": "Finish"
+    "finish": "Finish",
+    "questions": {
+      "loaded": "Questions loaded successfully",
+      "error": "Error fetching onboarding questions",
+      "updated": "Question updated successfully",
+      "updateError": "Error updating onboarding question",
+      "deleted": "Question deleted successfully",
+      "deleteError": "Error deleting onboarding question"
+    },
+    "validation": {
+      "idRequired": "ID is required",
+      "optionsRequired": "Options are required"
+    }
   },
   "bank": {
     "create": {
@@ -362,13 +382,20 @@
     },
     "unassign": {
       "success": "Coach unassigned successfully",
-      "error": "Error unassigning coach"
+      "error": "Error unassigning coach",
+      "notFound": "Coach assignment not found",
+      "removed": "Coach assignment removed successfully"
     },
     "list": {
       "empty": "No coaches available",
       "loaded": "Coaches loaded successfully",
       "myStudents": "My students",
-      "myCoaches": "My coaches"
+      "myCoaches": "My coaches",
+      "error": "Error fetching coaches"
+    },
+    "validation": {
+      "notFound": "Coach not found or not a coach",
+      "studentIdRequired": "Student ID is required"
     }
   },
   "ads": {
@@ -387,6 +414,19 @@
     "list": {
       "empty": "No active ads",
       "loaded": "Ads loaded successfully"
+    }
+  },
+  "weeklyVideo": {
+    "list": {
+      "loaded": "Weekly videos loaded successfully",
+      "error": "Error fetching weekly video"
+    },
+    "detail": {
+      "notFound": "Weekly video not found"
+    },
+    "check": {
+      "success": "Weekly video check updated successfully",
+      "error": "Error updating weekly video check"
     }
   },
   "emails": {

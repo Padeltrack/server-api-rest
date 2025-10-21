@@ -11,13 +11,13 @@ declare module 'express-serve-static-core' {
 export const authenticate = async (req: Request, res: Response, next: NextFunction) => {
   const bearer = req.headers['authorization'] as string;
   if (!bearer) {
-    return res.status(401).json({ message: 'Token missing' });
+    return res.status(401).json({ message: req.t('auth.token.missing') });
   }
 
   const token = bearer.split(' ')[1];
 
   if (!token) {
-    return res.status(401).json({ message: 'Token missing' });
+    return res.status(401).json({ message: req.t('auth.token.missing') });
   }
 
   try {
@@ -25,12 +25,12 @@ export const authenticate = async (req: Request, res: Response, next: NextFuncti
     const user = await UserMongoModel.findOne({ _id: decoded._id });
 
     if (!user) {
-      return res.status(401).json({ message: 'Usuario no encontrado' });
+      return res.status(401).json({ message: req.t('users.profile.notFound') });
     }
 
     req.user = user;
     next();
   } catch (err) {
-    res.status(401).json({ message: 'Invalid token' });
+    res.status(401).json({ message: req.t('auth.token.invalid') });
   }
 };

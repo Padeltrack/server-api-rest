@@ -31,7 +31,7 @@ export const registerUserWithGoogle = async (req: Request, res: Response) => {
 
     if (!email) {
       return res.status(400).json({
-        message: 'Se requiere correo electrónico',
+        message: req.t('auth.login.emailRequired'),
       });
     }
 
@@ -39,21 +39,21 @@ export const registerUserWithGoogle = async (req: Request, res: Response) => {
 
     if (countUser) {
       return res.status(401).json({
-        message: 'La usuario ya existe',
+        message: req.t('auth.register.emailExists'),
         isRegister: true,
       });
     }
 
     if (!onboarding.length) {
       return res.status(404).json({
-        message: 'No se encontró ninguna incorporación',
+        message: req.t('common.notFound'),
       });
     }
 
     const { valid, errors } = await validateOnboardingAnswers({ onboarding });
     if (!valid) {
       return res.status(400).json({
-        message: 'Respuestas de incorporación no válidas',
+        message: req.t('validation.validationError'),
         errors,
       });
     }
@@ -95,19 +95,19 @@ export const registerUserWithGoogle = async (req: Request, res: Response) => {
     };
 
     return res.status(200).json({
-      message: 'Registro exitoso',
+      message: req.t('auth.register.success'),
       me,
     });
   } catch (error) {
     if (error instanceof ZodError) {
       return res.status(400).json({
-        message: 'Error de validación',
+        message: req.t('validation.validationError'),
         issues: error.errors,
       });
     }
 
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(401).json({ message: error.message });
+    return res.status(401).json({ message: req.t('auth.register.error') });
   }
 };
 
@@ -127,7 +127,7 @@ export const loginWithGoogle = async (req: Request, res: Response) => {
 
     if (!email) {
       return res.status(404).json({
-        message: 'Usuario no encontrado',
+        message: req.t('users.profile.notFound'),
       });
     }
 
@@ -135,7 +135,7 @@ export const loginWithGoogle = async (req: Request, res: Response) => {
 
     if (!getUser) {
       return res.status(404).json({
-        message: 'Usuario no encontrado',
+        message: req.t('users.profile.notFound'),
         isRegister: false,
       });
     }
@@ -147,13 +147,13 @@ export const loginWithGoogle = async (req: Request, res: Response) => {
   } catch (error) {
     if (error instanceof ZodError) {
       return res.status(400).json({
-        message: 'Error de validación',
+        message: req.t('validation.validationError'),
         issues: error.errors,
       });
     }
 
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(401).json({ message: error.message });
+    return res.status(401).json({ message: req.t('auth.login.error') });
   }
 };
 
@@ -168,7 +168,7 @@ export const verifyAdminMfa = async (req: Request, res: Response) => {
 
     if (!email) {
       return res.status(404).json({
-        message: 'Usuario no encontrado',
+        message: req.t('users.profile.notFound'),
         isRegister: true,
       });
     }
@@ -177,13 +177,13 @@ export const verifyAdminMfa = async (req: Request, res: Response) => {
 
     if (!getUser?.mfaSecret) {
       return res.status(401).json({
-        message: 'Usuario no encontrado',
+        message: req.t('users.profile.notFound'),
       });
     }
 
     if (![SelectRoleModel.Admin, SelectRoleModel.SuperAdmin].includes(getUser.role as any)) {
       return res.status(401).json({
-        message: 'Usuario no encontrado',
+        message: req.t('errors.unauthorized'),
       });
     }
 
@@ -196,7 +196,7 @@ export const verifyAdminMfa = async (req: Request, res: Response) => {
 
     if (!verified) {
       return res.status(401).json({
-        message: 'Invalid code',
+        message: req.t('auth.token.invalid'),
       });
     }
 
@@ -208,18 +208,18 @@ export const verifyAdminMfa = async (req: Request, res: Response) => {
     };
 
     return res.status(200).json({
-      message: 'Inicio de sesión exitosa',
+      message: req.t('auth.login.success'),
       me,
     });
   } catch (error) {
     if (error instanceof ZodError) {
       return res.status(400).json({
-        message: 'Error de validación',
+        message: req.t('validation.validationError'),
         issues: error.errors,
       });
     }
 
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(401).json({ message: error.message });
+    return res.status(401).json({ message: req.t('auth.login.error') });
   }
 };

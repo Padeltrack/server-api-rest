@@ -15,10 +15,13 @@ export const getAds = async (req: Request, res: Response) => {
   try {
     const ads = await AdsMongoModel.find().sort({ createdAt: 1 });
 
-    return res.status(200).json({ ads });
+    return res.status(200).json({ 
+      ads,
+      message: req.t('ads.list.loaded')
+    });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(500).json({ message: 'Error al obtener anuncios', error });
+    return res.status(500).json({ message: req.t('errors.fetching'), error });
   }
 };
 
@@ -46,16 +49,19 @@ export const createAds = async (req: Request, res: Response) => {
       active: active || false,
     });
 
-    return res.status(200).json({ ads });
+    return res.status(200).json({ 
+      ads,
+      message: req.t('ads.create.success')
+    });
   } catch (error) {
     if (error instanceof ZodError) {
       return res.status(400).json({
-        message: 'Error de validación',
+        message: req.t('validation.validationError'),
         issues: error.errors,
       });
     }
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(500).json({ message: 'Error al crear anuncios', error });
+    return res.status(500).json({ message: req.t('ads.create.error'), error });
   }
 };
 
@@ -68,14 +74,14 @@ export const updateAds = async (req: Request, res: Response) => {
 
     if (!idAds) {
       return res.status(400).json({
-        message: 'Se requiere identificación',
+        message: req.t('common.idRequired'),
       });
     }
 
     const getAds = await AdsMongoModel.findOne({ _id: idAds });
     if (!getAds) {
       return res.status(404).json({
-        message: 'Anuncios no encontrados',
+        message: req.t('common.notFound'),
       });
     }
 
@@ -107,17 +113,17 @@ export const updateAds = async (req: Request, res: Response) => {
 
     return res.status(200).json({
       ads,
-      message: 'Anuncios actualizados exitosamente',
+      message: req.t('ads.update.success'),
     });
   } catch (error) {
     if (error instanceof ZodError) {
       return res.status(400).json({
-        message: 'Error de validación',
+        message: req.t('validation.validationError'),
         issues: error.errors,
       });
     }
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(500).json({ message: 'Error al actualizar los anuncios', error });
+    return res.status(500).json({ message: req.t('ads.update.error'), error });
   }
 };
 
@@ -130,14 +136,14 @@ export const deleteAds = async (req: Request, res: Response) => {
 
     if (!id) {
       return res.status(400).json({
-        message: 'Se requiere identificación',
+        message: req.t('common.idRequired'),
       });
     }
 
     const ads = await AdsMongoModel.findOne({ _id: id });
     if (!ads) {
       return res.status(404).json({
-        message: 'Anuncios no encontrados',
+        message: req.t('common.notFound'),
       });
     }
 
@@ -147,10 +153,10 @@ export const deleteAds = async (req: Request, res: Response) => {
     await AdsMongoModel.deleteOne({ _id: id });
 
     return res.status(200).json({
-      message: 'Anuncios eliminados exitosamente',
+      message: req.t('ads.delete.success'),
     });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(500).json({ message: 'Error al eliminar anuncios', error });
+    return res.status(500).json({ message: req.t('ads.delete.error'), error });
   }
 };

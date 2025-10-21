@@ -26,7 +26,7 @@ export const uploadVideoToFolderVimeo = async (req: Request, res: Response) => {
     const filePath = req.file?.path;
 
     if (!filePath) {
-      return res.status(400).json({ message: 'No se ha subido ningún archivo' });
+      return res.status(400).json({ message: req.t('vimeo.upload.fileRequired') });
     }
 
     const isFreeFolder = !!(freeFolder && Number(freeFolder) === Number(folderId));
@@ -54,19 +54,19 @@ export const uploadVideoToFolderVimeo = async (req: Request, res: Response) => {
     await cleanUploadedFiles(req);
 
     res.status(200).json({
-      message: 'Vídeo subido exitosamente',
+      message: req.t('vimeo.upload.success'),
     });
   } catch (error) {
     await cleanUploadedFiles(req);
     if (error instanceof ZodError) {
       return res.status(400).json({
-        message: 'Error de validación',
+        message: req.t('validation.validationError'),
         issues: error.errors,
       });
     }
 
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    res.status(500).json({ message: 'Server error', error: error });
+    res.status(500).json({ message: req.t('errors.serverError'), error: error });
   }
 };
 
@@ -88,13 +88,13 @@ export const getVimeoVideos = async (req: Request, res: Response) => {
     });
 
     res.status(200).json({
-      message: 'Vídeos obtenidos correctamente',
+      message: req.t('vimeo.fetch.success'),
       data: response.body,
     });
   } catch (error: any) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
     res.status(500).json({
-      message: 'Error al recuperar vídeos de Vimeo',
+      message: req.t('vimeo.fetch.error'),
       error: error.message || error,
     });
   }
@@ -124,13 +124,13 @@ export const getFreeVimeoVideos = async (req: Request, res: Response) => {
     response.body.data = dataVideos;
 
     res.status(200).json({
-      message: 'Vídeos obtenidos correctamente',
+      message: req.t('vimeo.fetch.success'),
       data: response.body,
     });
   } catch (error: any) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
     res.status(500).json({
-      message: 'Error al recuperar vídeos de Vimeo',
+      message: req.t('vimeo.fetch.error'),
       error: error.message || error,
     });
   }
@@ -154,13 +154,13 @@ export const getFoldersVimeo = async (req: Request, res: Response) => {
     });
 
     res.status(200).json({
-      message: 'Carpetas recuperadas exitosamente',
+      message: req.t('vimeo.folders.success'),
       data: response.body,
     });
   } catch (error: any) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
     res.status(500).json({
-      message: 'Error al recuperar carpetas de Vimeo',
+      message: req.t('vimeo.folders.error'),
       error: error.message || error,
     });
   }
@@ -177,13 +177,13 @@ export const getFolderByIdVimeo = async (req: Request, res: Response) => {
       path: `/me/projects/${id}`,
     });
     res.status(200).json({
-      message: 'Carpetas recuperadas exitosamente',
+      message: req.t('vimeo.folders.success'),
       data: response.body,
     });
   } catch (error: any) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
     res.status(500).json({
-      message: 'Error al recuperar carpetas de Vimeo',
+      message: req.t('vimeo.folders.error'),
       error: error.message || error,
     });
   }
@@ -208,13 +208,13 @@ export const getItemsFolderByIdVimeo = async (req: Request, res: Response) => {
     });
 
     res.status(200).json({
-      message: 'Carpetas recuperadas exitosamente',
+      message: req.t('vimeo.folders.success'),
       data: response.body,
     });
   } catch (error: any) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
     res.status(500).json({
-      message: 'Error al recuperar carpetas de Vimeo',
+      message: req.t('vimeo.folders.error'),
       error: error.message || error,
     });
   }
@@ -230,7 +230,7 @@ export const updateVideoToFolderVimeo = async (req: Request, res: Response) => {
 
     if (!idVideoVimeo) {
       return res.status(400).json({
-        message: 'Se requiere identificación de video',
+        message: req.t('vimeo.validation.idRequired'),
       });
     }
 
@@ -253,12 +253,12 @@ export const updateVideoToFolderVimeo = async (req: Request, res: Response) => {
     await cleanUploadedFiles(req);
 
     res.status(200).json({
-      message: 'Vídeo actualizado con éxito',
+      message: req.t('vimeo.update.success'),
     });
   } catch (error) {
     await cleanUploadedFiles(req);
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    res.status(500).json({ message: 'Server error', error: error });
+    res.status(500).json({ message: req.t('errors.serverError'), error: error });
   }
 };
 
@@ -271,7 +271,7 @@ export const removeVideoToFolderVimeo = async (req: Request, res: Response) => {
 
     if (!idVideoVimeo) {
       return res.status(400).json({
-        message: 'Se requiere identificación de video',
+        message: req.t('vimeo.validation.idRequired'),
       });
     }
 
@@ -279,10 +279,10 @@ export const removeVideoToFolderVimeo = async (req: Request, res: Response) => {
     await VideoMongoModel.deleteOne({ idVideoVimeo });
 
     res.status(200).json({
-      message: 'Vídeo eliminado con éxito',
+      message: req.t('vimeo.delete.success'),
     });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    res.status(500).json({ message: 'Server error', error: error });
+    res.status(500).json({ message: req.t('errors.serverError'), error: error });
   }
 };

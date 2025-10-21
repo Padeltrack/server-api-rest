@@ -85,7 +85,7 @@ export const getMe = async (req: Request, res: Response) => {
     return res.status(200).json({ user, plans, orders });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(401).json({ message: 'No autorizado' });
+    return res.status(401).json({ message: req.t('errors.unauthorized') });
   }
 };
 
@@ -145,7 +145,7 @@ export const getUsers = async (req: Request, res: Response) => {
     return res.status(200).json({ users, count });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(401).json({ message: 'Error al obtener usuarios' });
+    return res.status(401).json({ message: req.t('users.list.error') });
   }
 };
 
@@ -207,7 +207,7 @@ export const getCoachOrStudentUsers = async (req: Request, res: Response) => {
     return res.status(200).json({ users: usersSorted });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(401).json({ message: 'Error al obtener usuarios' });
+    return res.status(401).json({ message: req.t('users.list.error') });
   }
 };
 
@@ -220,7 +220,7 @@ export const getUserById = async (req: Request, res: Response) => {
 
     if (!_id) {
       return res.status(400).json({
-        message: 'Se requiere identificación de usuario',
+        message: req.t('users.validation.idRequired'),
       });
     }
 
@@ -231,7 +231,7 @@ export const getUserById = async (req: Request, res: Response) => {
     return res.status(200).json({ user });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(401).json({ message: 'Error al obtener usuarios' });
+    return res.status(401).json({ message: req.t('users.list.error') });
   }
 };
 
@@ -246,7 +246,7 @@ export const createAdmin = async (req: Request, res: Response) => {
     const getUser = await UserMongoModel.countDocuments({ email });
     if (getUser) {
       return res.status(400).json({
-        message: 'El usuario ya existe',
+        message: req.t('users.validation.alreadyExists'),
       });
     }
 
@@ -262,11 +262,11 @@ export const createAdmin = async (req: Request, res: Response) => {
     });
 
     return res.status(200).json({
-      message: 'Usuario creado exitosamente',
+      message: req.t('users.create.adminCreated'),
     });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(401).json({ message: 'Error al crear admin' });
+    return res.status(401).json({ message: req.t('users.create.error') });
   }
 };
 
@@ -279,7 +279,7 @@ export const markVerifiedUser = async (req: Request, res: Response) => {
 
     if (!idUser) {
       return res.status(400).json({
-        message: 'Se requiere identificación de usuario',
+        message: req.t('users.validation.idRequired'),
       });
     }
 
@@ -287,7 +287,7 @@ export const markVerifiedUser = async (req: Request, res: Response) => {
 
     if (!getCoachUser) {
       return res.status(404).json({
-        message: 'Entrenador no encontrado',
+        message: req.t('users.verification.notFound'),
       });
     }
 
@@ -295,11 +295,11 @@ export const markVerifiedUser = async (req: Request, res: Response) => {
     await UserMongoModel.updateOne({ _id: idUser }, { $set: { verified } });
 
     return res.status(200).json({
-      message: 'Usuario marcado como verificado exitosamente',
+      message: req.t('users.verification.success'),
     });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(401).json({ message: 'Error al marcar user' });
+    return res.status(401).json({ message: req.t('users.verification.error') });
   }
 };
 
@@ -312,7 +312,7 @@ export const markWorkedUser = async (req: Request, res: Response) => {
 
     if (!idUser) {
       return res.status(400).json({
-        message: 'Se requiere identificación de usuario',
+        message: req.t('users.validation.idRequired'),
       });
     }
 
@@ -320,7 +320,7 @@ export const markWorkedUser = async (req: Request, res: Response) => {
 
     if (!getCoachUser) {
       return res.status(404).json({
-        message: 'Entrenador no encontrado',
+        message: req.t('users.verification.notFound'),
       });
     }
 
@@ -330,11 +330,11 @@ export const markWorkedUser = async (req: Request, res: Response) => {
     await UserMongoModel.updateOne({ _id: idUser }, { $set: update });
 
     return res.status(200).json({
-      message: 'Usuario marcado exitosamente como miembro',
+      message: req.t('users.verification.memberSuccess'),
     });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(401).json({ message: 'Error removing users' });
+    return res.status(401).json({ message: req.t('users.delete.error') });
   }
 };
 
@@ -415,17 +415,17 @@ export const updateMe = async (req: Request, res: Response) => {
     }
 
     return res.status(200).json({
-      message: 'Usuario actualizado con éxito',
+      message: req.t('users.update.success'),
     });
   } catch (error) {
     if (error instanceof ZodError) {
       return res.status(400).json({
-        message: 'Error de validación',
+        message: req.t('validation.validationError'),
         issues: error.errors,
       });
     }
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(401).json({ message: 'Error al actualizar users' });
+    return res.status(401).json({ message: req.t('users.update.error') });
   }
 };
 
@@ -439,7 +439,7 @@ export const deleteMe = async (req: Request, res: Response) => {
 
     if (ADMINS_EMAILS.includes(me.email)) {
       return res.status(400).json({
-        message: 'No puedes eliminar a este usuario.',
+        message: req.t('users.delete.cannotDelete'),
       });
     }
 
@@ -475,11 +475,11 @@ export const deleteMe = async (req: Request, res: Response) => {
     sendEMail({ data: msg });
 
     return res.status(200).json({
-      message: 'Usuario eliminado exitosamente',
+      message: req.t('users.delete.success'),
     });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(401).json({ message: 'Error al eliminar user' });
+    return res.status(401).json({ message: req.t('users.delete.error') });
   }
 };
 
@@ -493,13 +493,13 @@ export const deleteUser = async (req: Request, res: Response) => {
     const getUser = await UserMongoModel.findOne({ _id: userId });
     if (!getUser) {
       return res.status(404).json({
-        message: 'Usuario no encontrado',
+        message: req.t('users.profile.notFound'),
       });
     }
 
     if (ADMINS_EMAILS.includes(getUser.email)) {
       return res.status(400).json({
-        message: 'No puedes eliminar a este usuario.',
+        message: req.t('users.delete.cannotDelete'),
       });
     }
 
@@ -537,10 +537,10 @@ export const deleteUser = async (req: Request, res: Response) => {
     sendEMail({ data: msg });
 
     return res.status(200).json({
-      message: 'Usuario eliminado exitosamente',
+      message: req.t('users.delete.success'),
     });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(401).json({ message: 'Error al eliminar user' });
+    return res.status(401).json({ message: req.t('users.delete.error') });
   }
 };

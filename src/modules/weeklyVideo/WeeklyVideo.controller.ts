@@ -13,7 +13,7 @@ export const getWeeklyVideos = async (req: Request, res: Response) => {
 
     if (!order) {
       return res.status(404).json({
-        message: 'Pedido no encontrado',
+        message: req.t('orders.detail.notFound'),
       });
     }
 
@@ -24,7 +24,7 @@ export const getWeeklyVideos = async (req: Request, res: Response) => {
 
     if (!weeklyVideo) {
       return res.status(404).json({
-        message: 'Vídeo semanal no encontrado',
+        message: req.t('weeklyVideo.detail.notFound'),
       });
     }
 
@@ -50,10 +50,13 @@ export const getWeeklyVideos = async (req: Request, res: Response) => {
 
     weeklyVideo._doc.videos = weeklyVideoData.filter(video => video !== null);
 
-    return res.status(200).json({ weeklyVideo });
+    return res.status(200).json({ 
+      weeklyVideo,
+      message: req.t('weeklyVideo.list.loaded')
+    });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(500).json({ message: 'Error al obtener el vídeo semanal' });
+    return res.status(500).json({ message: req.t('weeklyVideo.list.error') });
   }
 };
 
@@ -67,7 +70,7 @@ export const markCheckMeVideo = async (req: Request, res: Response) => {
 
     if (!order) {
       return res.status(404).json({
-        message: 'Pedido no encontrado',
+        message: req.t('orders.detail.notFound'),
       });
     }
 
@@ -85,7 +88,7 @@ export const markCheckMeVideo = async (req: Request, res: Response) => {
 
     if (!weeklyVideo?.videos?.length) {
       return res.status(404).json({
-        message: 'Vídeo semanal no encontrado',
+        message: req.t('weeklyVideo.detail.notFound'),
       });
     }
 
@@ -103,12 +106,12 @@ export const markCheckMeVideo = async (req: Request, res: Response) => {
     );
 
     return res.status(200).json({
-      message: 'La verificación de video semanal se actualizó correctamente',
+      message: req.t('weeklyVideo.check.success'),
     });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
     return res
       .status(500)
-      .json({ message: 'Error al actualizar la verificación de video semanal' });
+      .json({ message: req.t('weeklyVideo.check.error') });
   }
 };

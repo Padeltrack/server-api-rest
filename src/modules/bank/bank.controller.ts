@@ -11,10 +11,13 @@ export const getBanks = async (req: Request, res: Response) => {
   try {
     const banks = await BankMongoModel.find().sort({ createdAt: 1 });
 
-    return res.status(200).json({ banks });
+    return res.status(200).json({ 
+      banks,
+      message: req.t('common.success')
+    });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(500).json({ message: 'Error al obtener los bancos', error });
+    return res.status(500).json({ message: req.t('errors.fetching'), error });
   }
 };
 
@@ -29,7 +32,7 @@ export const createBank = async (req: Request, res: Response) => {
     const getBank = await BankMongoModel.findOne({ numberAccount });
     if (getBank) {
       return res.status(400).json({
-        message: 'El banco ya existe',
+        message: req.t('errors.conflict'),
       });
     }
 
@@ -42,17 +45,20 @@ export const createBank = async (req: Request, res: Response) => {
       dniAccount,
     });
 
-    return res.status(200).json({ bank });
+    return res.status(200).json({ 
+      bank,
+      message: req.t('bank.create.success')
+    });
   } catch (error) {
     if (error instanceof ZodError) {
       return res.status(400).json({
-        message: 'Error de validación',
+        message: req.t('validation.validationError'),
         issues: error.errors,
       });
     }
 
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(500).json({ message: 'Error al crear el banco', error });
+    return res.status(500).json({ message: req.t('bank.create.error'), error });
   }
 };
 
@@ -68,7 +74,7 @@ export const updateBank = async (req: Request, res: Response) => {
 
     if (!_id) {
       return res.status(404).json({
-        message: 'No se encontró el banco de identificación',
+        message: req.t('common.idRequired'),
       });
     }
 
@@ -84,17 +90,26 @@ export const updateBank = async (req: Request, res: Response) => {
       new: true,
     });
 
-    return res.status(200).json({ bank });
+    if (!bank) {
+      return res.status(404).json({
+        message: req.t('common.notFound'),
+      });
+    }
+
+    return res.status(200).json({ 
+      bank,
+      message: req.t('bank.update.success')
+    });
   } catch (error) {
     if (error instanceof ZodError) {
       return res.status(400).json({
-        message: 'Error de validación',
+        message: req.t('validation.validationError'),
         issues: error.errors,
       });
     }
 
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(500).json({ message: 'Error al actualizar el banco', error });
+    return res.status(500).json({ message: req.t('bank.update.error'), error });
   }
 };
 
@@ -107,17 +122,24 @@ export const deleteBank = async (req: Request, res: Response) => {
 
     if (!id) {
       return res.status(404).json({
-        message: 'No se encontró el banco de identificación',
+        message: req.t('common.idRequired'),
+      });
+    }
+
+    const bank = await BankMongoModel.findOne({ _id: id });
+    if (!bank) {
+      return res.status(404).json({
+        message: req.t('common.notFound'),
       });
     }
 
     await BankMongoModel.deleteOne({ _id: id });
 
     return res.status(200).json({
-      message: 'Banco eliminado exitosamente',
+      message: req.t('common.deleted'),
     });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(500).json({ message: 'Error al eliminar el banco', error });
+    return res.status(500).json({ message: req.t('errors.deleting'), error });
   }
 };

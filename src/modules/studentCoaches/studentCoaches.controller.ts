@@ -57,10 +57,14 @@ export const getMyAssignments = async (req: Request, res: Response) => {
       };
     });
 
-    return res.status(200).json({ users: formatted, count });
+    return res.status(200).json({ 
+      users: formatted, 
+      count,
+      message: req.t('coaches.list.loaded')
+    });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(500).json({ message: 'Error fetching coaches', error });
+    return res.status(500).json({ message: req.t('coaches.list.error'), error });
   }
 };
 
@@ -79,7 +83,7 @@ export const getCoachesByStudent = async (req: Request, res: Response) => {
 
     if (!studentId) {
       return res.status(400).json({
-        message: 'Se requiere identificación de estudiante',
+        message: req.t('coaches.validation.studentIdRequired'),
       });
     }
 
@@ -91,10 +95,14 @@ export const getCoachesByStudent = async (req: Request, res: Response) => {
       .skip(skip)
       .limit(limit)
       .sort({ createdAt: -1 });
-    return res.status(200).json({ coaches, count });
+    return res.status(200).json({ 
+      coaches, 
+      count,
+      message: req.t('coaches.list.loaded')
+    });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(500).json({ message: 'Error al obtener coaches', error });
+    return res.status(500).json({ message: req.t('coaches.list.error'), error });
   }
 };
 
@@ -112,7 +120,7 @@ export const assignCoach = async (req: Request, res: Response) => {
     });
     if (!getCoach) {
       return res.status(404).json({
-        message: 'Entrenador no encontrado or not a coach',
+        message: req.t('coaches.validation.notFound'),
       });
     }
 
@@ -128,7 +136,7 @@ export const assignCoach = async (req: Request, res: Response) => {
       });
 
       return res.status(200).json({
-        message: 'Entrenador desasignado exitosamente',
+        message: req.t('coaches.unassign.success'),
       });
     } else {
       await StudentCoachesMongoModel.create({
@@ -138,12 +146,12 @@ export const assignCoach = async (req: Request, res: Response) => {
       });
 
       return res.status(200).json({
-        message: 'Entrenador asignado con éxito',
+        message: req.t('coaches.assign.success'),
       });
     }
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(500).json({ message: 'Error assigning coach', error });
+    return res.status(500).json({ message: req.t('coaches.assign.error'), error });
   }
 };
 
@@ -162,17 +170,17 @@ export const removeAssignCoach = async (req: Request, res: Response) => {
 
     if (!existingAssignment) {
       return res.status(404).json({
-        message: 'No se encontró la asignación de entrenador',
+        message: req.t('coaches.unassign.notFound'),
       });
     }
 
     await StudentCoachesMongoModel.deleteOne({ studentId: me._id, _id: assignCoach });
 
     return res.status(200).json({
-      message: 'Asignación de entrenador eliminada con éxito',
+      message: req.t('coaches.unassign.removed'),
     });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(500).json({ message: 'Error removing coach assignment', error });
+    return res.status(500).json({ message: req.t('coaches.unassign.error'), error });
   }
 };

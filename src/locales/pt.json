@@ -316,16 +316,24 @@
     },
     "list": {
       "empty": "Não há partidas registradas",
-      "loaded": "Partidas carregadas com sucesso"
+      "loaded": "Partidas carregadas com sucesso",
+      "error": "Erro ao obter partidas"
     },
     "detail": {
       "notFound": "Partida não encontrada",
-      "loaded": "Detalhes da partida carregados"
+      "loaded": "Detalhes da partida carregados",
+      "error": "Erro ao obter partida"
     },
     "validation": {
       "dateRequired": "A data é obrigatória",
       "opponentRequired": "Você deve especificar o oponente",
-      "scoreRequired": "Você deve registrar o placar"
+      "scoreRequired": "Você deve registrar o placar",
+      "playersRequired": "Jogadores são obrigatórios",
+      "twoPlayersRequired": "Dois jogadores são obrigatórios",
+      "finalPointsRequired": "Pontos finais são obrigatórios",
+      "tiebreaksRequired": "Desempate é obrigatório",
+      "superTiebreaksRequired": "Super tie breaks são obrigatórios",
+      "differentPlayers": "Os jogadores devem ser diferentes"
     }
   },
   "onboarding": {
@@ -337,7 +345,19 @@
     "skip": "Pular",
     "next": "Próximo",
     "previous": "Anterior",
-    "finish": "Finalizar"
+    "finish": "Finalizar",
+    "questions": {
+      "loaded": "Perguntas carregadas com sucesso",
+      "error": "Erro ao obter perguntas de onboarding",
+      "updated": "Pergunta atualizada com sucesso",
+      "updateError": "Erro ao atualizar pergunta de onboarding",
+      "deleted": "Pergunta excluída com sucesso",
+      "deleteError": "Erro ao excluir pergunta de onboarding"
+    },
+    "validation": {
+      "idRequired": "Identificação é obrigatória",
+      "optionsRequired": "Opções são obrigatórias"
+    }
   },
   "bank": {
     "create": {
@@ -362,13 +382,20 @@
     },
     "unassign": {
       "success": "Treinador desatribuído com sucesso",
-      "error": "Erro ao desatribuir o treinador"
+      "error": "Erro ao desatribuir o treinador",
+      "notFound": "Atribuição de treinador não encontrada",
+      "removed": "Atribuição de treinador removida com sucesso"
     },
     "list": {
       "empty": "Não há treinadores disponíveis",
       "loaded": "Treinadores carregados com sucesso",
       "myStudents": "Meus estudantes",
-      "myCoaches": "Meus treinadores"
+      "myCoaches": "Meus treinadores",
+      "error": "Erro ao obter treinadores"
+    },
+    "validation": {
+      "notFound": "Treinador não encontrado ou não é um treinador",
+      "studentIdRequired": "Identificação do estudante é obrigatória"
     }
   },
   "ads": {
@@ -387,6 +414,19 @@
     "list": {
       "empty": "Não há anúncios ativos",
       "loaded": "Anúncios carregados com sucesso"
+    }
+  },
+  "weeklyVideo": {
+    "list": {
+      "loaded": "Vídeos semanais carregados com sucesso",
+      "error": "Erro ao obter o vídeo semanal"
+    },
+    "detail": {
+      "notFound": "Vídeo semanal não encontrado"
+    },
+    "check": {
+      "success": "Verificação de vídeo semanal atualizada com sucesso",
+      "error": "Erro ao atualizar verificação de vídeo semanal"
     }
   },
   "emails": {

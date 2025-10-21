@@ -83,10 +83,14 @@ export const getMatches = async (req: Request, res: Response) => {
       },
     ]);
 
-    return res.status(200).json({ matches, count });
+    return res.status(200).json({ 
+      matches, 
+      count,
+      message: req.t('matches.list.loaded')
+    });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(500).json({ message: 'Error fetching matches', error });
+    return res.status(500).json({ message: req.t('matches.list.error'), error });
   }
 };
 
@@ -154,7 +158,7 @@ export const getMatch = async (req: Request, res: Response) => {
     return res.status(200).json({ match: match?.[0] || {} });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(500).json({ message: 'Error fetching matches', error });
+    return res.status(500).json({ message: req.t('matches.detail.error'), error });
   }
 };
 
@@ -170,31 +174,31 @@ export const createMatch = async (req: Request, res: Response) => {
 
     if (!playersId.length || !playersName.length) {
       return res.status(400).json({
-        message: 'Se requieren jugadores',
+        message: req.t('matches.validation.playersRequired'),
       });
     }
 
     if (playersId.length !== 2 || playersName.length !== 2) {
       return res.status(400).json({
-        message: 'Se requieren dos jugadoras',
+        message: req.t('matches.validation.twoPlayersRequired'),
       });
     }
 
     if (!finalPoints.length) {
       return res.status(400).json({
-        message: 'Se requieren puntos finales',
+        message: req.t('matches.validation.finalPointsRequired'),
       });
     }
 
     if (!tiebreaks.length) {
       return res.status(400).json({
-        message: 'Se requiere desempate',
+        message: req.t('matches.validation.tiebreaksRequired'),
       });
     }
 
     if (!superTiebreaks.length) {
       return res.status(400).json({
-        message: 'Se requieren súper tie breaks',
+        message: req.t('matches.validation.superTiebreaksRequired'),
       });
     }
 
@@ -204,7 +208,7 @@ export const createMatch = async (req: Request, res: Response) => {
     });
     if (playersCount < 2) {
       return res.status(400).json({
-        message: 'Las jugadoras deben ser diferentes',
+        message: req.t('matches.validation.differentPlayers'),
       });
     }
 
@@ -231,9 +235,12 @@ export const createMatch = async (req: Request, res: Response) => {
       coachId: me._id,
     });
 
-    return res.status(200).json({ match });
+    return res.status(200).json({ 
+      match,
+      message: req.t('matches.create.success')
+    });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res.status(500).json({ message: 'Error creating match', error });
+    return res.status(500).json({ message: req.t('matches.create.error'), error });
   }
 };
