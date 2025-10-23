@@ -330,10 +330,8 @@ export const updateOrderStatus = async (req: Request, res: Response) => {
 
     const isApproved = fieldsUpdated.status === SelectStatusOrderModel.Approved;
     const isCancel = fieldsUpdated.status === SelectStatusOrderModel.Cancelled;
-    // const isStudent = getUser.role === SelectRoleModel.Student;
-    const isPlanNotCoach = getPlan.isCoach === false;
 
-    if (isApproved && isPlanNotCoach) {
+    if (isApproved) {
       const getLimitVideoWeek = await CounterMongoModel.findOne({ _id: 'limitVideoWeek' });
       const week = fieldsUpdated.currentWeek;
       const videosByWeek = await getVideosByWeek({ week, maxVideo: getLimitVideoWeek?.seq });
