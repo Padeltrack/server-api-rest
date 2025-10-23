@@ -19,7 +19,6 @@ const cronOrderProgressWeek = async () => {
   try {
     const progresos = await OrderMongoModel.find({
       status: SelectStatusOrderModel.Approved,
-      isCoach: false,
       currentWeek: { $exists: true },
       lastProgressDate: { $exists: true },
     });
