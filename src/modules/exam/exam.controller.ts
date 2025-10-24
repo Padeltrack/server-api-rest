@@ -379,6 +379,7 @@ export const registerAnswerExam = async (req: Request, res: Response) => {
 
       const notificationAdminEmail = await generateEmail({
         template: 'newExamAdmin',
+        language: req.language || 'es',
         variables: {
           displayName: 'Administrador',
           examId: currentExam._id,
@@ -391,7 +392,7 @@ export const registerAnswerExam = async (req: Request, res: Response) => {
       const msgAdmin = {
         from: `${process.env.NODE_MAILER_ROOT_EMAIL}`,
         to: `${process.env.NODE_MAILER_ROOT_EMAIL}`,
-        subject: 'Nuevo examen a revisar en PadelTrack',
+        subject: req.t('emails.subjects.newExamAdmin'),
         text: '-',
         html: notificationAdminEmail,
       };
@@ -631,6 +632,7 @@ export const registerGradeExam = async (req: Request, res: Response) => {
 
     const examGradeEmail = await generateEmail({
       template: 'examGradeStudent',
+      language: req.language || 'es',
       variables: {
         average: `${average}`,
         studentName: getUser.displayName,
@@ -640,7 +642,7 @@ export const registerGradeExam = async (req: Request, res: Response) => {
     const msg = {
       from: `${process.env.NODE_MAILER_ROOT_EMAIL}`,
       to: getUser.email,
-      subject: 'Calificación de examen, PadelTrack',
+      subject: req.t('emails.subjects.examGradeStudent'),
       text: '-',
       html: examGradeEmail,
     };
@@ -720,10 +722,11 @@ export const assignExamToCoach = async (req: Request, res: Response) => {
 
     const assignExamEmail = await generateEmail({
       template: 'assignCoachExam',
+      language: req.language || 'es',
       variables: {
         professorName: getCoach.displayName,
         studentName: getUser.displayName,
-        subject: 'Preparación física',
+        subject: req.t('emails.subjects.subjectAssignCoachExam'),
         status: 'En Revision',
         reviewLink: `${HOST_CLIENT_ADMIN_PROD}/exams/${examAnswerId}`,
       },
@@ -732,7 +735,7 @@ export const assignExamToCoach = async (req: Request, res: Response) => {
     const msg = {
       from: `${process.env.NODE_MAILER_ROOT_EMAIL}`,
       to: getCoach.email,
-      subject: 'Asignación de examen, PadelTrack',
+      subject: req.t('emails.subjects.assignCoachExam'),
       text: '-',
       html: assignExamEmail,
     };
@@ -743,11 +746,12 @@ export const assignExamToCoach = async (req: Request, res: Response) => {
 
     const notifyStudentAssignExamEmail = await generateEmail({
       template: 'notifyStudentAssignCoachExam',
+      language: req.language || 'es',
       variables: {
         coachName: getCoach.displayName,
         studentName: getUser.displayName,
         reviewHours: '48',
-        examTitle: 'Preparación física',
+        examTitle: req.t('emails.subjects.subjectAssignCoachExam'),
         supportEmail: 'padeltrackhub@gmail.com',
       },
     });
@@ -755,7 +759,7 @@ export const assignExamToCoach = async (req: Request, res: Response) => {
     const msgStudent = {
       from: `${process.env.NODE_MAILER_ROOT_EMAIL}`,
       to: getUser.email,
-      subject: 'Revisión de examen, PadelTrack',
+      subject: req.t('emails.subjects.notifyStudentAssignCoachExam'),
       text: '-',
       html: notifyStudentAssignExamEmail,
     };

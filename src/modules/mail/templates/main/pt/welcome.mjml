@@ -1,0 +1,38 @@
+<mjml>
+  <mj-body background-color="#f4f4f4">
+    <mj-include path="./src/modules/mail/templates/layout/header/general.header.mjml" />
+
+    <mj-section background-color="#ffffff" padding="20px" border-radius="8px">
+      <mj-column width="100%">
+        <mj-text
+          font-size="22px"
+          font-weight="bold"
+          align="center"
+          color="#333333"
+          padding-bottom="10px"
+        >
+          Bem-vindo ao PadelTrack 🎉!
+        </mj-text>
+
+        <mj-text align="center" color="#555555" font-size="16px" line-height="24px">
+          Olá <b>{{name}}</b
+          >,<br /><br />
+          <b>Obrigado por confiar no PadelTrack!</b> Sua jornada em direção a um melhor desempenho já começou e estamos animados em fazer parte desse processo. Com nosso app você terá uma ferramenta pensada para acompanhá-lo em cada treino e ajudá-lo a dar aquele salto que você busca em sua evolução.
+        </mj-text>
+
+        <mj-button href="https://padeltrack.app/" font-size="16px" padding="20px">
+          Começar agora
+        </mj-button>
+
+        <mj-text align="center" color="#999999" font-size="12px" padding-top="15px">
+          Se você tem dúvidas, pode entrar em contato com nosso
+          <a href="mailto:info@padeltrack.app" style="color: #007bff; text-decoration: none"
+            >Centro de Ajuda</a
+          >.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <mj-include path="./src/modules/mail/templates/layout/footer.mjml" />
+  </mj-body>
+</mjml>

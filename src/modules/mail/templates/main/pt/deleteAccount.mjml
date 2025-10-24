@@ -1,0 +1,88 @@
+<mjml>
+  <mj-body background-color="#f4f4f4">
+    <mj-include path="./src/modules/mail/templates/layout/header/general.header.mjml" />
+
+    <mj-section background-color="#ffffff" padding="24px 0">
+      <mj-column>
+        <mj-text font-size="20px" font-weight="700" line-height="130%">
+          Sua conta foi excluída
+        </mj-text>
+        <mj-text font-size="14px" line-height="160%">
+          <b>Olá {{displayName}}, lamentamos sua decisão!</b><br /><br />
+          Confirmamos que processamos a solicitação de
+          <strong>exclusão de sua conta</strong> na {{companyName}} no dia
+          <strong>{{deletionDate}}</strong
+          >.
+        </mj-text>
+
+        <mj-text font-size="14px" line-height="160%"> O que isso significa? </mj-text>
+        <mj-text font-size="14px" line-height="180%">
+          • Você não poderá mais fazer login com suas credenciais.<br />
+          • Suas assinaturas e acessos associados foram desativados.<br />
+          • Seus dados pessoais serão excluídos com segurança.
+        </mj-text>
+
+        <mj-text line-height="160%">
+          <b>Nos esforçaremos para melhorar e oferecer um melhor serviço, esperamos vê-lo em breve</b>
+        </mj-text>
+
+        <!--{{#if dataExportUrl}}
+        <mj-text font-size="14px" line-height="160%">
+          Se você ainda não baixou uma cópia dos seus dados, pode fazer isso aqui:
+        </mj-text>
+        <mj-button href="{{dataExportUrl}}" font-size="14px" padding="8px 16px">
+          Baixar meus dados
+        </mj-button>
+        {{/if}}
+
+        {{#if feedbackUrl}}
+        <mj-divider border-color="#E5E7EB" padding-top="16px" padding-bottom="16px" />
+        <mj-text font-size="14px" line-height="160%">
+          Nos conte sobre sua experiência? Sua opinião nos ajuda a melhorar.
+        </mj-text>
+        <mj-button href="{{feedbackUrl}}" font-size="14px" padding="8px 16px">
+          Enviar comentários
+        </mj-button>
+        {{/if}}
+
+        {{#if reactivateUrl}}
+        <mj-divider border-color="#E5E7EB" padding-top="16px" padding-bottom="16px" />
+        <mj-text font-size="14px" line-height="160%">
+          Se você mudar de ideia, pode solicitar a reativação da sua conta enquanto o processo
+          de exclusão ainda não é irreversível.
+        </mj-text>
+        <mj-button href="{{reactivateUrl}}" font-size="14px" padding="8px 16px">
+          Solicitar reativação
+        </mj-button>
+        {{/if}}-->
+      </mj-column>
+    </mj-section>
+
+    <mj-section background-color="#F9FAFB" padding="12px 0">
+      <mj-column>
+        <mj-text font-size="11px" line-height="160%" color="#6B7280">
+          Esta mensagem foi enviada para <strong>{{email}}</strong> porque estava associada a uma
+          conta na {{companyName}}. Se você não solicitou esta ação, entre em contato com nossa equipe de suporte
+          imediatamente.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <mj-include path="./src/modules/mail/templates/layout/footer.mjml" />
+
+    <mj-divider border-color="#E5E7EB" padding-top="16px" padding-bottom="16px" />
+
+    <mj-section background-color="#F9FAFB" padding="12px 0">
+      <mj-column>
+        <mj-text font-size="12px" line-height="170%" color="#6B7280">
+          Se você tem dúvidas, responda este email ou entre em contato conosco em
+          <a href="mailto:{{supportEmail}}" style="color: #111827; text-decoration: underline">{{supportEmail}}</a
+          >{{#if helpCenterUrl}} ou visite nosso
+          <a href="{{helpCenterUrl}}" style="color: #111827; text-decoration: underline"
+            >Centro de Ajuda</a
+          >{{/if}}.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>

@@ -1,0 +1,62 @@
+<mj-section background-color="#ffffff">
+  <mj-column>
+    <mj-text font-size="18px" color="#333333" align="center"> Siga-nos </mj-text>
+    <mj-social icon-size="30px" mode="horizontal" align="center">
+      <mj-social-element name="instagram" href="https://www.instagram.com/padeltrack.app" />
+      <mj-social-element name="facebook" href="#" />
+      <mj-social-element name="twitter" href="#" />
+    </mj-social>
+  </mj-column>
+</mj-section>
+
+<mj-section background-color="#ffffff">
+  <mj-group>
+    <mj-column>
+      <mj-image
+        href="https://apps.apple.com/ec/app/meniuz/id1563662812?l=en"
+        src="https://firebasestorage.googleapis.com/v0/b/meniuz.appspot.com/o/web%2FApp%20Store.png?alt=media"
+        alt="Baixar na App Store"
+        width="100px"
+        align="center"
+        padding="0px"
+      />
+    </mj-column>
+
+    <mj-column>
+      <mj-image
+        href="https://play.google.com/store/apps/details?id=com.kevinhomorales.meniuzkotlin&hl=es-419"
+        src="https://firebasestorage.googleapis.com/v0/b/meniuz.appspot.com/o/web%2FPlay%20Store.png?alt=media"
+        alt="Disponível no Google Play"
+        width="100px"
+        align="center"
+        padding="0px"
+      />
+    </mj-column>
+
+    <mj-column>
+      <mj-image
+        href="https://appgallery.huawei.com/app/C104330241"
+        src="https://firebasestorage.googleapis.com/v0/b/meniuz.appspot.com/o/web%2FHUAWEI.png?alt=media"
+        alt="Disponível na AppGallery"
+        width="100px"
+        align="center"
+        padding="0px"
+      />
+    </mj-column>
+  </mj-group>
+</mj-section>
+
+<mj-section background-color="#fff" padding="20px">
+  <mj-column>
+    <mj-text font-size="18px" font-weight="bold" color="#333333" padding-bottom="10px">
+      PadelTrack App
+    </mj-text>
+    <mj-text font-size="14px" color="#555555" line-height="22px">
+      PadelTrack
+      <strong
+        >Treine com programas 100% personalizados, projetados por treinadores reais que adaptam
+        cada sessão ao seu nível e objetivos.</strong
+      >.
+    </mj-text>
+  </mj-column>
+</mj-section>

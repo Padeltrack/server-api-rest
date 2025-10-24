@@ -489,6 +489,21 @@
   "emails": {
     "sent": "Email sent successfully",
     "error": "Error sending email",
+    "subjects": {
+      "welcome": "Welcome to PadelTrack!",
+      "orderApproved": "Your order has been approved!",
+      "orderReject": "Your order has been rejected",
+      "orderCancel": "Your order was cancelled",
+      "orderComplete": "Your plan has ended",
+      "newOrder": "We have received your order",
+      "newOrderAdmin": "🛒 New Purchase Order",
+      "deleteAccount": "We're sorry to see you leave PadelTrack",
+      "examGradeStudent": "Your exam has been graded!",
+      "newExamAdmin": "📑 New Exam Pending Assignment",
+      "assignCoachExam": "New exam assigned",
+      "subjectAssignCoachExam": "Physical preparation",
+      "notifyStudentAssignCoachExam": "Your exam has been assigned to a coach"
+    },
     "welcome": {
       "subject": "Welcome to Padel Track!",
       "title": "Welcome, {{name}}",

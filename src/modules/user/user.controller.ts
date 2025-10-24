@@ -452,6 +452,7 @@ export const deleteMe = async (req: Request, res: Response) => {
 
     const deleteAccountEmail = await generateEmail({
       template: 'deleteAccount',
+      language: req.language || 'es',
       variables: {
         displayName: me.displayName,
         email: me.email,
@@ -465,7 +466,7 @@ export const deleteMe = async (req: Request, res: Response) => {
     const msg = {
       from: `${process.env.NODE_MAILER_ROOT_EMAIL}`,
       to: me.email,
-      subject: 'Lamentamos que te vallas de PadelTrack',
+      subject: req.t('emails.subjects.deleteAccount'),
       text: '-',
       html: deleteAccountEmail,
     };
@@ -514,6 +515,7 @@ export const deleteUser = async (req: Request, res: Response) => {
 
     const deleteAccountEmail = await generateEmail({
       template: 'deleteAccount',
+      language: req.language || 'es',
       variables: {
         displayName: getUser.displayName,
         email: getUser.email,
@@ -527,7 +529,7 @@ export const deleteUser = async (req: Request, res: Response) => {
     const msg = {
       from: `${process.env.NODE_MAILER_ROOT_EMAIL}`,
       to: getUser.email,
-      subject: 'Lamentamos que te vallas de PadelTrack',
+      subject: req.t('emails.subjects.deleteAccount'),
       text: '-',
       html: deleteAccountEmail,
     };

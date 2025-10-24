@@ -1,0 +1,38 @@
+<mjml>
+  <mj-body background-color="#f4f4f4">
+    <mj-include path="./src/modules/mail/templates/layout/header/general.header.mjml" />
+
+    <mj-section background-color="#ffffff" padding="20px">
+      <mj-column>
+        <mj-text font-size="20px" font-weight="bold" color="#333333" align="center">
+          Seu exame foi avaliado!
+        </mj-text>
+
+        <mj-divider border-color="#cccccc" padding="10px 0" />
+
+        <mj-text font-size="16px" color="#555555">
+          Olá <strong>{{studentName}}</strong>,
+        </mj-text>
+
+        <mj-text font-size="16px" color="#555555">
+          Queremos informar que seu exame foi revisado e você já tem uma nota.
+        </mj-text>
+
+        <mj-text font-size="18px" font-weight="bold" color="#2e86de" align="center" padding="15px">
+          Sua média: <span style="font-size:22px;">{{average}}</span>
+        </mj-text>
+
+        <mj-text font-size="16px" color="#555555">
+          Com esta nota você já tem acesso habilitado às outras funcionalidades da aplicação. 
+          Continue avançando em seu aprendizado!
+        </mj-text>
+
+        <!--<mj-button background-color="#2e86de" color="#ffffff" font-size="16px" href="{{appUrl}}" padding="20px">
+          Entrar na aplicação
+        </mj-button>-->
+      </mj-column>
+    </mj-section>
+
+  <mj-include path="./src/modules/mail/templates/layout/footer.mjml" />
+  </mj-body>
+</mjml>

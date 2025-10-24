@@ -489,6 +489,21 @@
   "emails": {
     "sent": "Email enviado com sucesso",
     "error": "Erro ao enviar o email",
+    "subjects": {
+      "welcome": "Bem-vindo ao PadelTrack!",
+      "orderApproved": "Seu pedido foi aprovado!",
+      "orderReject": "Seu pedido foi rejeitado",
+      "orderCancel": "Seu pedido foi cancelado",
+      "orderComplete": "Seu plano terminou",
+      "newOrder": "Recebemos seu pedido",
+      "newOrderAdmin": "🛒 Novo Pedido de Compra",
+      "deleteAccount": "Lamentamos vê-lo sair do PadelTrack",
+      "examGradeStudent": "Seu exame foi avaliado!",
+      "newExamAdmin": "📑 Novo Exame Pendente de Atribuição",
+      "assignCoachExam": "Novo exame atribuído",
+      "subjectAssignCoachExam": "Preparação física",
+      "notifyStudentAssignCoachExam": "Seu exame foi atribuído a um treinador"
+    },
     "welcome": {
       "subject": "Bem-vindo ao Padel Track!",
       "title": "Bem-vindo, {{name}}",

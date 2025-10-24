@@ -1,0 +1,41 @@
+<mjml>
+  <mj-body background-color="#f4f4f4">
+    <mj-include path="./src/modules/mail/templates/layout/header/general.header.mjml" />
+
+    <mj-section>
+        <mj-column>
+            <mj-text font-size="20px" font-weight="bold" align="center" color="#333333">
+                Novo exame atribuído
+            </mj-text>
+            <mj-divider border-color="#cccccc" />
+            <mj-text font-size="16px" color="#555555">
+                Olá <strong>{{professorName}}</strong>,
+            </mj-text>
+            <mj-text font-size="16px" color="#555555">
+                Você foi atribuído para revisar um exame de <strong>{{studentName}}</strong>.  
+            </mj-text>
+            <mj-text font-size="16px" color="#555555">
+                Detalhes do exame:
+            </mj-text>
+            <mj-table>
+                <tr>
+                    <td><strong>Matéria:</strong></td>
+                    <td>{{subject}}</td>
+                </tr>
+                <tr>
+                    <td><strong>Status:</strong></td>
+                    <td>{{status}}</td>
+                </tr>
+            </mj-table>
+            <mj-text font-size="16px" color="#555555">
+                Por favor, entre na plataforma para começar a revisão.
+            </mj-text>
+            <mj-button background-color="#4CAF50" color="white" href="{{reviewLink}}" font-size="16px" border-radius="6px">
+                Revisar exame
+            </mj-button>
+        </mj-column>
+    </mj-section>
+
+    <mj-include path="./src/modules/mail/templates/layout/footer.mjml" />
+  </mj-body>
+</mjml>

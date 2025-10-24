@@ -77,12 +77,13 @@ export const registerUserWithGoogle = async (req: Request, res: Response) => {
     const welcomeEmail = await generateEmail({
       template: 'welcome',
       variables: { name: user.displayName },
+      language: req.language || 'es',
     });
 
     const msg = {
       from: `${process.env.NODE_MAILER_ROOT_EMAIL}`,
       to: email,
-      subject: 'Bienvenido a PadelTrack',
+      subject: req.t('emails.subjects.welcome'),
       text: '-',
       html: welcomeEmail,
     };

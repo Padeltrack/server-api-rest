@@ -1,0 +1,74 @@
+<mjml>
+  <mj-body background-color="#f4f4f4">
+    <mj-include path="./src/modules/mail/templates/layout/header/general.header.mjml" />
+
+    <mj-section background-color="#ffffff" padding="24px 0">
+        <mj-column>
+            <mj-text font-size="20px" font-weight="700" line-height="130%" color="#0C1A3E">
+            Your order has been approved!
+            </mj-text>
+
+            <mj-text font-size="14px" line-height="160%">
+                Hello {{displayName}},<br/><br/>
+                We're happy to inform you that your order <strong>#{{orderNumber}}</strong>, created on <strong>{{orderDate}}</strong>, has been <strong>approved</strong>.
+            </mj-text>
+
+            <mj-text font-size="14px" line-height="160%">
+                Our team is already preparing your order. You'll receive more updates about your purchase order shortly.
+            </mj-text>
+
+            <mj-divider border-color="#E5E7EB" padding-top="16px" padding-bottom="16px" />
+
+            <mj-text font-size="14px" line-height="160%">
+                Order summary:
+            </mj-text>
+
+            <mj-table font-size="13px" cellpadding="8" width="100%">
+                <tr style="background-color:#F9FAFB;">
+                    <th align="left">Product</th>
+                    <th align="center">Quantity</th>
+                    <th align="right">Price</th>
+                </tr>
+                {{#each orderItems}}
+                    <tr>
+                        <td>{{this.name}}</td>
+                        <td align="center">{{this.quantity}}</td>
+                        <td align="right">{{this.price}}</td>
+                    </tr>
+                {{/each}}
+            </mj-table>
+
+            <mj-divider border-color="#E5E7EB" padding-top="16px" padding-bottom="16px" />
+
+            <mj-text font-size="14px" font-weight="700">
+                Total: {{orderTotal}}
+            </mj-text>
+
+            <!--<mj-text font-size="14px" line-height="160%">
+                You can check the details and status of your order at any time at the following link:
+            </mj-text>
+
+            <mj-button href="{{orderUrl}}" font-size="14px" padding="8px 16px" background-color="#16A34A" color="#ffffff">
+                View my order
+            </mj-button>-->
+
+            <mj-divider border-color="#E5E7EB" padding-top="16px" padding-bottom="16px" />
+
+            <mj-text font-size="12px" line-height="170%" color="#6B7280">
+                If you have questions about your order, contact us at 
+                <a href="mailto:{{supportEmail}}" style="color:#111827; text-decoration:underline;">{{supportEmail}}</a>.
+            </mj-text>
+        </mj-column>
+    </mj-section>
+
+    <mj-include path="./src/modules/mail/templates/layout/footer.mjml" />
+
+    <mj-section background-color="#F9FAFB" padding="12px 0">
+        <mj-column>
+            <mj-text font-size="11px" line-height="160%" color="#6B7280">
+            This message was sent to <strong>{{email}}</strong> in relation to order #{{orderNumber}} at {{companyName}}.
+            </mj-text>
+        </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>

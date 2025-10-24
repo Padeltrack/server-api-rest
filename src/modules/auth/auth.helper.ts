@@ -44,21 +44,3 @@ export const generateAuthRefreshToken = (payload: string | object) => {
     expiresIn: TOKEN_JWT_REFRESH_EXPIRES_SEVEN_DAYS_IN_SECONDS,
   });
 };
-
-/*export const notificationRegisterUser = async (options: Pick<UserModel, 'name' | 'email'>) => {
-  const { name, email } = options;
-  const welcomeEmail = await generateEmail({
-    template: 'welcome',
-    variables: { name: name || email },
-  });
-
-  const msg: MailDataRequired = {
-    from: config.ROOT_MAIN,
-    to: email,
-    subject: 'Bienvenido a Meniuz',
-    text: '-',
-    html: welcomeEmail,
-  };
-
-  sendEMail({ data: msg });
-};*/

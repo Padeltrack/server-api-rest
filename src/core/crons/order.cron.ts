@@ -9,6 +9,7 @@ import { generateEmail } from '../../modules/mail/loadTemplate.mail';
 import { sendEMail } from '../../modules/mail/sendTemplate.mail';
 import { UserModel, UserMongoModel } from '../../modules/user/user.model';
 import { CounterMongoModel } from '../../modules/counter/counter.model';
+import i18next from '../../config/i18n.config';
 
 function daysBetween(fecha1: Date, fecha2: Date) {
   return Math.floor((fecha2.getTime() - fecha1.getTime()) / (1000 * 60 * 60 * 24));
@@ -139,7 +140,7 @@ const cronOrderStatusComplete = async () => {
           const msg = {
             from: `${process.env.NODE_MAILER_ROOT_EMAIL}`,
             to: `${order.user.email}`,
-            subject: 'Orden completada, PadelTrack',
+            subject: i18next.t('emails.subjects.orderComplete'),
             text: '-',
             html: orderCompleteEmail,
           };

@@ -177,6 +177,7 @@ export const createOrder = async (req: Request, res: Response) => {
 
     const newOrderEmail = await generateEmail({
       template: 'newOrder',
+      language: req.language || 'es',
       variables: {
         displayName: me.displayName,
         orderNumber: order.orderNumber,
@@ -198,7 +199,7 @@ export const createOrder = async (req: Request, res: Response) => {
     const msg = {
       from: `${process.env.NODE_MAILER_ROOT_EMAIL}`,
       to: me.email,
-      subject: 'Recibimos tu orden de PadelTrack',
+      subject: req.t('emails.subjects.newOrder'),
       text: '-',
       html: newOrderEmail,
     };
@@ -209,6 +210,7 @@ export const createOrder = async (req: Request, res: Response) => {
 
     const newOrderAdminEmail = await generateEmail({
       template: 'newOrderAdmin',
+      language: req.language || 'es',
       variables: {
         displayName: 'Administrador',
         orderNumber: order.orderNumber,
@@ -228,7 +230,7 @@ export const createOrder = async (req: Request, res: Response) => {
     const msgAdmin = {
       from: `${process.env.NODE_MAILER_ROOT_EMAIL}`,
       to: `${process.env.NODE_MAILER_ROOT_EMAIL}`,
-      subject: 'Nueva orden de compra en PadelTrack',
+      subject: req.t('emails.subjects.newOrderAdmin'),
       text: '-',
       html: newOrderAdminEmail,
     };
@@ -373,6 +375,7 @@ export const updateOrderStatus = async (req: Request, res: Response) => {
 
     const statusOrderEmail = await generateEmail({
       template: isCancel ? 'orderCancel' : isApproved ? 'orderApproved' : 'orderReject',
+      language: req.language || 'es',
       variables: {
         displayName: getUser.displayName,
         orderNumber: getOrder.orderNumber,
@@ -397,10 +400,10 @@ export const updateOrderStatus = async (req: Request, res: Response) => {
       from: `${process.env.NODE_MAILER_ROOT_EMAIL}`,
       to: getUser.email,
       subject: isCancel
-        ? 'Tu orden fue cancelada en PadelTrack'
+        ? req.t('emails.subjects.orderCancel')
         : isApproved
-          ? 'Tu orden fue aprobada en PadelTrack'
-          : 'Tu orden fue rechazada en PadelTrack',
+          ? req.t('emails.subjects.orderApproved')
+          : req.t('emails.subjects.orderReject'),
       text: '-',
       html: statusOrderEmail,
     };

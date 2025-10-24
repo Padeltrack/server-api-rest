@@ -1,0 +1,41 @@
+<mjml>
+  <mj-body background-color="#f4f4f4">
+    <mj-include path="./src/modules/mail/templates/layout/header/general.header.mjml" />
+
+    <mj-section>
+        <mj-column>
+            <mj-text font-size="20px" font-weight="bold" align="center" color="#333333">
+                New exam assigned
+            </mj-text>
+            <mj-divider border-color="#cccccc" />
+            <mj-text font-size="16px" color="#555555">
+                Hello <strong>{{professorName}}</strong>,
+            </mj-text>
+            <mj-text font-size="16px" color="#555555">
+                You have been assigned to review an exam from <strong>{{studentName}}</strong>.  
+            </mj-text>
+            <mj-text font-size="16px" color="#555555">
+                Exam details:
+            </mj-text>
+            <mj-table>
+                <tr>
+                    <td><strong>Subject:</strong></td>
+                    <td>{{subject}}</td>
+                </tr>
+                <tr>
+                    <td><strong>Status:</strong></td>
+                    <td>{{status}}</td>
+                </tr>
+            </mj-table>
+            <mj-text font-size="16px" color="#555555">
+                Please log into the platform to begin the review.
+            </mj-text>
+            <mj-button background-color="#4CAF50" color="white" href="{{reviewLink}}" font-size="16px" border-radius="6px">
+                Review exam
+            </mj-button>
+        </mj-column>
+    </mj-section>
+
+    <mj-include path="./src/modules/mail/templates/layout/footer.mjml" />
+  </mj-body>
+</mjml>

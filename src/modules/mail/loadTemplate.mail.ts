@@ -4,15 +4,26 @@ import handlebars from 'handlebars';
 
 import mjml2html from 'mjml';
 
-export const loadTemplate = async (templateName: string, variables: Record<string, string>) => {
+export const loadTemplate = async (
+  templateName: string,
+  variables: Record<string, string>,
+  language: string = 'es',
+) => {
   const templatesPath = path.join(__dirname, './templates/main');
-  const templatePath = path.join(templatesPath, `${templateName}.mjml`);
+  const templatePath = path.join(templatesPath, language, `${templateName}.mjml`);
 
   if (!fs.existsSync(templatePath)) {
-    throw new Error(`El archivo ${templateName}.mjml no existe.`);
+    throw new Error(`El archivo ${templateName}.mjml no existe para el idioma ${language}.`);
   }
 
-  const mjmlContent = await fs.promises.readFile(templatePath, 'utf8');
+  let mjmlContent = await fs.promises.readFile(templatePath, 'utf8');
+
+  // Reemplazar la ruta del footer con la versión por idioma
+  const footerPath = `./src/modules/mail/templates/layout/footer/${language}/footer.mjml`;
+  mjmlContent = mjmlContent.replace(
+    /<mj-include path="\.\/src\/modules\/mail\/templates\/layout\/footer\.mjml" \/>/g,
+    `<mj-include path="${footerPath}" />`,
+  );
 
   const template = handlebars.compile(mjmlContent);
   const compiledMjml = template(variables);
@@ -31,6 +42,7 @@ export const loadTemplate = async (templateName: string, variables: Record<strin
 export const generateEmail = async (options: {
   template: string;
   variables: Record<string, string>;
+  language?: string;
 }) => {
-  return await loadTemplate(options.template, options.variables);
+  return await loadTemplate(options.template, options.variables, options.language || 'es');
 };

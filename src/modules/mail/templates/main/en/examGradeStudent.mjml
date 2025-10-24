@@ -1,0 +1,38 @@
+<mjml>
+  <mj-body background-color="#f4f4f4">
+    <mj-include path="./src/modules/mail/templates/layout/header/general.header.mjml" />
+
+    <mj-section background-color="#ffffff" padding="20px">
+      <mj-column>
+        <mj-text font-size="20px" font-weight="bold" color="#333333" align="center">
+          Your exam has been graded!
+        </mj-text>
+
+        <mj-divider border-color="#cccccc" padding="10px 0" />
+
+        <mj-text font-size="16px" color="#555555">
+          Hello <strong>{{studentName}}</strong>,
+        </mj-text>
+
+        <mj-text font-size="16px" color="#555555">
+          We want to inform you that your exam has been reviewed and you now have a grade.
+        </mj-text>
+
+        <mj-text font-size="18px" font-weight="bold" color="#2e86de" align="center" padding="15px">
+          Your average: <span style="font-size:22px;">{{average}}</span>
+        </mj-text>
+
+        <mj-text font-size="16px" color="#555555">
+          With this grade you now have access enabled to the other application features. 
+          Keep advancing in your learning!
+        </mj-text>
+
+        <!--<mj-button background-color="#2e86de" color="#ffffff" font-size="16px" href="{{appUrl}}" padding="20px">
+          Enter the application
+        </mj-button>-->
+      </mj-column>
+    </mj-section>
+
+  <mj-include path="./src/modules/mail/templates/layout/footer.mjml" />
+  </mj-body>
+</mjml>

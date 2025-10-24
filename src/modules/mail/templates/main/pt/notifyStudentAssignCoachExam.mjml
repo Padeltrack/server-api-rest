@@ -1,0 +1,35 @@
+<mjml>
+  <mj-body background-color="#f4f4f4">
+    <mj-include path="./src/modules/mail/templates/layout/header/general.header.mjml" />
+
+    <mj-section padding="20px 0">
+        <mj-column>
+            <mj-text font-size="18px" font-weight="600" line-height="26px" padding-bottom="8px">
+                Olá {{studentName}},
+            </mj-text>
+
+            <mj-text font-size="16px" line-height="24px" padding="0 0 16px 0">
+                Informamos que seu exame <strong>"{{examTitle}}"</strong> foi atribuído a um treinador: <strong>{{coachName}}</strong>.
+            </mj-text>
+
+            <mj-text font-size="14px" line-height="22px" padding="0 0 12px 0">
+                O treinador revisará seu exame nas próximas <strong>{{reviewHours}} horas</strong>. Uma vez finalizada a revisão, você receberá uma notificação com os resultados e observações.
+            </mj-text>
+
+            <mj-divider border-color="#E0E0E0" padding="12px 0"/>
+
+            <mj-text font-size="13px" line-height="20px" color="#555555" padding-top="8px">
+                Precisa de ajuda ou tem alguma dúvida? Responda este email ou escreva para <a href="mailto:{{supportEmail}}">{{supportEmail}}</a>.
+            </mj-text>
+
+            <mj-spacer height="8px"/>
+
+            <mj-text font-size="12px" line-height="18px" color="#888888">
+                Obrigado pela sua constância. Boa sorte!
+            </mj-text>
+        </mj-column>
+    </mj-section>
+
+    <mj-include path="./src/modules/mail/templates/layout/footer.mjml" />
+  </mj-body>
+</mjml>

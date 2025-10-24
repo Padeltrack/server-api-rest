@@ -1,0 +1,82 @@
+<mjml>
+  <mj-body background-color="#f4f4f4">
+    <mj-include path="./src/modules/mail/templates/layout/header/general.header.mjml" />
+
+    <mj-section background-color="#ffffff" padding="24px 0">
+        <mj-column>
+            <mj-text font-size="20px" font-weight="700" line-height="130%" color="#DC2626">
+                Your order was cancelled
+            </mj-text>
+
+            <mj-text font-size="14px" line-height="160%">
+                Hello {{displayName}},<br/><br/>
+                We inform you that your order <strong>#{{orderNumber}}</strong>, created on <strong>{{orderDate}}</strong>, was <strong>cancelled in advance</strong> for administrative reasons on <strong>{{cancellationDate}}</strong>.
+            </mj-text>
+
+            <mj-text font-size="14px" line-height="160%" color="#DC2626" font-style="italic">
+                Administrative reason:<br/>
+                "{{rejectionReason}}"
+            </mj-text>
+
+            <mj-divider border-color="#E5E7EB" padding-top="16px" padding-bottom="16px" />
+
+            {{#if orderItems}}
+                <mj-text font-size="14px" line-height="160%">
+                    Order details:
+                </mj-text>
+
+                <mj-table font-size="13px" cellpadding="8" width="100%">
+                    <tr style="background-color:#F9FAFB;">
+                        <th align="left">Product</th>
+                        <th align="center">Quantity</th>
+                        <th align="right">Price</th>
+                    </tr>
+                    {{#each orderItems}}
+                        <tr>
+                            <td>{{this.name}}</td>
+                            <td align="center">{{this.quantity}}</td>
+                            <td align="right">{{this.price}}</td>
+                        </tr>
+                    {{/each}}
+                </mj-table>
+
+                <mj-text font-size="14px" font-weight="700" padding-top="8px">
+                    Total: {{orderTotal}}
+                </mj-text>
+            {{/if}}
+
+            <mj-divider border-color="#E5E7EB" padding-top="16px" padding-bottom="16px" />
+
+            <mj-text font-size="14px" line-height="160%">
+                If you need more information or believe this is an error, contact us:
+            </mj-text>
+
+            <mj-button href="mailto:{{supportEmail}}" font-size="14px" padding="8px 16px" background-color="#DC2626" color="#ffffff">
+                Contact support
+            </mj-button>
+
+            <!--{{#if orderUrl}}
+                <mj-button href="{{orderUrl}}" font-size="14px" padding="8px 16px">
+                    View my order
+                </mj-button>
+            {{/if}}-->
+
+            <mj-text font-size="12px" line-height="170%" color="#6B7280" padding-top="16px">
+                This is an automatic notification. For assistance, write to 
+                <a href="mailto:{{supportEmail}}" style="color:#111827; text-decoration:underline;">{{supportEmail}}</a>.
+            </mj-text>
+        </mj-column>
+    </mj-section>
+
+        <!-- ===== OPTIONAL BLOCK: Legal notice ===== -->
+    <mj-section background-color="#F9FAFB" padding="12px 0">
+        <mj-column>
+            <mj-text font-size="11px" line-height="160%" color="#6B7280">
+            This message was sent to <strong>{{email}}</strong> in relation to order #{{orderNumber}} at {{companyName}}.
+            </mj-text>
+        </mj-column>
+    </mj-section>
+
+  <mj-include path="./src/modules/mail/templates/layout/footer.mjml" />
+  </mj-body>
+</mjml>

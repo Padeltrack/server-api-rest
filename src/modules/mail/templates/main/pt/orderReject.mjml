@@ -1,0 +1,79 @@
+<mjml>
+  <mj-body background-color="#f4f4f4">
+    <mj-include path="./src/modules/mail/templates/layout/header/general.header.mjml" />
+
+    <mj-section background-color="#ffffff" padding="24px 0">
+        <mj-column>
+            <mj-text font-size="20px" font-weight="700" line-height="130%">
+                Seu pedido foi rejeitado
+            </mj-text>
+
+            <mj-text font-size="14px" line-height="160%">
+                Olá {{displayName}},<br/><br/>
+                Lamentamos informar que seu pedido <strong>#{{orderNumber}}</strong>, criado em <strong>{{orderDate}}</strong>, foi <strong>rejeitado</strong>.
+            </mj-text>
+
+            <mj-text font-size="14px" line-height="160%" color="#DC2626" font-style="italic">
+                Motivo da rejeição: {{rejectionReason}}
+            </mj-text>
+
+            <mj-divider border-color="#E5E7EB" padding-top="16px" padding-bottom="16px" />
+
+            <mj-text font-size="14px" line-height="160%">
+                Detalhes do pedido:
+            </mj-text>
+
+            <mj-table font-size="13px" cellpadding="8" width="100%">
+                <tr style="background-color:#F9FAFB;">
+                    <th align="left">Produto</th>
+                    <th align="center">Quantidade</th>
+                    <th align="right">Preço</th>
+                </tr>
+                {{#each orderItems}}
+                    <tr>
+                        <td>{{this.name}}</td>
+                        <td align="center">{{this.quantity}}</td>
+                        <td align="right">{{this.price}}</td>
+                    </tr>
+                {{/each}}
+            </mj-table>
+
+            <mj-divider border-color="#E5E7EB" padding-top="16px" padding-bottom="16px" />
+
+            <mj-text font-size="14px" font-weight="700">
+                Total: {{orderTotal}}
+            </mj-text>
+
+            <mj-text font-size="14px" line-height="160%">
+                Se você acredita que esta rejeição foi um erro ou deseja mais informações, entre em contato conosco:
+            </mj-text>
+
+            <mj-button href="mailto:{{supportEmail}}" font-size="14px" padding="8px 16px" background-color="#DEFE03" color="#000">
+                Entrar em contato com suporte
+            </mj-button>
+
+            <mj-divider border-color="#E5E7EB" padding-top="16px" padding-bottom="16px" />
+        </mj-column>
+    </mj-section>
+
+    <mj-section background-color="#F9FAFB" padding="12px 0">
+        <mj-column>
+            <mj-text font-size="11px" line-height="160%" color="#6B7280">
+            Esta mensagem foi enviada para <strong>{{email}}</strong> em relação ao pedido #{{orderNumber}} na {{companyName}}.
+            </mj-text>
+        </mj-column>
+    </mj-section>
+
+    <mj-include path="./src/modules/mail/templates/layout/footer.mjml" />
+
+    <mj-section background-color="#ffffff" padding="24px 0">
+        <mj-column>
+            <mj-text font-size="12px" line-height="170%" color="#6B7280">
+                Esta é uma notificação automática. Não responda diretamente a esta mensagem.  
+                Para qualquer consulta escreva para 
+                <a href="mailto:{{supportEmail}}" style="color:#111827; text-decoration:underline;">{{supportEmail}}</a>.
+            </mj-text>
+        </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>

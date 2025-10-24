@@ -1,0 +1,51 @@
+<mjml>
+  <mj-body background-color="#f4f4f4">
+        <mj-include path="./src/modules/mail/templates/layout/header/general.header.mjml" />
+
+        <mj-section background-color="#ffffff" padding="20px">
+        <mj-column>
+            <mj-text font-size="20px" font-weight="bold" color="#333333" padding-bottom="10px">
+            🛒 Novo Pedido de Compra
+            </mj-text>
+
+            <mj-text font-size="16px" color="#555555" padding-bottom="20px">
+            Olá <strong>{{displayName}}</strong>,<br/><br/>
+            Um novo pedido de compra foi gerado na plataforma. Abaixo estão os detalhes principais:
+            </mj-text>
+
+            <mj-table font-size="13px" cellpadding="8" width="100%">
+            <tr style="background-color:#F9FAFB;">
+                <th align="left">Produto</th>
+                <th align="center">Quantidade</th>
+                <th align="right">Preço</th>
+            </tr>
+            {{#each orderItems}}
+                <tr>
+                    <td>{{this.name}}</td>
+                    <td align="center">{{this.quantity}}</td>
+                    <td align="right">{{this.price}}</td>
+                </tr>
+            {{/each}}
+            </mj-table>
+
+            <mj-divider border-color="#E5E7EB" padding-top="16px" padding-bottom="16px" />
+
+            <mj-text font-size="14px" line-height="160%" font-weight="700">
+                Total: {{orderTotal}}
+            </mj-text>
+
+            <mj-spacer height="20px"/>
+
+            <mj-button background-color="#0C1A3E" color="#ffffff" font-size="16px" href="{{orderLink}}" border-radius="6px" padding="10px 25px">
+            Ver Pedido Completo
+            </mj-button>
+
+            <mj-text font-size="14px" color="#999999" padding-top="20px">
+            Lembre-se de revisar este pedido no painel administrativo para gerenciá-lo.
+            </mj-text>
+        </mj-column>
+    </mj-section>
+
+    <mj-include path="./src/modules/mail/templates/layout/footer.mjml" />
+</mj-body>
+</mjml>
