@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
 import { ZodError } from 'zod';
-import { StudentCoachesMongoModel } from './studentCoaches.model';
+import { StudentCoachesModel, StudentCoachesMongoModel } from './studentCoaches.model';
 import { SelectRoleModel, UserMongoModel } from '../user/user.model';
 import { studentCoachesAssignSchemaZod } from './studentCoaches.zod';
 import { formatZodErrorResponse } from '../../shared/util/zod.util';
@@ -78,27 +78,53 @@ export const getCoachesByStudent = async (req: Request, res: Response) => {
   req.logger.info({ status: 'start' });
 
   try {
-    const studentId = req.params?.studentId;
+    const userId = req.params?.userId;
     const page = Number(req.query?.page) || 1;
     const limit = Number(req.query?.limit) || 150;
     const skip = (page - 1) * limit;
 
-    if (!studentId) {
+    if (!userId) {
       return res.status(400).json({
         message: req.t('coaches.validation.studentIdRequired'),
       });
     }
 
-    const query = { studentId };
+    const getUserByRol = await UserMongoModel.findOne({ _id: userId });
+    if (!getUserByRol) {
+      return res.status(404).json({
+        message: req.t('users.profile.notFound'),
+      });
+    }
+
+    if (![SelectRoleModel.Coach, SelectRoleModel.Student].includes(getUserByRol.role as any)) {
+      return res.status(400).json({
+        message: req.t('users.role.invalid'),
+      });
+    }
+
+    let query: Partial<Pick<StudentCoachesModel, 'studentId' | 'coachId'>> = {};
+
+    if (getUserByRol.role === SelectRoleModel.Student) {
+      query = { studentId: userId };
+    } else if (getUserByRol.role === SelectRoleModel.Coach) {
+      query = { coachId: userId };
+    }
+
+    if (!Object.keys(query).length) {
+      return res.status(404).json({
+        message: req.t('common.badRequest'),
+      });
+    }
 
     const count = await StudentCoachesMongoModel.countDocuments(query);
-    const coaches = await StudentCoachesMongoModel.find(query)
-      .populate('coachId')
+    const users = await StudentCoachesMongoModel.find(query)
+      .populate(query.coachId ? 'studentId' : 'coachId')
       .skip(skip)
       .limit(limit)
       .sort({ createdAt: -1 });
+
     return res.status(200).json({
-      coaches,
+      users,
       count,
       message: req.t('coaches.list.loaded'),
     });

@@ -19,7 +19,7 @@ studentCoachesRoutes.get(
   getMyAssignments,
 );
 studentCoachesRoutes.get(
-  `${pathStudentCoaches}/assign/:studentId`,
+  `${pathStudentCoaches}/assign/:userId`,
   authenticate,
   authorize(SelectRoleModel.SuperAdmin),
   getCoachesByStudent,
