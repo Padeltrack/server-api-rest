@@ -558,6 +558,11 @@
     "available": {
       "success": "Idiomas disponíveis obtidos com sucesso",
       "error": "Erro ao obter os idiomas disponíveis"
+    },
+    "names": {
+      "es": "Espanhol",
+      "en": "Inglês",
+      "pt": "Português"
     }
   }
 }

@@ -7,11 +7,15 @@ export const getAvailableLanguages = async (req: Request, res: Response) => {
 
   try {
     const allLanguages = i18next.options.supportedLngs || ['es', 'en', 'pt'];
-    // Filtrar 'cimode' que es un modo especial de desarrollo
     const availableLanguages = allLanguages.filter(lang => lang !== 'cimode');
     
+    const languagesWithNames = availableLanguages.map(code => ({
+      name: req.t(`languages.names.${code}`),
+      code: code
+    }));
+    
     return res.status(200).json({
-      languages: availableLanguages,
+      languages: languagesWithNames,
       message: req.t('languages.available.success'),
     });
   } catch (error) {
