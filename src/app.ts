@@ -32,7 +32,6 @@ import { serverImagesStaticAssets } from './middleware/imagesCache.middleware';
 // const { swaggerDocument } = require('./swagger');
 // const swaggerUi = require('swagger-ui-express');
 
-// Configurar las variables de entorno según el ambiente (development o production)
 configureEnvironment();
 
 const uploadDir = path.join('uploads');

@@ -1,10 +1,12 @@
 import { OnboardingQuestionMongoModel } from './onboarding.model';
 import { UserOnboardingAnswerModel } from '../user/user.model';
+import { OnboardingQuestionModel } from './onboarding.model';
 
 export const validateOnboardingAnswers = async (options: {
   onboarding: UserOnboardingAnswerModel[];
+  language: keyof OnboardingQuestionModel["translate"];
 }): Promise<{ valid: boolean; errors?: string[] }> => {
-  const { onboarding } = options;
+  const { onboarding, language } = options;
   const errors: string[] = [];
 
   const questionsCount = await OnboardingQuestionMongoModel.countDocuments();
@@ -32,9 +34,9 @@ export const validateOnboardingAnswers = async (options: {
       continue;
     }
 
-    if (!question.options.includes(answer)) {
+    if (!question.translate[language].options.includes(answer)) {
       errors.push(
-        `Respuesta inválida para la pregunta "${question.question}". Opción recibida: "${answer}"`,
+        `Respuesta inválida para la pregunta "${question.translate[language].question}". Opción recibida: "${answer}"`,
       );
     }
   }

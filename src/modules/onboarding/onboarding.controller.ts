@@ -3,6 +3,7 @@ import { OnboardingQuestionMongoModel } from './onboarding.model';
 import { updateOnboardingSchema } from './onboarding.dto';
 import { ZodError } from 'zod';
 import { formatZodErrorResponse } from '../../shared/util/zod.util';
+import { getRequestLanguage, transformTranslatedDocument } from '../../middleware/translation.middleware';
 
 export const getQuestionsOnboarding = async (req: Request, res: Response) => {
   req.logger = req.logger.child({
@@ -12,7 +13,7 @@ export const getQuestionsOnboarding = async (req: Request, res: Response) => {
   req.logger.info({ status: 'start' });
 
   try {
-    const questions = await OnboardingQuestionMongoModel.find().sort({ order: 1 });
+    const questions = await OnboardingQuestionMongoModel.find().sort({ order: 1 }).lean();
     return res.status(200).json({
       questions,
       message: req.t('onboarding.questions.loaded'),
@@ -33,6 +34,7 @@ export const updateQuestionOnboarding = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const { question, options } = updateOnboardingSchema.parse(req.body);
+    const language = getRequestLanguage(req);
 
     if (!id) {
       return res.status(400).json({
@@ -46,13 +48,19 @@ export const updateQuestionOnboarding = async (req: Request, res: Response) => {
       });
     }
 
+    const fields: any = {};
+    fields[`translate.${language}`] = {
+      question,
+      options,
+    };
+
     const questionUpdated = await OnboardingQuestionMongoModel.findByIdAndUpdate(
       id,
-      { question, options },
+      fields,
       { new: true },
     );
     return res.status(200).json({
-      question: questionUpdated,
+      question: transformTranslatedDocument(questionUpdated, language),
       message: req.t('onboarding.questions.updated'),
     });
   } catch (error) {

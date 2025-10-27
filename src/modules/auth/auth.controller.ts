@@ -14,6 +14,7 @@ import { getTextBeforeAtEmail } from '../../shared/util/string.util';
 import { generateEmail } from '../mail/loadTemplate.mail';
 import { sendEMail } from '../mail/sendTemplate.mail';
 import { formatZodErrorResponse } from '../../shared/util/zod.util';
+import { OnboardingQuestionModel } from '../onboarding/onboarding.model';
 
 export const registerUserWithGoogle = async (req: Request, res: Response) => {
   req.logger = req.logger.child({ service: 'auth', serviceHandler: 'registerUserWithGoogle' });
@@ -29,6 +30,7 @@ export const registerUserWithGoogle = async (req: Request, res: Response) => {
     } = GoogleRegisterSchemaZod.parse(req.body);
     const decodedToken = await verifyIdFirebaseTokenGoogle(idToken);
     const { name: displayName, email, picture = null } = decodedToken;
+    const language = req.language as keyof OnboardingQuestionModel["translate"];
 
     if (!email) {
       return res.status(400).json({
@@ -51,7 +53,7 @@ export const registerUserWithGoogle = async (req: Request, res: Response) => {
       });
     }
 
-    const { valid, errors } = await validateOnboardingAnswers({ onboarding });
+    const { valid, errors } = await validateOnboardingAnswers({ onboarding, language });
     if (!valid) {
       return res.status(400).json({
         message: req.t('validation.validationError'),

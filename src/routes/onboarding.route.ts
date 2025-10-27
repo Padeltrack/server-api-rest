@@ -6,12 +6,13 @@ import {
 } from '../modules/onboarding/onboarding.controller';
 import { authenticate } from '../middleware/auth.middleware';
 import { authorize } from '../middleware/roles.middleware';
+import { translationCollectionMiddleware } from '../middleware/translation.middleware';
 import { SelectRoleModel } from '../modules/user/user.model';
 
 const onboardingRoutes = Router();
 const pathOnboarding = '/onboarding';
 
-onboardingRoutes.get(`${pathOnboarding}/questions/list`, getQuestionsOnboarding);
+onboardingRoutes.get(`${pathOnboarding}/questions/list`, translationCollectionMiddleware, getQuestionsOnboarding);
 onboardingRoutes.patch(
   `${pathOnboarding}/questions/:id`,
   authenticate,
