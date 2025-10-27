@@ -4,7 +4,10 @@ import { createPlanSchema, updatePlanSchema } from './plan.dto';
 import { ZodError } from 'zod';
 import { HOST_ADMINS } from '../../shared/util/url.util';
 import { formatZodErrorResponse } from '../../shared/util/zod.util';
-import { getRequestLanguage, transformTranslatedDocument } from '../../middleware/translation.middleware';
+import {
+  getRequestLanguage,
+  transformTranslatedDocument,
+} from '../../middleware/translation.middleware';
 
 export const getPlans = async (req: Request, res: Response) => {
   req.logger = req.logger.child({ service: 'plans', serviceHandler: 'getPlans' });
@@ -110,14 +113,14 @@ export const updatePlan = async (req: Request, res: Response) => {
     const { id } = req.params;
     const { name, description, price, active, benefits } = updatePlanSchema.parse(req.body);
     const language = getRequestLanguage(req);
-    
+
     const fields: any = {};
 
     if (typeof price === 'number') fields['price'] = price;
     if (typeof active === 'boolean') fields['active'] = active;
     if (name || description || benefits) {
       fields[`translate.${language}`] = {};
-      
+
       if (name) fields[`translate.${language}.name`] = name;
       if (description) fields[`translate.${language}.description`] = description;
       if (Array.isArray(benefits)) fields[`translate.${language}.benefits`] = benefits;

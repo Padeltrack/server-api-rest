@@ -15,10 +15,13 @@ export interface OnboardingQuestionModel extends Document {
   };
 }
 
-const onboardingTranslationSchema = new Schema<IOnboardingTranslation>({
-  question: { type: String, required: false, default: "" },
-  options: { type: [String], required: false, default: [] },
-}, { _id: false });
+const onboardingTranslationSchema = new Schema<IOnboardingTranslation>(
+  {
+    question: { type: String, required: false, default: '' },
+    options: { type: [String], required: false, default: [] },
+  },
+  { _id: false },
+);
 
 const OnboardingQuestionSchema = new Schema<OnboardingQuestionModel>(
   {

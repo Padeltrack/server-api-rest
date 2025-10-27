@@ -30,7 +30,7 @@ export const registerUserWithGoogle = async (req: Request, res: Response) => {
     } = GoogleRegisterSchemaZod.parse(req.body);
     const decodedToken = await verifyIdFirebaseTokenGoogle(idToken);
     const { name: displayName, email, picture = null } = decodedToken;
-    const language = req.language as keyof OnboardingQuestionModel["translate"];
+    const language = req.language as keyof OnboardingQuestionModel['translate'];
 
     if (!email) {
       return res.status(400).json({

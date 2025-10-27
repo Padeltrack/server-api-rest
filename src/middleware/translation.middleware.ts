@@ -20,7 +20,7 @@ export const transformTranslatedDocument = (doc: any, language: string): any => 
   if (doc.translate && typeof doc.translate === 'object') {
     const translatedDoc = { ...doc };
     const translation = doc.translate[language];
-    
+
     if (translation && typeof translation === 'object') {
       Object.keys(translation).forEach(key => {
         if (translation[key] !== null && translation[key] !== undefined) {
@@ -40,7 +40,7 @@ export const translationMiddleware = (req: Request, res: Response, next: NextFun
 
   const language = req.language || 'es';
 
-  res.json = function(data: any) {
+  res.json = function (data: any) {
     try {
       const transformedData = transformTranslatedDocument(data, language);
       return originalJson(transformedData);
@@ -53,11 +53,15 @@ export const translationMiddleware = (req: Request, res: Response, next: NextFun
   next();
 };
 
-export const translationCollectionMiddleware = (req: Request, res: Response, next: NextFunction) => {
+export const translationCollectionMiddleware = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   const originalJson = res.json.bind(res);
   const language = req.language || 'es';
 
-  res.json = function(data: any) {
+  res.json = function (data: any) {
     try {
       let transformedData = data;
 
@@ -71,7 +75,7 @@ export const translationCollectionMiddleware = (req: Request, res: Response, nex
             if (data[key].length > 0 && data[key][0]?.translate) {
               transformedData = {
                 ...transformedData,
-                [key]: data[key].map((item: any) => transformTranslatedDocument(item, language))
+                [key]: data[key].map((item: any) => transformTranslatedDocument(item, language)),
               };
             }
           }

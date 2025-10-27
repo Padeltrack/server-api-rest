@@ -4,7 +4,7 @@ import { OnboardingQuestionModel } from './onboarding.model';
 
 export const validateOnboardingAnswers = async (options: {
   onboarding: UserOnboardingAnswerModel[];
-  language: keyof OnboardingQuestionModel["translate"];
+  language: keyof OnboardingQuestionModel['translate'];
 }): Promise<{ valid: boolean; errors?: string[] }> => {
   const { onboarding, language } = options;
   const errors: string[] = [];

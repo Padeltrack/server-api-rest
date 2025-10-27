@@ -30,11 +30,14 @@ export interface IPlanModel extends Document {
   };
 }
 
-const planTranslationSchema = new Schema<IPlanTranslation>({
-  name: { type: String, required: false, default: "" },
-  description: { type: String, required: false, default: "" },
-  benefits: { type: [String], required: false, default: [] },
-}, { _id: false });
+const planTranslationSchema = new Schema<IPlanTranslation>(
+  {
+    name: { type: String, required: false, default: '' },
+    description: { type: String, required: false, default: '' },
+    benefits: { type: [String], required: false, default: [] },
+  },
+  { _id: false },
+);
 
 const planMongoSchema = new Schema<IPlanModel>(
   {

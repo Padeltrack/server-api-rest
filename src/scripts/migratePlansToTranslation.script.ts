@@ -16,44 +16,53 @@ const connectDB = async () => {
 };
 
 // Esquema temporal para leer los datos actuales
-const oldPlanSchema = new mongoose.Schema({
-  _id: String,
-  name: String,
-  description: String,
-  price: Number,
-  isCoach: Boolean,
-  daysActive: Number,
-  active: Boolean,
-  benefits: [String],
-}, { 
-  timestamps: true,
-  collection: 'plans' 
-});
+const oldPlanSchema = new mongoose.Schema(
+  {
+    _id: String,
+    name: String,
+    description: String,
+    price: Number,
+    isCoach: Boolean,
+    daysActive: Number,
+    active: Boolean,
+    benefits: [String],
+  },
+  {
+    timestamps: true,
+    collection: 'plans',
+  },
+);
 
 const OldPlanModel = mongoose.model('OldPlan', oldPlanSchema);
 
 // Esquema para el nuevo formato
-const planTranslationSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  description: { type: String, required: true },
-  benefits: { type: [String], required: true },
-}, { _id: false });
-
-const newPlanSchema = new mongoose.Schema({
-  _id: String,
-  price: Number,
-  isCoach: Boolean,
-  daysActive: Number,
-  active: Boolean,
-  translate: {
-    es: { type: planTranslationSchema, required: true },
-    en: { type: planTranslationSchema, required: true },
-    pt: { type: planTranslationSchema, required: true },
+const planTranslationSchema = new mongoose.Schema(
+  {
+    name: { type: String, required: true },
+    description: { type: String, required: true },
+    benefits: { type: [String], required: true },
   },
-}, { 
-  timestamps: true,
-  collection: 'plans' 
-});
+  { _id: false },
+);
+
+const newPlanSchema = new mongoose.Schema(
+  {
+    _id: String,
+    price: Number,
+    isCoach: Boolean,
+    daysActive: Number,
+    active: Boolean,
+    translate: {
+      es: { type: planTranslationSchema, required: true },
+      en: { type: planTranslationSchema, required: true },
+      pt: { type: planTranslationSchema, required: true },
+    },
+  },
+  {
+    timestamps: true,
+    collection: 'plans',
+  },
+);
 
 const NewPlanModel = mongoose.model('NewPlan', newPlanSchema);
 
@@ -118,9 +127,10 @@ const migratePlans = async () => {
     if (!db) {
       throw new Error('Database connection not available');
     }
-    await db.collection('plans').aggregate([
-      { $out: 'plans_backup_' + new Date().toISOString().replace(/[:.]/g, '-') }
-    ]).toArray();
+    await db
+      .collection('plans')
+      .aggregate([{ $out: 'plans_backup_' + new Date().toISOString().replace(/[:.]/g, '-') }])
+      .toArray();
 
     // Migrar cada plan
     const migratedPlans: any[] = [];
@@ -147,7 +157,6 @@ const migratePlans = async () => {
       LoggerColor.color('cyan').log('📋 Example of migrated plan:');
       console.log(JSON.stringify(examplePlan.toObject(), null, 2));
     }
-
   } catch (error) {
     LoggerColor.error('❌ Migration failed:', error);
     throw error;
@@ -158,10 +167,10 @@ const migratePlans = async () => {
 const verifyMigration = async () => {
   try {
     LoggerColor.color('cyan').log('🔍 Verifying migration...');
-    
+
     const plans = await NewPlanModel.find({});
     LoggerColor.color('green').log(`✅ Found ${plans.length} plans in new schema`);
-    
+
     // Verificar que todos los planes tienen la estructura correcta
     for (const plan of plans) {
       if (!plan.translate || !plan.translate.es || !plan.translate.en || !plan.translate.pt) {
@@ -169,7 +178,7 @@ const verifyMigration = async () => {
         return false;
       }
     }
-    
+
     LoggerColor.color('green').log('✅ All plans have correct translation structure');
     return true;
   } catch (error) {
@@ -182,7 +191,7 @@ const verifyMigration = async () => {
 const rollbackMigration = async () => {
   try {
     LoggerColor.color('yellow').log('🔄 Rolling back migration...');
-    
+
     // Buscar el backup más reciente
     const db = mongoose.connection?.db;
     if (!db) {
@@ -198,18 +207,19 @@ const rollbackMigration = async () => {
       LoggerColor.error('❌ No backup found for rollback');
       return;
     }
-    
+
     const latestBackup = backupCollections[0].name;
     LoggerColor.color('blue').log(`📦 Restoring from backup: ${latestBackup}`);
-    
+
     // Eliminar colección actual
     await db.collection('plans').drop();
-    
+
     // Restaurar desde backup
-    await db.collection(latestBackup).aggregate([
-      { $out: 'plans' }
-    ]).toArray();
-    
+    await db
+      .collection(latestBackup)
+      .aggregate([{ $out: 'plans' }])
+      .toArray();
+
     LoggerColor.color('green').log('✅ Rollback completed successfully');
   } catch (error) {
     LoggerColor.error('❌ Rollback failed:', error);
@@ -220,9 +230,9 @@ const rollbackMigration = async () => {
 const main = async () => {
   try {
     await connectDB();
-    
+
     const command = process.argv[2];
-    
+
     switch (command) {
       case 'migrate':
         await migratePlans();
@@ -241,7 +251,6 @@ const main = async () => {
         LoggerColor.color('cyan').log('  npm run migrate:plans rollback  - Rollback migration');
         break;
     }
-    
   } catch (error) {
     LoggerColor.error('❌ Script failed:', error);
     process.exit(1);

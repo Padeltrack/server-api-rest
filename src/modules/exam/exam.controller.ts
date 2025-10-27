@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
-import { ExamQuestionnaireModel, ExamQuestionnaireMongoModel } from './exam.model';
+import { ExamQuestionnaireMongoModel } from './exam.model';
 import { ExamAnswerMongoModel, SelectStatusAnswerModel } from './exam-answer.model';
 import {
   addQuestionnaireSchemaZod,
@@ -30,22 +30,46 @@ import { sendEMail } from '../mail/sendTemplate.mail';
 import { HOST_CLIENT_ADMIN_PROD } from '../../shared/util/url.util';
 import { generateEmail } from '../mail/loadTemplate.mail';
 import { cleanUploadedFiles } from '../../middleware/multer.middleware';
+import {
+  getRequestLanguage,
+  transformTranslatedDocument,
+} from '../../middleware/translation.middleware';
 
 export const getQuestionnaireExam = async (req: Request, res: Response) => {
   req.logger = req.logger.child({ service: 'exam', serviceHandler: 'getQuestionnaireExam' });
   req.logger.info({ status: 'start' });
 
   try {
-    const getQuestionnaires = await ExamQuestionnaireMongoModel.find().sort({ order: 1 });
+    const getQuestionnaires = await ExamQuestionnaireMongoModel.find().sort({ order: 1 }).lean();
+
+    /*const q = getQuestionnaires[0];
+    console.log('q ', q);
+    const videoVimeo: any = await getVimeoVideoById({ id: q.idVideoVimeo });
+    console.log('videoVimeo ', videoVimeo);
+    const { linkVideo, thumbnail } = getUrlTokenExtractVimeoVideoById({ videoVimeo });
+    console.log('linkVideo ', linkVideo);
+    console.log('thumbnail ', thumbnail);*/
+
     const questionnaires = await Promise.all(
       getQuestionnaires.map(async (q: any) => {
-        const videoVimeo: any = await getVimeoVideoById({ id: q.idVideoVimeo });
-        const { linkVideo, thumbnail } = getUrlTokenExtractVimeoVideoById({ videoVimeo });
-        return {
-          ...q._doc,
-          linkVideo,
-          thumbnail,
-        };
+        try {
+          const videoVimeo: any = await getVimeoVideoById({ id: q.idVideoVimeo });
+          const { linkVideo, thumbnail } = getUrlTokenExtractVimeoVideoById({ videoVimeo });
+          console.log('linkVideo ', linkVideo);
+          console.log('thumbnail ', thumbnail);
+          return {
+            ...q,
+            linkVideo,
+            thumbnail,
+          };
+        } catch (error) {
+          console.error(`Error fetching video ${q.idVideoVimeo}:`, error);
+          return {
+            ...q,
+            linkVideo: null,
+            thumbnail: null,
+          };
+        }
       }),
     );
 
@@ -275,6 +299,7 @@ export const registerAnswerExam = async (req: Request, res: Response) => {
     const userId = me._id;
     const { questionnaireId, answerText } = ExamAnswerRegisterSchemaZod.parse(req.body);
     const filePath = req.file?.path;
+    const language = getRequestLanguage(req);
 
     if (me.level) {
       return res.status(401).json({
@@ -379,7 +404,7 @@ export const registerAnswerExam = async (req: Request, res: Response) => {
 
       const notificationAdminEmail = await generateEmail({
         template: 'newExamAdmin',
-        language: req.language || 'es',
+        language,
         variables: {
           displayName: 'Administrador',
           examId: currentExam._id,
@@ -488,6 +513,7 @@ export const addQuestionnaire = async (req: Request, res: Response) => {
   try {
     const { title, description } = addQuestionnaireSchemaZod.parse(req.body);
     const filePath = req.file?.path;
+    const language = getRequestLanguage(req);
 
     if (!filePath) {
       return res.status(400).json({ message: req.t('exams.question.fileRequired') });
@@ -510,13 +536,20 @@ export const addQuestionnaire = async (req: Request, res: Response) => {
 
     const nextOrder = lastItem?.order != null ? lastItem.order + 1 : 1;
 
-    await ExamQuestionnaireMongoModel.create({
+    // Crear el cuestionario con el nuevo esquema de traducciones
+    const questionnaireData = {
       _id: new ObjectId().toHexString(),
-      title,
-      description,
       idVideoVimeo,
       order: nextOrder,
-    });
+      translate: {
+        es: { title: '', description: '' },
+        en: { title: '', description: '' },
+        pt: { title: '', description: '' },
+        [language]: { title, description },
+      },
+    };
+
+    await ExamQuestionnaireMongoModel.create(questionnaireData);
 
     return res.status(200).json({
       message: 'Añadir cuestionario correctamente',
@@ -543,6 +576,7 @@ export const registerGradeExam = async (req: Request, res: Response) => {
   try {
     const me = req.user;
     const { examAnswerId, answers } = ExamGradeRegisterSchemaZod.parse(req.body);
+    const language = getRequestLanguage(req);
 
     const getExamAnswer = await ExamAnswerMongoModel.findOne({ _id: examAnswerId });
 
@@ -632,7 +666,7 @@ export const registerGradeExam = async (req: Request, res: Response) => {
 
     const examGradeEmail = await generateEmail({
       template: 'examGradeStudent',
-      language: req.language || 'es',
+      language,
       variables: {
         average: `${average}`,
         studentName: getUser.displayName,
@@ -677,6 +711,7 @@ export const assignExamToCoach = async (req: Request, res: Response) => {
 
   try {
     const { examAnswerId, coachId } = AssignExamToCoachSchemaZod.parse(req.body);
+    const language = getRequestLanguage(req);
 
     const getExamAnswer = await ExamAnswerMongoModel.findOne({ _id: examAnswerId });
     if (!getExamAnswer) {
@@ -722,7 +757,7 @@ export const assignExamToCoach = async (req: Request, res: Response) => {
 
     const assignExamEmail = await generateEmail({
       template: 'assignCoachExam',
-      language: req.language || 'es',
+      language,
       variables: {
         professorName: getCoach.displayName,
         studentName: getUser.displayName,
@@ -746,7 +781,7 @@ export const assignExamToCoach = async (req: Request, res: Response) => {
 
     const notifyStudentAssignExamEmail = await generateEmail({
       template: 'notifyStudentAssignCoachExam',
-      language: req.language || 'es',
+      language,
       variables: {
         coachName: getCoach.displayName,
         studentName: getUser.displayName,
@@ -792,11 +827,9 @@ export const updateQuestionnaire = async (req: Request, res: Response) => {
   try {
     const { title, description } = updateQuestionnaireSchemaZod.parse(req.body);
     const idQuestionnaire = req.params.id as string;
-    const updateFields: Partial<Pick<ExamQuestionnaireModel, 'title' | 'description'>> = {};
+    const language = getRequestLanguage(req);
+    const updateFields: any = {};
     let questionnaire: any = {};
-
-    if (title) updateFields.title = title;
-    if (description) updateFields.description = description;
 
     if (!idQuestionnaire) {
       return res.status(400).json({
@@ -828,6 +861,13 @@ export const updateQuestionnaire = async (req: Request, res: Response) => {
       await cleanUploadedFiles(req);
     }
 
+    // Actualizar solo el idioma específico
+    if (title || description) {
+      updateFields[`translate.${language}`] = {};
+      if (title) updateFields[`translate.${language}.title`] = title;
+      if (description) updateFields[`translate.${language}.description`] = description;
+    }
+
     if (Object.keys(updateFields).length) {
       questionnaire = await ExamQuestionnaireMongoModel.findOneAndUpdate(
         { _id: idQuestionnaire },
@@ -840,7 +880,7 @@ export const updateQuestionnaire = async (req: Request, res: Response) => {
 
     res.status(200).json({
       message: 'Vídeo actualizado con éxito',
-      questionnaire,
+      questionnaire: transformTranslatedDocument(questionnaire, language),
     });
   } catch (error) {
     if (error instanceof ZodError) {

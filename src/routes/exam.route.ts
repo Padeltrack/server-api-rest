@@ -17,6 +17,7 @@ import { authorize } from '../middleware/roles.middleware';
 import { SelectRoleModel } from '../modules/user/user.model';
 import { uploadVideo } from '../middleware/multer.middleware';
 import { activeOrder } from '../middleware/orderActive.middleware';
+import { translationCollectionMiddleware } from '../middleware/translation.middleware';
 
 const examRoutes = Router();
 const pathAExam = '/exam';
@@ -25,7 +26,8 @@ examRoutes.get(
   `${pathAExam}/questionnaire/list`,
   authenticate,
   authorize(SelectRoleModel.Student, SelectRoleModel.SuperAdmin, SelectRoleModel.Coach),
-  activeOrder,
+  // activeOrder,
+  translationCollectionMiddleware,
   getQuestionnaireExam,
 );
 examRoutes.get(

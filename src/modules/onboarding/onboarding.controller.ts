@@ -3,7 +3,10 @@ import { OnboardingQuestionMongoModel } from './onboarding.model';
 import { updateOnboardingSchema } from './onboarding.dto';
 import { ZodError } from 'zod';
 import { formatZodErrorResponse } from '../../shared/util/zod.util';
-import { getRequestLanguage, transformTranslatedDocument } from '../../middleware/translation.middleware';
+import {
+  getRequestLanguage,
+  transformTranslatedDocument,
+} from '../../middleware/translation.middleware';
 
 export const getQuestionsOnboarding = async (req: Request, res: Response) => {
   req.logger = req.logger.child({
@@ -54,11 +57,9 @@ export const updateQuestionOnboarding = async (req: Request, res: Response) => {
       options,
     };
 
-    const questionUpdated = await OnboardingQuestionMongoModel.findByIdAndUpdate(
-      id,
-      fields,
-      { new: true },
-    );
+    const questionUpdated = await OnboardingQuestionMongoModel.findByIdAndUpdate(id, fields, {
+      new: true,
+    });
     return res.status(200).json({
       question: transformTranslatedDocument(questionUpdated, language),
       message: req.t('onboarding.questions.updated'),

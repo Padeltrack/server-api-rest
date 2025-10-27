@@ -52,6 +52,13 @@ const validateRequiredEnvVars = (): void => {
     'FIREBASE_PROJECT_ID',
     'FIREBASE_CLIENT_EMAIL',
     'FIREBASE_PRIVATE_KEY',
+    'VIMEO_CLIENT_ID',
+    'VIMEO_CLIENT_SECRET',
+    'VIMEO_ACCESS_TOKEN',
+    'VIMEO_FREE_FOLDER_ID',
+    'VIMEO_PLAN_VIDEO_FOLDER_ID',
+    'VIMEO_EXAM_FOLDER_ID',
+    'VIMEO_EXAM_ANSWER_STUDENT_FOLDER_ID',
   ];
 
   const missingVars = requiredVars.filter(varName => !process.env[varName]);
