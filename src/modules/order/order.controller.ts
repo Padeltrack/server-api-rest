@@ -107,6 +107,7 @@ export const createOrder = async (req: Request, res: Response) => {
         message: req.t('orders.validation.planNotFound'),
       });
     }
+    const language = req.language as keyof typeof getPlan.translate;
 
     if (getPlan.isCoach && !isCoach) {
       return res.status(400).json({
@@ -177,7 +178,7 @@ export const createOrder = async (req: Request, res: Response) => {
 
     const newOrderEmail = await generateEmail({
       template: 'newOrder',
-      language: req.language || 'es',
+      language,
       variables: {
         displayName: me.displayName,
         orderNumber: order.orderNumber,
@@ -188,7 +189,7 @@ export const createOrder = async (req: Request, res: Response) => {
         orderTotal: `${getPlan.price}`,
         orderItems: [
           {
-            name: `${getPlan.name}`,
+            name: `${getPlan.translate[language].name}`,
             quantity: '1',
             price: `${getPlan.price}`,
           },
@@ -210,7 +211,7 @@ export const createOrder = async (req: Request, res: Response) => {
 
     const newOrderAdminEmail = await generateEmail({
       template: 'newOrderAdmin',
-      language: req.language || 'es',
+      language,
       variables: {
         displayName: 'Administrador',
         orderNumber: order.orderNumber,
@@ -218,7 +219,7 @@ export const createOrder = async (req: Request, res: Response) => {
         orderTotal: `${getPlan.price}`,
         orderItems: [
           {
-            name: `${getPlan.name}`,
+            name: `${getPlan.translate[language].name}`,
             quantity: '1',
             price: `${getPlan.price}`,
           },
@@ -287,6 +288,8 @@ export const updateOrderStatus = async (req: Request, res: Response) => {
         message: req.t('orders.validation.planNotFound'),
       });
     }
+
+    const language = req.language as keyof typeof getPlan.translate;
     const isPlanNotCoach = getPlan.isCoach === false;
 
     const getUser = await UserMongoModel.findOne({ _id: getOrder.userId });
@@ -375,7 +378,7 @@ export const updateOrderStatus = async (req: Request, res: Response) => {
 
     const statusOrderEmail = await generateEmail({
       template: isCancel ? 'orderCancel' : isApproved ? 'orderApproved' : 'orderReject',
-      language: req.language || 'es',
+      language,
       variables: {
         displayName: getUser.displayName,
         orderNumber: getOrder.orderNumber,
@@ -388,7 +391,7 @@ export const updateOrderStatus = async (req: Request, res: Response) => {
         orderTotal: `${getPlan.price}`,
         orderItems: [
           {
-            name: `${getPlan.name}`,
+            name: `${getPlan.translate[language].name}`,
             quantity: '1',
             price: `${getPlan.price}`,
           },

@@ -130,7 +130,7 @@ const cronOrderStatusComplete = async () => {
           const orderCompleteEmail = await generateEmail({
             template: 'orderComplete',
             variables: {
-              planName: `${order.plan.name}`,
+              planName: `${order.plan.translate.es.name}`,
               duration: `${order.plan.daysActive}`,
               displayName: `${order.user.displayName}`,
               endDate: new Date().toLocaleString(),

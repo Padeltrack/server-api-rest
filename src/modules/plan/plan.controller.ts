@@ -4,6 +4,7 @@ import { createPlanSchema, updatePlanSchema } from './plan.dto';
 import { ZodError } from 'zod';
 import { HOST_ADMINS } from '../../shared/util/url.util';
 import { formatZodErrorResponse } from '../../shared/util/zod.util';
+import { getRequestLanguage, transformTranslatedDocument } from '../../middleware/translation.middleware';
 
 export const getPlans = async (req: Request, res: Response) => {
   req.logger = req.logger.child({ service: 'plans', serviceHandler: 'getPlans' });
@@ -17,7 +18,7 @@ export const getPlans = async (req: Request, res: Response) => {
       query['active'] = true;
     }
 
-    const plans = await PlanMongoModel.find(query).sort({ createdAt: -1 });
+    const plans = await PlanMongoModel.find(query).sort({ createdAt: -1 }).lean();
     return res.status(200).json({
       plans,
       message: req.t('plans.list.loaded'),
@@ -43,7 +44,7 @@ export const getCoachPlans = async (req: Request, res: Response) => {
       query['active'] = true;
     }
 
-    const plans = await PlanMongoModel.find(query).sort({ createdAt: -1 });
+    const plans = await PlanMongoModel.find(query).sort({ createdAt: -1 }).lean();
     return res.status(200).json({
       plans,
       message: req.t('plans.list.loaded'),
@@ -70,7 +71,24 @@ export const createPlan = async (req: Request, res: Response) => {
       });
     }
 
-    const newPlan = await PlanMongoModel.create(parsed.data);
+    const language = getRequestLanguage(req);
+    const { name, description, price, active, benefits } = parsed.data;
+
+    const planData = {
+      _id: `plan_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      price,
+      active,
+      isCoach: false,
+      daysActive: 30,
+      translate: {
+        es: { name: null, description: null, benefits: null },
+        en: { name: null, description: null, benefits: null },
+        pt: { name: null, description: null, benefits: null },
+        [language]: { name, description, benefits },
+      },
+    };
+
+    const newPlan = await PlanMongoModel.create(planData);
     return res.status(201).json({
       plan: newPlan,
       message: req.t('plans.create.success'),
@@ -91,13 +109,19 @@ export const updatePlan = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const { name, description, price, active, benefits } = updatePlanSchema.parse(req.body);
+    const language = getRequestLanguage(req);
+    
     const fields: any = {};
 
-    if (name) fields['name'] = name;
-    if (description) fields['description'] = description;
     if (typeof price === 'number') fields['price'] = price;
     if (typeof active === 'boolean') fields['active'] = active;
-    if (Array.isArray(benefits)) fields['benefits'] = benefits;
+    if (name || description || benefits) {
+      fields[`translate.${language}`] = {};
+      
+      if (name) fields[`translate.${language}.name`] = name;
+      if (description) fields[`translate.${language}.description`] = description;
+      if (Array.isArray(benefits)) fields[`translate.${language}.benefits`] = benefits;
+    }
 
     if (!id) {
       return res.status(400).json({
@@ -114,7 +138,7 @@ export const updatePlan = async (req: Request, res: Response) => {
     }
 
     return res.status(200).json({
-      plan,
+      plan: transformTranslatedDocument(plan, language),
       message: req.t('plans.update.success'),
     });
   } catch (error) {

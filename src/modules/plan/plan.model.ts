@@ -11,27 +11,43 @@ export type DaysActiveModel =
   | SelectDaysActiveModel.THREE_MONTHS
   | SelectDaysActiveModel.TWELVE_MONTHS;
 
-export interface IPlanModel extends Document {
-  readonly _id: string;
+export interface IPlanTranslation {
   name: string;
   description: string;
+  benefits: string[];
+}
+
+export interface IPlanModel extends Document {
+  readonly _id: string;
   price: number;
   isCoach: boolean;
   daysActive: DaysActiveModel;
   active: boolean;
-  benefits: string[];
+  translate: {
+    es: IPlanTranslation;
+    en: IPlanTranslation;
+    pt: IPlanTranslation;
+  };
 }
+
+const planTranslationSchema = new Schema<IPlanTranslation>({
+  name: { type: String, required: false, default: "" },
+  description: { type: String, required: false, default: "" },
+  benefits: { type: [String], required: false, default: [] },
+}, { _id: false });
 
 const planMongoSchema = new Schema<IPlanModel>(
   {
     _id: { type: String, required: true },
-    name: { type: String, required: true },
-    description: { type: String },
     price: { type: Number, required: true },
     isCoach: { type: Boolean, required: true, default: false },
     daysActive: { type: Number, required: true, default: SelectDaysActiveModel.ONE_MONTH },
     active: { type: Boolean, default: true },
-    benefits: { type: [String], required: false },
+    translate: {
+      es: { type: planTranslationSchema, required: true },
+      en: { type: planTranslationSchema, required: true },
+      pt: { type: planTranslationSchema, required: true },
+    },
   },
   {
     timestamps: true,
