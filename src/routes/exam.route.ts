@@ -26,7 +26,7 @@ examRoutes.get(
   `${pathAExam}/questionnaire/list`,
   authenticate,
   authorize(SelectRoleModel.Student, SelectRoleModel.SuperAdmin, SelectRoleModel.Coach),
-  // activeOrder,
+  activeOrder,
   translationCollectionMiddleware,
   getQuestionnaireExam,
 );

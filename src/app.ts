@@ -18,6 +18,7 @@ import studentCoachesRoutes from './routes/studentCoaches.route';
 import weeklyVideoRoutes from './routes/weeklyVideo.route';
 import matchRoutes from './routes/match.route';
 import AdsRoutes from './routes/ads.route';
+import languageRoutes from './routes/languages.route';
 
 import { errorHandler } from './middleware/errorHandler.middleware';
 import { connectToMongo } from './config/mongo.config';
@@ -71,6 +72,7 @@ app.use('/api', logger, [
   studentCoachesRoutes,
   matchRoutes,
   AdsRoutes,
+  languageRoutes,
 ]);
 
 app.use(errorHandler);

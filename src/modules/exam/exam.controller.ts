@@ -41,15 +41,6 @@ export const getQuestionnaireExam = async (req: Request, res: Response) => {
 
   try {
     const getQuestionnaires = await ExamQuestionnaireMongoModel.find().sort({ order: 1 }).lean();
-
-    /*const q = getQuestionnaires[0];
-    console.log('q ', q);
-    const videoVimeo: any = await getVimeoVideoById({ id: q.idVideoVimeo });
-    console.log('videoVimeo ', videoVimeo);
-    const { linkVideo, thumbnail } = getUrlTokenExtractVimeoVideoById({ videoVimeo });
-    console.log('linkVideo ', linkVideo);
-    console.log('thumbnail ', thumbnail);*/
-
     const questionnaires = await Promise.all(
       getQuestionnaires.map(async (q: any) => {
         try {

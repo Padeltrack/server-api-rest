@@ -553,5 +553,11 @@
     "creating": "Erro ao criar",
     "updating": "Erro ao atualizar",
     "deleting": "Erro ao excluir"
+  },
+  "languages": {
+    "available": {
+      "success": "Idiomas disponíveis obtidos com sucesso",
+      "error": "Erro ao obter os idiomas disponíveis"
+    }
   }
 }

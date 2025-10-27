@@ -553,5 +553,11 @@
     "creating": "Error creating",
     "updating": "Error updating",
     "deleting": "Error deleting"
+  },
+  "languages": {
+    "available": {
+      "success": "Available languages retrieved successfully",
+      "error": "Error retrieving available languages"
+    }
   }
 }
