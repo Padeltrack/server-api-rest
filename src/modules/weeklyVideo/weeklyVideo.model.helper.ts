@@ -1,11 +1,16 @@
+import { UserLevelModel } from '../user/user.model';
 import { VideoMongoModel } from '../video/video.model';
 
-export const getVideosByWeek = async (options: { week: number; maxVideo?: number }) => {
-  const { week, maxVideo } = options;
+export const getVideosByWeek = async (options: {
+  week: number;
+  levelUser: UserLevelModel;
+  maxVideo?: number;
+}) => {
+  const { week, levelUser, maxVideo } = options;
   try {
     const videos = await VideoMongoModel.aggregate([
       {
-        $match: { semanas: week },
+        $match: { semanas: week, nivelFisico: levelUser },
       },
       { $sample: { size: maxVideo || 10 } },
       { $project: { _id: 1 } },

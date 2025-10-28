@@ -25,6 +25,9 @@ const cronOrderProgressWeek = async () => {
     });
 
     for (const progress of progresos) {
+      const getUser = await UserMongoModel.findOne({ _id: progress.userId }).select('level');
+
+      if (!getUser?.level) continue;
       if (progress?.currentWeek && progress?.lastProgressDate) {
         const days = daysBetween(progress.lastProgressDate, new Date());
         let week = progress.currentWeek;
@@ -38,7 +41,11 @@ const cronOrderProgressWeek = async () => {
           await progress.save();
 
           const getLimitVideoWeek = await CounterMongoModel.findOne({ _id: 'limitVideoWeek' });
-          const videosByWeek = await getVideosByWeek({ week, maxVideo: getLimitVideoWeek?.seq });
+          const videosByWeek = await getVideosByWeek({
+            week,
+            levelUser: getUser.level,
+            maxVideo: getLimitVideoWeek?.seq,
+          });
           await WeeklyVideoMongoModel.create({
             _id: new ObjectId().toHexString(),
             orderId: progress._id,

@@ -156,9 +156,7 @@ export const getAnswerExamByList = async (req: Request, res: Response) => {
     return res.status(200).json({ exams, count });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res
-      .status(500)
-      .json({ message: req.t('exams.answers.list.error'), error });
+    return res.status(500).json({ message: req.t('exams.answers.list.error'), error });
   }
 };
 
@@ -237,9 +235,7 @@ export const getAnswerExamById = async (req: Request, res: Response) => {
     return res.status(200).json({ exam: getExam, hasAllQuestionsAnswered });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res
-      .status(500)
-      .json({ message: req.t('exams.answers.getById.error'), error });
+    return res.status(500).json({ message: req.t('exams.answers.getById.error'), error });
   }
 };
 
@@ -279,9 +275,7 @@ export const getRegisterAnswerExam = async (req: Request, res: Response) => {
     return res.status(200).json({ answers: answersLinkVideo, status: currentExam.status });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res
-      .status(500)
-      .json({ message: req.t('exams.answers.getById.error'), error });
+    return res.status(500).json({ message: req.t('exams.answers.getById.error'), error });
   }
 };
 
@@ -495,9 +489,7 @@ export const finalizeAnswerExam = async (req: Request, res: Response) => {
     }
 
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res
-      .status(500)
-      .json({ message: req.t('exams.answers.register.error'), error });
+    return res.status(500).json({ message: req.t('exams.answers.register.error'), error });
   }
 };
 
@@ -558,9 +550,7 @@ export const addQuestionnaire = async (req: Request, res: Response) => {
     }
 
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res
-      .status(500)
-      .json({ message: req.t('exams.answers.register.error'), error });
+    return res.status(500).json({ message: req.t('exams.answers.register.error'), error });
   }
 };
 
@@ -616,8 +606,10 @@ export const registerGradeExam = async (req: Request, res: Response) => {
       userId: getUser._id,
       status: SelectStatusOrderModel.Approved,
       isCoach: false,
-      currentWeek: { $exists: false }
-    }).sort({ createdAt: -1 }).select('_id');
+      currentWeek: { $exists: false },
+    })
+      .sort({ createdAt: -1 })
+      .select('_id');
     if (!getOrder) {
       return res.status(404).json({
         message: req.t('exams.order.notFound'),
@@ -672,7 +664,7 @@ export const registerGradeExam = async (req: Request, res: Response) => {
     );
 
     // UPDATE ORDER
-    let fieldsUpdated: any = { currentWeek: 1};
+    let fieldsUpdated: any = { currentWeek: 1 };
 
     const lastOrderApproved = await OrderMongoModel.findOne(
       {
@@ -697,7 +689,11 @@ export const registerGradeExam = async (req: Request, res: Response) => {
 
     const getLimitVideoWeek = await CounterMongoModel.findOne({ _id: 'limitVideoWeek' });
     const week = fieldsUpdated.currentWeek;
-    const videosByWeek = await getVideosByWeek({ week, maxVideo: getLimitVideoWeek?.seq });
+    const videosByWeek = await getVideosByWeek({
+      week,
+      levelUser,
+      maxVideo: getLimitVideoWeek?.seq,
+    });
 
     await WeeklyVideoMongoModel.create({
       _id: new ObjectId().toHexString(),
@@ -743,9 +739,7 @@ export const registerGradeExam = async (req: Request, res: Response) => {
     }
 
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res
-      .status(500)
-      .json({ message: req.t('exams.answers.register.error'), error });
+    return res.status(500).json({ message: req.t('exams.answers.register.error'), error });
   }
 };
 
@@ -858,9 +852,7 @@ export const assignExamToCoach = async (req: Request, res: Response) => {
     }
 
     req.logger.error({ status: 'error', code: 500, error: error.message });
-    return res
-      .status(500)
-      .json({ message: req.t('exams.answers.register.error'), error });
+    return res.status(500).json({ message: req.t('exams.answers.register.error'), error });
   }
 };
 

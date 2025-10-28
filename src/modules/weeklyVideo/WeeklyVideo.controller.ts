@@ -48,8 +48,8 @@ export const getWeeklyVideos = async (req: Request, res: Response) => {
           return {
             ...video,
             check: item?.check || false,
-            thumbnail: "https://placehold.co/600x400?text=video%20not%20found",
-            linkVideo: "#",
+            thumbnail: 'https://placehold.co/600x400?text=video%20not%20found',
+            linkVideo: '#',
           };
         }
       }),
