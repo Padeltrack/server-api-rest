@@ -78,7 +78,7 @@ export const getMe = async (req: Request, res: Response) => {
       if (lastOrder) orders.push(lastOrder);
 
       if (lastOrder) {
-        const getPlan = await PlanMongoModel.findOne({ _id: lastOrder.planId, isCoach });
+        const getPlan = await PlanMongoModel.findOne({ _id: lastOrder.planId, isCoach }).lean();
         if (getPlan) plans.push(getPlan);
       }
     }

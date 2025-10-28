@@ -14,12 +14,13 @@ import {
 import { authenticate } from '../middleware/auth.middleware';
 import { SelectRoleModel } from '../modules/user/user.model';
 import { authorize } from '../middleware/roles.middleware';
+import { translationCollectionMiddleware } from '../middleware/translation.middleware';
 
 const userRoutes = Router();
 const pathUser = '/user';
 
 userRoutes.get(`${pathUser}/all`, authenticate, authorize(SelectRoleModel.SuperAdmin), getUsers);
-userRoutes.get(`${pathUser}/me`, authenticate, getMe);
+userRoutes.get(`${pathUser}/me`, authenticate, translationCollectionMiddleware, getMe);
 userRoutes.get(
   `${pathUser}/coach`,
   authenticate,
