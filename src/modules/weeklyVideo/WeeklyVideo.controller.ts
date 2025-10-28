@@ -33,7 +33,7 @@ export const getWeeklyVideos = async (req: Request, res: Response) => {
     const weeklyVideoData = await Promise.all(
       weeklyVideo.videos.map(async (item: ItemVideoWeekly) => {
         const video = await VideoMongoModel.findOne({ _id: item.videoId }).lean();
-        if (video) {
+        if (video?.idVideoVimeo) {
           const videoVimeo: any = await getVimeoVideoById({
             id: video.idVideoVimeo,
           });
@@ -44,9 +44,14 @@ export const getWeeklyVideos = async (req: Request, res: Response) => {
             thumbnail,
             linkVideo,
           };
+        } else {
+          return {
+            ...video,
+            check: item?.check || false,
+            thumbnail: "https://placehold.co/600x400?text=video%20not%20found",
+            linkVideo: "#",
+          };
         }
-
-        return null;
       }),
     );
 

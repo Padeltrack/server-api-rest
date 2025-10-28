@@ -241,7 +241,65 @@
       "notFound": "Question not found",
       "fileRequired": "No file uploaded"
     },
+    "answers": {
+      "list": {
+        "error": "Error getting exam answers list"
+      },
+      "notFound": "Answer not found",
+      "getById": {
+        "error": "Error getting exam answer by id"
+      },
+      "notEnrolled": "You haven't enrolled for the exam yet",
+      "register": {
+        "success": "Answer registered successfully",
+        "error": "Error registering exam answer"
+      },
+      "finalize": {
+        "success": "Answer finalized successfully"
+      },
+      "notFoundInList": "No answers found",
+      "countMismatch": "Number of answers doesn't match",
+      "notFoundById": "Exam Answer not found",
+      "invalidState": "Exam answer is not in a valid state"
+    },
+    "alreadyCompleted": "You have already completed the exam",
+    "notCompleted": "You haven't completed the exam",
+    "notFound": "Exam not found",
+    "forbidden": "Forbidden",
+    "cannotAssignSelf": "You cannot assign your own exam",
+    "user": {
+      "notFound": "User not found"
+    },
+    "coach": {
+      "notFound": "Coach not found"
+    },
+    "order": {
+      "notFound": "Order not found"
+    },
+    "grade": {
+      "register": {
+        "success": "Grade registered successfully"
+      }
+    },
+    "questionnaire": {
+      "add": {
+        "success": "Questionnaire added successfully"
+      },
+      "assign": {
+        "success": "Questionnaire assigned successfully"
+      },
+      "update": {
+        "success": "Video updated successfully"
+      },
+      "delete": {
+        "success": "Questionnaire deleted successfully"
+      }
+    },
+    "videoId": {
+      "required": "Video identification is required"
+    },
     "validation": {
+      "error": "Validation error",
       "titleRequired": "Title is required",
       "descriptionRequired": "Description is required",
       "questionRequired": "Question identifier is required",

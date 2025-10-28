@@ -6,11 +6,8 @@ import { PlanMongoModel } from '../plan/plan.model';
 import { SelectRoleModel, UserMongoModel } from '../user/user.model';
 import { ZodError } from 'zod';
 import { uploadImagePayment } from './order.service';
-import { WeeklyVideoMongoModel } from '../weeklyVideo/weeklyVideo.model';
-import { getVideosByWeek } from '../weeklyVideo/weeklyVideo.model.helper';
 import { generateEmail } from '../mail/loadTemplate.mail';
 import { sendEMail } from '../mail/sendTemplate.mail';
-import { CounterMongoModel } from '../counter/counter.model';
 import { HOST_CLIENT_ADMIN_PROD } from '../../shared/util/url.util';
 import { formatZodErrorResponse } from '../../shared/util/zod.util';
 
@@ -290,7 +287,6 @@ export const updateOrderStatus = async (req: Request, res: Response) => {
     }
 
     const language = req.language as keyof typeof getPlan.translate;
-    const isPlanNotCoach = getPlan.isCoach === false;
 
     const getUser = await UserMongoModel.findOne({ _id: getOrder.userId });
     if (!getUser) {
@@ -316,38 +312,8 @@ export const updateOrderStatus = async (req: Request, res: Response) => {
       if (getOrder.status === SelectStatusOrderModel.Rejected) {
         fieldsUpdated.messageRejected = null;
       }
-
-      if (isPlanNotCoach) {
-        fieldsUpdated.currentWeek = 1;
-
-        // Obtener orden aprobada mas reciente para continuar con la semana para usuarios no coaches.
-        if (!getOrder.isCoach) {
-          const lastOrderApproved = await OrderMongoModel.findOne(
-            {
-              userId: getUser._id,
-              status: SelectStatusOrderModel.Approved,
-              isCoach: false,
-              currentWeek: { $exists: true },
-            },
-            { sort: { createdAt: -1 } },
-          );
-
-          if (lastOrderApproved?.currentWeek) {
-            fieldsUpdated.currentWeek = lastOrderApproved.currentWeek + 1;
-          }
-        }
-      }
-
-      fieldsUpdated.approvedOrderDate = new Date();
-      fieldsUpdated.lastProgressDate = new Date();
     } else if (status === SelectStatusOrderModel.Rejected) {
       fieldsUpdated.messageRejected = messageRejected;
-
-      if (isPlanNotCoach) {
-        fieldsUpdated.approvedOrderDate = undefined;
-        fieldsUpdated.currentWeek = undefined;
-        fieldsUpdated.lastProgressDate = undefined;
-      }
     } else if (status === SelectStatusOrderModel.Cancelled) {
       fieldsUpdated.cancellationDate = new Date();
       fieldsUpdated.messageRejected = messageRejected;
@@ -362,19 +328,6 @@ export const updateOrderStatus = async (req: Request, res: Response) => {
 
     const isApproved = fieldsUpdated.status === SelectStatusOrderModel.Approved;
     const isCancel = fieldsUpdated.status === SelectStatusOrderModel.Cancelled;
-
-    if (isApproved) {
-      const getLimitVideoWeek = await CounterMongoModel.findOne({ _id: 'limitVideoWeek' });
-      const week = fieldsUpdated.currentWeek;
-      const videosByWeek = await getVideosByWeek({ week, maxVideo: getLimitVideoWeek?.seq });
-
-      await WeeklyVideoMongoModel.create({
-        _id: new ObjectId().toHexString(),
-        orderId,
-        week,
-        videos: videosByWeek.map(videoId => ({ videoId, check: false })),
-      });
-    }
 
     const statusOrderEmail = await generateEmail({
       template: isCancel ? 'orderCancel' : isApproved ? 'orderApproved' : 'orderReject',

@@ -241,7 +241,65 @@
       "notFound": "Pergunta não encontrada",
       "fileRequired": "Nenhum arquivo foi enviado"
     },
+    "answers": {
+      "list": {
+        "error": "Erro ao obter a lista de respostas do exame"
+      },
+      "notFound": "Resposta não encontrada",
+      "getById": {
+        "error": "Erro ao obter resposta do exame por id"
+      },
+      "notEnrolled": "Você ainda não se inscreveu para o exame",
+      "register": {
+        "success": "Resposta registrada com sucesso",
+        "error": "Erro ao registrar resposta do exame"
+      },
+      "finalize": {
+        "success": "Resposta finalizada com sucesso"
+      },
+      "notFoundInList": "Nenhuma resposta encontrada",
+      "countMismatch": "Número de respostas não confere",
+      "notFoundById": "Resposta do Exame não encontrada",
+      "invalidState": "A resposta do exame não está em um estado válido"
+    },
+    "alreadyCompleted": "Você já completou o exame",
+    "notCompleted": "Você não completou o exame",
+    "notFound": "Exame não encontrado",
+    "forbidden": "Proibido",
+    "cannotAssignSelf": "Você não pode atribuir seu próprio exame",
+    "user": {
+      "notFound": "Usuário não encontrado"
+    },
+    "coach": {
+      "notFound": "Treinador não encontrado"
+    },
+    "order": {
+      "notFound": "Pedido não encontrado"
+    },
+    "grade": {
+      "register": {
+        "success": "Nota registrada com sucesso"
+      }
+    },
+    "questionnaire": {
+      "add": {
+        "success": "Questionário adicionado com sucesso"
+      },
+      "assign": {
+        "success": "Questionário atribuído com sucesso"
+      },
+      "update": {
+        "success": "Vídeo atualizado com sucesso"
+      },
+      "delete": {
+        "success": "Questionário excluído com sucesso"
+      }
+    },
+    "videoId": {
+      "required": "Identificação do vídeo é necessária"
+    },
     "validation": {
+      "error": "Erro de validação",
       "titleRequired": "O título é obrigatório",
       "descriptionRequired": "A descrição é obrigatória",
       "questionRequired": "O identificador da pergunta é obrigatório",

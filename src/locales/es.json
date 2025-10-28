@@ -241,7 +241,65 @@
       "notFound": "Pregunta no encontrada",
       "fileRequired": "No se ha subido ningún archivo"
     },
+    "answers": {
+      "list": {
+        "error": "Error al obtener la lista de respuestas del examen"
+      },
+      "notFound": "Respuesta no encontrada",
+      "getById": {
+        "error": "Error al obtener la respuesta del examen por id"
+      },
+      "notEnrolled": "Aún no te has inscrito para el examen",
+      "register": {
+        "success": "Respuesta registrada exitosamente",
+        "error": "Error en el registro de respuestas del examen"
+      },
+      "finalize": {
+        "success": "Respuesta finalizada exitosamente"
+      },
+      "notFoundInList": "No se encontraron respuestas",
+      "countMismatch": "El número de respuestas no coincide",
+      "notFoundById": "Exam Respuesta no encontrada",
+      "invalidState": "La respuesta del examen no está en un estado válido"
+    },
+    "alreadyCompleted": "Ya has completado el examen",
+    "notCompleted": "No has completado el examen",
+    "notFound": "Examen no encontrado",
+    "forbidden": "Prohibido",
+    "cannotAssignSelf": "No puedes asignarte tu propio examen",
+    "user": {
+      "notFound": "Usuario no encontrado"
+    },
+    "coach": {
+      "notFound": "Entrenador no encontrado"
+    },
+    "order": {
+      "notFound": "Orden no encontrada"
+    },
+    "grade": {
+      "register": {
+        "success": "Grado registrado exitosamente"
+      }
+    },
+    "questionnaire": {
+      "add": {
+        "success": "Añadir cuestionario correctamente"
+      },
+      "assign": {
+        "success": "Cuestionario asignado con éxito"
+      },
+      "update": {
+        "success": "Vídeo actualizado con éxito"
+      },
+      "delete": {
+        "success": "Cuestionario eliminado correctamente"
+      }
+    },
+    "videoId": {
+      "required": "Se requiere identificación de video"
+    },
     "validation": {
+      "error": "Error de validación",
       "titleRequired": "El título es requerido",
       "descriptionRequired": "La descripción es requerida",
       "questionRequired": "El identificador de la pregunta es requerido",

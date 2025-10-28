@@ -11,7 +11,7 @@ export const SelectRoleModel = {
 export type RoleModel = (typeof SelectRoleModel)[keyof typeof SelectRoleModel];
 
 export const SelectUserLevelModel = {
-  Principiante: 'Principiante',
+  Basico: 'Basico',
   Intermedio: 'Intermedio',
   Avanzado: 'Avanzado',
 } as const;

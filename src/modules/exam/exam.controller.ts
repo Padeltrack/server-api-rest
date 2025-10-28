@@ -34,6 +34,10 @@ import {
   getRequestLanguage,
   transformTranslatedDocument,
 } from '../../middleware/translation.middleware';
+import { WeeklyVideoMongoModel } from '../weeklyVideo/weeklyVideo.model';
+import { getVideosByWeek } from '../weeklyVideo/weeklyVideo.model.helper';
+import { CounterMongoModel } from '../counter/counter.model';
+import { OrderMongoModel, SelectStatusOrderModel } from '../order/order.model';
 
 export const getQuestionnaireExam = async (req: Request, res: Response) => {
   req.logger = req.logger.child({ service: 'exam', serviceHandler: 'getQuestionnaireExam' });
@@ -154,7 +158,7 @@ export const getAnswerExamByList = async (req: Request, res: Response) => {
     req.logger.error({ status: 'error', code: 500, error: error.message });
     return res
       .status(500)
-      .json({ message: 'Error al obtener la lista de respuestas del examen', error });
+      .json({ message: req.t('exams.answers.list.error'), error });
   }
 };
 
@@ -188,7 +192,7 @@ export const getAnswerExamById = async (req: Request, res: Response) => {
       .sort({ order: -1 });
     if (!getExam) {
       return res.status(404).json({
-        message: 'Respuesta no encontrada',
+        message: req.t('exams.answers.notFound'),
       });
     }
 
@@ -235,7 +239,7 @@ export const getAnswerExamById = async (req: Request, res: Response) => {
     req.logger.error({ status: 'error', code: 500, error: error.message });
     return res
       .status(500)
-      .json({ message: 'Error al obtener la respuesta del examen por id', error });
+      .json({ message: req.t('exams.answers.getById.error'), error });
   }
 };
 
@@ -252,7 +256,7 @@ export const getRegisterAnswerExam = async (req: Request, res: Response) => {
 
     if (!currentExam) {
       return res.status(200).json({
-        message: 'Aún no te has inscrito para el examen',
+        message: req.t('exams.answers.notEnrolled'),
         answers: [],
         hasAllQuestionsAnswered: false,
       });
@@ -277,7 +281,7 @@ export const getRegisterAnswerExam = async (req: Request, res: Response) => {
     req.logger.error({ status: 'error', code: 500, error: error.message });
     return res
       .status(500)
-      .json({ message: 'Error al obtener la respuesta del examen por id', error });
+      .json({ message: req.t('exams.answers.getById.error'), error });
   }
 };
 
@@ -294,7 +298,7 @@ export const registerAnswerExam = async (req: Request, res: Response) => {
 
     if (me.level) {
       return res.status(401).json({
-        message: 'Ya has completado el examen',
+        message: req.t('exams.alreadyCompleted'),
       });
     }
     let isComplete = false;
@@ -308,7 +312,7 @@ export const registerAnswerExam = async (req: Request, res: Response) => {
 
     if (currentExam && currentExam.status !== SelectStatusAnswerModel.Pendiente) {
       return res.status(400).json({
-        message: 'Ya has completado el examen',
+        message: req.t('exams.alreadyCompleted'),
         isComplete: true,
       });
     }
@@ -344,7 +348,7 @@ export const registerAnswerExam = async (req: Request, res: Response) => {
       });
 
       return res.status(200).json({
-        message: 'Respuesta registrada exitosamente',
+        message: req.t('exams.answers.register.success'),
         isComplete: false,
       });
     }
@@ -417,13 +421,13 @@ export const registerAnswerExam = async (req: Request, res: Response) => {
     }
 
     return res.status(200).json({
-      message: 'Respuesta registrada exitosamente',
+      message: req.t('exams.answers.register.success'),
       isComplete,
     });
   } catch (error) {
     if (error instanceof ZodError) {
       return res.status(400).json({
-        message: 'Error de validación',
+        message: req.t('exams.validation.error'),
         issues: error.errors,
       });
     }
@@ -443,7 +447,7 @@ export const finalizeAnswerExam = async (req: Request, res: Response) => {
 
     if (me.level) {
       return res.status(401).json({
-        message: 'Ya has completado el examen',
+        message: req.t('exams.alreadyCompleted'),
       });
     }
     let isComplete = false;
@@ -451,13 +455,13 @@ export const finalizeAnswerExam = async (req: Request, res: Response) => {
 
     if (!currentExam) {
       return res.status(404).json({
-        message: 'Examen no encontrado',
+        message: req.t('exams.notFound'),
       });
     }
 
     if (currentExam.status !== SelectStatusAnswerModel.Pendiente) {
       return res.status(400).json({
-        message: 'Ya has completado el examen',
+        message: req.t('exams.alreadyCompleted'),
         isComplete: true,
       });
     }
@@ -473,19 +477,19 @@ export const finalizeAnswerExam = async (req: Request, res: Response) => {
       isComplete = true;
     } else {
       return res.status(400).json({
-        message: 'No has completado el examen',
+        message: req.t('exams.notCompleted'),
         isComplete: false,
       });
     }
 
     return res.status(200).json({
-      message: 'Respuesta finalizada exitosamente',
+      message: req.t('exams.answers.finalize.success'),
       isComplete,
     });
   } catch (error) {
     if (error instanceof ZodError) {
       return res.status(400).json({
-        message: 'Error de validación',
+        message: req.t('exams.validation.error'),
         issues: error.errors,
       });
     }
@@ -493,7 +497,7 @@ export const finalizeAnswerExam = async (req: Request, res: Response) => {
     req.logger.error({ status: 'error', code: 500, error: error.message });
     return res
       .status(500)
-      .json({ message: 'Error en el registro de respuestas del examen', error });
+      .json({ message: req.t('exams.answers.register.error'), error });
   }
 };
 
@@ -543,12 +547,12 @@ export const addQuestionnaire = async (req: Request, res: Response) => {
     await ExamQuestionnaireMongoModel.create(questionnaireData);
 
     return res.status(200).json({
-      message: 'Añadir cuestionario correctamente',
+      message: req.t('exams.questionnaire.add.success'),
     });
   } catch (error) {
     if (error instanceof ZodError) {
       return res.status(400).json({
-        message: 'Error de validación',
+        message: req.t('exams.validation.error'),
         issues: error.errors,
       });
     }
@@ -556,7 +560,7 @@ export const addQuestionnaire = async (req: Request, res: Response) => {
     req.logger.error({ status: 'error', code: 500, error: error.message });
     return res
       .status(500)
-      .json({ message: 'Error en el registro de respuestas del examen', error });
+      .json({ message: req.t('exams.answers.register.error'), error });
   }
 };
 
@@ -573,38 +577,50 @@ export const registerGradeExam = async (req: Request, res: Response) => {
 
     if (!getExamAnswer) {
       return res.status(404).json({
-        message: 'Respuesta no encontrada',
+        message: req.t('exams.answers.notFound'),
       });
     }
 
     if (me._id !== getExamAnswer?.assignCoachId) {
       return res.status(403).json({
-        message: 'Prohibido',
+        message: req.t('exams.forbidden'),
       });
     }
 
     if (getExamAnswer.status !== SelectStatusAnswerModel.Revision) {
       return res.status(400).json({
-        message: 'Respuesta no encontrada',
+        message: req.t('exams.answers.notFound'),
       });
     }
 
     if (!answers.length) {
       return res.status(404).json({
-        message: 'No se encontraron respuestas',
+        message: req.t('exams.answers.notFoundInList'),
       });
     }
 
     if (getExamAnswer.answers.length !== answers.length) {
       return res.status(400).json({
-        message: 'El número de respuestas no coincide',
+        message: req.t('exams.answers.countMismatch'),
       });
     }
 
     const getUser = await UserMongoModel.findOne({ _id: getExamAnswer.userId });
     if (!getUser) {
       return res.status(404).json({
-        message: 'Usuario no encontrado',
+        message: req.t('exams.user.notFound'),
+      });
+    }
+
+    const getOrder = await OrderMongoModel.findOne({
+      userId: getUser._id,
+      status: SelectStatusOrderModel.Approved,
+      isCoach: false,
+      currentWeek: { $exists: false }
+    }).sort({ createdAt: -1 }).select('_id');
+    if (!getOrder) {
+      return res.status(404).json({
+        message: req.t('exams.order.notFound'),
       });
     }
 
@@ -615,7 +631,7 @@ export const registerGradeExam = async (req: Request, res: Response) => {
 
     if (updatedAnswers.length !== answers.length) {
       return res.status(400).json({
-        message: 'El número de respuestas no coincide',
+        message: req.t('exams.answers.countMismatch'),
       });
     }
 
@@ -637,7 +653,7 @@ export const registerGradeExam = async (req: Request, res: Response) => {
     );
 
     // UPDATE LEVEL USER
-    let levelUser: UserLevelModel = SelectUserLevelModel.Principiante;
+    let levelUser: UserLevelModel = SelectUserLevelModel.Basico;
     if (average >= 4 && average <= 6) {
       levelUser = SelectUserLevelModel.Intermedio;
     } else if (average >= 7) {
@@ -654,6 +670,43 @@ export const registerGradeExam = async (req: Request, res: Response) => {
         },
       },
     );
+
+    // UPDATE ORDER
+    let fieldsUpdated: any = { currentWeek: 1};
+
+    const lastOrderApproved = await OrderMongoModel.findOne(
+      {
+        userId: getUser._id,
+        status: SelectStatusOrderModel.Approved,
+        isCoach: false,
+        currentWeek: { $exists: true },
+      },
+      { sort: { createdAt: -1 } },
+    ).select('currentWeek');
+
+    if (lastOrderApproved?.currentWeek) {
+      fieldsUpdated.currentWeek = lastOrderApproved.currentWeek + 1;
+    }
+
+    fieldsUpdated.approvedOrderDate = new Date();
+    fieldsUpdated.lastProgressDate = new Date();
+
+    await OrderMongoModel.updateOne({ _id: getOrder._id }, { $set: fieldsUpdated });
+
+    // GENERATE WEEK VIDEOS
+
+    const getLimitVideoWeek = await CounterMongoModel.findOne({ _id: 'limitVideoWeek' });
+    const week = fieldsUpdated.currentWeek;
+    const videosByWeek = await getVideosByWeek({ week, maxVideo: getLimitVideoWeek?.seq });
+
+    await WeeklyVideoMongoModel.create({
+      _id: new ObjectId().toHexString(),
+      orderId: getOrder._id,
+      week,
+      videos: videosByWeek.map(videoId => ({ videoId, check: false })),
+    });
+
+    // SEND EMAIL TO STUDENT
 
     const examGradeEmail = await generateEmail({
       template: 'examGradeStudent',
@@ -675,7 +728,7 @@ export const registerGradeExam = async (req: Request, res: Response) => {
     sendEMail({ data: msg });
 
     return res.status(200).json({
-      message: 'Grado registrado exitosamente',
+      message: req.t('exams.grade.register.success'),
       updatedAnswers,
       levelUser,
       average,
@@ -684,7 +737,7 @@ export const registerGradeExam = async (req: Request, res: Response) => {
   } catch (error) {
     if (error instanceof ZodError) {
       return res.status(400).json({
-        message: 'Error de validación',
+        message: req.t('exams.validation.error'),
         issues: error.errors,
       });
     }
@@ -692,7 +745,7 @@ export const registerGradeExam = async (req: Request, res: Response) => {
     req.logger.error({ status: 'error', code: 500, error: error.message });
     return res
       .status(500)
-      .json({ message: 'Error en el registro de respuestas del examen', error });
+      .json({ message: req.t('exams.answers.register.error'), error });
   }
 };
 
@@ -707,20 +760,20 @@ export const assignExamToCoach = async (req: Request, res: Response) => {
     const getExamAnswer = await ExamAnswerMongoModel.findOne({ _id: examAnswerId });
     if (!getExamAnswer) {
       return res.status(404).json({
-        message: 'Exam Respuesta no encontrada',
+        message: req.t('exams.answers.notFoundById'),
       });
     }
 
     const getUser = await UserMongoModel.findOne({ _id: getExamAnswer.userId });
     if (!getUser) {
       return res.status(404).json({
-        message: 'Usuario no encontrado',
+        message: req.t('exams.user.notFound'),
       });
     }
 
     if (coachId === getUser._id) {
       return res.status(400).json({
-        message: 'No puedes asignarte tu propio examen',
+        message: req.t('exams.cannotAssignSelf'),
       });
     }
 
@@ -730,14 +783,14 @@ export const assignExamToCoach = async (req: Request, res: Response) => {
       )
     ) {
       return res.status(400).json({
-        message: 'La respuesta del examen no está en un estado válido',
+        message: req.t('exams.answers.invalidState'),
       });
     }
 
     const getCoach = await UserMongoModel.findOne({ _id: coachId });
     if (!getCoach) {
       return res.status(404).json({
-        message: 'Entrenador no encontrado',
+        message: req.t('exams.coach.notFound'),
       });
     }
 
@@ -793,13 +846,13 @@ export const assignExamToCoach = async (req: Request, res: Response) => {
     sendEMail({ data: msgStudent });
 
     return res.status(200).json({
-      message: 'Cuestionario asignado con éxito',
+      message: req.t('exams.questionnaire.assign.success'),
       coach: getCoach,
     });
   } catch (error) {
     if (error instanceof ZodError) {
       return res.status(400).json({
-        message: 'Error de validación',
+        message: req.t('exams.validation.error'),
         issues: error.errors,
       });
     }
@@ -807,7 +860,7 @@ export const assignExamToCoach = async (req: Request, res: Response) => {
     req.logger.error({ status: 'error', code: 500, error: error.message });
     return res
       .status(500)
-      .json({ message: 'Error en el registro de respuestas del examen', error });
+      .json({ message: req.t('exams.answers.register.error'), error });
   }
 };
 
@@ -824,14 +877,14 @@ export const updateQuestionnaire = async (req: Request, res: Response) => {
 
     if (!idQuestionnaire) {
       return res.status(400).json({
-        message: 'Se requiere identificación de video',
+        message: req.t('exams.videoId.required'),
       });
     }
 
     const getQuestionnaire = await ExamQuestionnaireMongoModel.findOne({ _id: idQuestionnaire });
     if (!getQuestionnaire) {
       return res.status(404).json({
-        message: 'Cuestionario no encontrado',
+        message: req.t('exams.questionnaire.notFound'),
       });
     }
 
@@ -870,13 +923,13 @@ export const updateQuestionnaire = async (req: Request, res: Response) => {
     }
 
     res.status(200).json({
-      message: 'Vídeo actualizado con éxito',
+      message: req.t('exams.questionnaire.update.success'),
       questionnaire: transformTranslatedDocument(questionnaire, language),
     });
   } catch (error) {
     if (error instanceof ZodError) {
       return res.status(400).json({
-        message: 'Error de validación',
+        message: req.t('exams.validation.error'),
         issues: error.errors,
       });
     }
@@ -897,7 +950,7 @@ export const deleteQuestionnaire = async (req: Request, res: Response) => {
 
     if (!getQuestionnaire) {
       return res.status(404).json({
-        message: 'Cuestionario no encontrado',
+        message: req.t('exams.questionnaire.notFound'),
       });
     }
 
@@ -907,12 +960,12 @@ export const deleteQuestionnaire = async (req: Request, res: Response) => {
     await deleteVimeoVideo({ idVideoVimeo: getQuestionnaire.idVideoVimeo });
 
     return res.status(200).json({
-      message: 'Cuestionario eliminado correctamente',
+      message: req.t('exams.questionnaire.delete.success'),
     });
   } catch (error) {
     if (error instanceof ZodError) {
       return res.status(400).json({
-        message: 'Error de validación',
+        message: req.t('exams.validation.error'),
         issues: error.errors,
       });
     }
