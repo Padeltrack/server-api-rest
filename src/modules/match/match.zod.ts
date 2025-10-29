@@ -1,10 +1,4 @@
 import { z } from 'zod';
-import {
-  SelectErrorTypeModel,
-  SelectMainErrorTypeModel,
-  SelectShotTypeModel,
-  SelectZoneModel,
-} from './match.model';
 
 export const createMatchSchemaZod = z.object({
   playersId: z
@@ -30,13 +24,9 @@ export const createMatchSchemaZod = z.object({
   winners: z
     .array(
       z.object({
-        zone: z.enum([SelectZoneModel.backcourt, SelectZoneModel.net, SelectZoneModel.transition]),
-        shotType: z.enum([
-          SelectShotTypeModel.block,
-          SelectShotTypeModel.dropShot,
-          SelectShotTypeModel.smash,
-          SelectShotTypeModel.volley,
-        ]),
+        zone: z.string(),
+        shootType: z.string(),
+        variantType: z.string().optional(),
         comment: z.string().optional(),
       }),
     )
@@ -44,22 +34,10 @@ export const createMatchSchemaZod = z.object({
   err: z
     .array(
       z.object({
-        mainErrorType: z.enum([
-          SelectMainErrorTypeModel.forcedError,
-          SelectMainErrorTypeModel.unforcedError,
-        ]),
-        zone: z.enum([SelectZoneModel.backcourt, SelectZoneModel.net, SelectZoneModel.transition]),
-        shotType: z.enum([
-          SelectShotTypeModel.block,
-          SelectShotTypeModel.dropShot,
-          SelectShotTypeModel.smash,
-          SelectShotTypeModel.volley,
-        ]),
-        errorType: z.enum([
-          SelectErrorTypeModel.physical,
-          SelectErrorTypeModel.tactical,
-          SelectErrorTypeModel.technical,
-        ]),
+        error: z.string(),
+        shootTypeError: z.string(),
+        typeError: z.string(),
+        causeError: z.string(),
         comment: z.string().optional(),
       }),
     )

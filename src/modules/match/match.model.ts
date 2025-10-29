@@ -36,8 +36,9 @@ export type ShotTypeModel = (typeof SelectShotTypeModel)[keyof typeof SelectShot
 
 export interface WinnersMatchModel {
   readonly _id: string;
-  zone: ZoneModel;
-  shotType: ShotTypeModel;
+  zone: string;
+  shootType: string;
+  variantType?: string | null;
   comment?: string | null;
   createdAt: Date;
   updatedAt: Date;
@@ -45,10 +46,10 @@ export interface WinnersMatchModel {
 
 export interface ErrMatchModel {
   readonly _id: string;
-  mainErrorType: MainErrorTypeModel;
-  zone: ZoneModel;
-  shotType: ShotTypeModel;
-  errorType: ErrorTypeModel;
+  error: string;
+  shootTypeError: string;
+  typeError: string;
+  causeError: string;
   comment?: string | null;
   createdAt: Date;
   updatedAt: Date;
@@ -84,8 +85,9 @@ export interface MatchModel extends Document {
 const WinnersMatchSchema = new Schema<WinnersMatchModel>(
   {
     _id: { type: String, required: true, default: new ObjectId().toHexString() },
-    zone: { type: String, required: true, enum: Object.values(SelectZoneModel) },
-    shotType: { type: String, required: true, enum: Object.values(SelectShotTypeModel) },
+    zone: { type: String, required: true },
+    shootType: { type: String, required: true },
+    variantType: { type: String, required: false },
     comment: { type: String, required: false },
   },
   {
@@ -96,10 +98,10 @@ const WinnersMatchSchema = new Schema<WinnersMatchModel>(
 const ErrMatchSchema = new Schema<ErrMatchModel>(
   {
     _id: { type: String, required: true, default: new ObjectId().toHexString() },
-    mainErrorType: { type: String, required: true, enum: Object.values(SelectMainErrorTypeModel) },
-    zone: { type: String, required: true, enum: Object.values(SelectZoneModel) },
-    shotType: { type: String, required: true, enum: Object.values(SelectShotTypeModel) },
-    errorType: { type: String, required: true, enum: Object.values(SelectErrorTypeModel) },
+    error: { type: String, required: true },
+    shootTypeError: { type: String, required: true },
+    typeError: { type: String, required: true },
+    causeError: { type: String, required: true },
     comment: { type: String, required: false },
   },
   {
