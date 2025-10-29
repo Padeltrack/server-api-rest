@@ -35,23 +35,23 @@ export const updateQuestionnaireSchemaZod = z.object({
 
 export const ExamGradeRegisterSchemaZod = z.object({
   examAnswerId: z
-    .string({ required_error: 'El identificador del examen es requerido' })
-    .min(1, 'El identificador del examen es requerido'),
+    .string({ required_error: 'exams.validation.examIdRequired' })
+    .min(1, 'exams.validation.examIdRequired'),
   answers: z.array(
     z.object({
-      questionnaireId: z.string({ required_error: 'El identificador de la pregunta es requerido' }),
-      score: z.number({ required_error: 'El puntaje es requerido' }).min(0).max(10).positive(),
+      questionnaireId: z.string({ required_error: 'exams.validation.questionIdRequired' }),
+      score: z.number({ required_error: 'exams.validation.scoreRequired' }).min(0).max(10).positive(),
     }),
   ),
 });
 
 export const AssignExamToCoachSchemaZod = z.object({
   examAnswerId: z
-    .string({ required_error: 'El identificador del examen es requerido' })
-    .min(1, 'El identificador del examen es requerido'),
+    .string({ required_error: 'exams.validation.examIdRequired' })
+    .min(1, 'exams.validation.examIdRequired'),
   coachId: z
-    .string({ required_error: 'El identificador del coach es requerido' })
-    .min(1, 'El identificador del coach es requerido'),
+    .string({ required_error: 'exams.validation.coachIdRequired' })
+    .min(1, 'exams.validation.coachIdRequired'),
 });
 
 export type IExamAnswerRegisterDTO = z.infer<typeof ExamAnswerRegisterSchemaZod>;

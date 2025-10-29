@@ -305,7 +305,10 @@
       "questionRequired": "O identificador da pergunta é obrigatório",
       "questionsRequired": "Você deve adicionar pelo menos uma pergunta",
       "answerRequired": "Você deve selecionar uma resposta",
-      "examIdRequired": "O identificador do exame é obrigatório"
+      "examIdRequired": "O identificador do exame é obrigatório",
+      "questionIdRequired": "O identificador da pergunta é obrigatório",
+      "scoreRequired": "A pontuação é obrigatória",
+      "coachIdRequired": "O identificador do treinador é obrigatório"
     }
   },
   "videos": {
@@ -459,6 +462,8 @@
     },
     "validation": {
       "idRequired": "Identificação é obrigatória",
+      "questionRequired": "Pergunta é obrigatória",
+      "answerRequired": "Resposta é obrigatória",
       "optionsRequired": "Opções são obrigatórias",
       "questionTextRequired": "O texto da pergunta é obrigatório",
       "optionTextRequired": "O texto da opção é obrigatório",

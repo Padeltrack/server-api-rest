@@ -305,7 +305,10 @@
       "questionRequired": "Question identifier is required",
       "questionsRequired": "You must add at least one question",
       "answerRequired": "You must select an answer",
-      "examIdRequired": "Exam ID is required"
+      "examIdRequired": "Exam ID is required",
+      "questionIdRequired": "Question identifier is required",
+      "scoreRequired": "Score is required",
+      "coachIdRequired": "Coach identifier is required"
     }
   },
   "videos": {
@@ -459,6 +462,8 @@
     },
     "validation": {
       "idRequired": "ID is required",
+      "questionRequired": "Question is required",
+      "answerRequired": "Answer is required",
       "optionsRequired": "Options are required",
       "questionTextRequired": "Question text is required",
       "optionTextRequired": "Option text is required",

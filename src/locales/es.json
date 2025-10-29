@@ -305,7 +305,10 @@
       "questionRequired": "El identificador de la pregunta es requerido",
       "questionsRequired": "Debes agregar al menos una pregunta",
       "answerRequired": "Debes seleccionar una respuesta",
-      "examIdRequired": "El identificador del examen es requerido"
+      "examIdRequired": "El identificador del examen es requerido",
+      "questionIdRequired": "El identificador de la pregunta es requerido",
+      "scoreRequired": "El puntaje es requerido",
+      "coachIdRequired": "El identificador del coach es requerido"
     }
   },
   "videos": {
@@ -459,6 +462,8 @@
     },
     "validation": {
       "idRequired": "Se requiere identificación",
+      "questionRequired": "La pregunta es requerida",
+      "answerRequired": "La respuesta es requerida",
       "optionsRequired": "Se requieren opciones",
       "questionTextRequired": "El texto de la pregunta es requerido",
       "optionTextRequired": "El texto de la opción es requerido",
