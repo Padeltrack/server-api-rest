@@ -895,11 +895,10 @@ export const updateQuestionnaire = async (req: Request, res: Response) => {
       await cleanUploadedFiles(req);
     }
 
-    // Actualizar solo el idioma específico
     if (title || description) {
-      updateFields[`translate.${language}`] = {};
-      if (title) updateFields[`translate.${language}.title`] = title;
-      if (description) updateFields[`translate.${language}.description`] = description;
+      const pathTranslate = `translate.${language}`;
+      if (title) updateFields[`${pathTranslate}.title`] = title;
+      if (description) updateFields[`${pathTranslate}.description`] = description;
     }
 
     if (Object.keys(updateFields).length) {
@@ -909,7 +908,7 @@ export const updateQuestionnaire = async (req: Request, res: Response) => {
           $set: updateFields,
         },
         { new: true },
-      );
+      ).lean();
     }
 
     res.status(200).json({

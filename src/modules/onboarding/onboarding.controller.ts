@@ -59,7 +59,7 @@ export const updateQuestionOnboarding = async (req: Request, res: Response) => {
 
     const questionUpdated = await OnboardingQuestionMongoModel.findByIdAndUpdate(id, fields, {
       new: true,
-    });
+    }).lean();
     return res.status(200).json({
       question: transformTranslatedDocument(questionUpdated, language),
       message: req.t('onboarding.questions.updated'),

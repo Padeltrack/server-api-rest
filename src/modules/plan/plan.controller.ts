@@ -114,25 +114,25 @@ export const updatePlan = async (req: Request, res: Response) => {
     const { name, description, price, active, benefits } = updatePlanSchema.parse(req.body);
     const language = getRequestLanguage(req);
 
-    const fields: any = {};
-
-    if (typeof price === 'number') fields['price'] = price;
-    if (typeof active === 'boolean') fields['active'] = active;
-    if (name || description || benefits) {
-      fields[`translate.${language}`] = {};
-
-      if (name) fields[`translate.${language}.name`] = name;
-      if (description) fields[`translate.${language}.description`] = description;
-      if (Array.isArray(benefits)) fields[`translate.${language}.benefits`] = benefits;
-    }
-
     if (!id) {
       return res.status(400).json({
         message: req.t('errors.badRequest'),
       });
     }
 
-    const plan = await PlanMongoModel.findOneAndUpdate({ _id: id }, fields, { new: true });
+    const fields: any = {};
+
+    if (typeof price === 'number') fields['price'] = price;
+    if (typeof active === 'boolean') fields['active'] = active;
+    if (name || description || benefits) {
+      const pathTranslate = `translate.${language}`;
+
+      if (name) fields[`${pathTranslate}.name`] = name;
+      if (description) fields[`${pathTranslate}.description`] = description;
+      if (Array.isArray(benefits)) fields[`${pathTranslate}.benefits`] = benefits;
+    }
+
+    const plan = await PlanMongoModel.findOneAndUpdate({ _id: id }, fields, { new: true }).lean();
 
     if (!plan) {
       return res.status(404).json({

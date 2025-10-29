@@ -13,7 +13,7 @@ export const createPlanSchema = z.object({
 });
 
 export const updatePlanSchema = z.object({
-  name: z.string().min(1, { message: 'plans.validation.nameRequired' }).optional(),
+  name: z.string().optional(),
   description: z.string().optional(),
   price: z.number().nonnegative({ message: 'plans.validation.priceInvalid' }).optional(),
   active: z.boolean().optional(),
