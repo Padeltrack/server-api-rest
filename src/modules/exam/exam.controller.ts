@@ -605,7 +605,6 @@ export const registerGradeExam = async (req: Request, res: Response) => {
     const getOrder = await OrderMongoModel.findOne({
       userId: getUser._id,
       status: SelectStatusOrderModel.Approved,
-      isCoach: false,
       currentWeek: { $exists: false },
     })
       .sort({ createdAt: -1 })
@@ -670,7 +669,6 @@ export const registerGradeExam = async (req: Request, res: Response) => {
       {
         userId: getUser._id,
         status: SelectStatusOrderModel.Approved,
-        isCoach: false,
         currentWeek: { $exists: true },
       },
       { sort: { createdAt: -1 } },
