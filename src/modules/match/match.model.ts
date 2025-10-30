@@ -1,39 +1,6 @@
 import { Schema, model, Document } from 'mongoose';
 import { ObjectId } from 'mongodb';
 
-export enum SelectErrorTypeModel {
-  technical = 'Técnico',
-  tactical = 'Táctico',
-  physical = 'Físico',
-}
-
-export type ErrorTypeModel = (typeof SelectErrorTypeModel)[keyof typeof SelectErrorTypeModel];
-
-export enum SelectMainErrorTypeModel {
-  unforcedError = 'Error no forzado',
-  forcedError = 'Error forzado',
-}
-
-export type MainErrorTypeModel =
-  (typeof SelectMainErrorTypeModel)[keyof typeof SelectMainErrorTypeModel];
-
-export enum SelectZoneModel {
-  net = 'Red',
-  transition = 'Transición',
-  backcourt = 'Fondo',
-}
-
-export type ZoneModel = (typeof SelectZoneModel)[keyof typeof SelectZoneModel];
-
-export enum SelectShotTypeModel {
-  volley = 'Volea',
-  smash = 'Smash',
-  block = 'Bloqueo',
-  dropShot = 'Dejada',
-}
-
-export type ShotTypeModel = (typeof SelectShotTypeModel)[keyof typeof SelectShotTypeModel];
-
 export interface WinnersMatchModel {
   readonly _id: string;
   zone: string;

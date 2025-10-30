@@ -79,7 +79,7 @@ export const createMatchSchemaZod = z.object({
     .number({ required_error: 'matches.validation.setsNumberRequired' })
     .min(1, { message: 'matches.validation.setsNumberRequired' }),
   notes: z.string().optional(),
-  isAD: z.boolean().optional(),
+  isAD: z.boolean(),
 });
 
 export type CreateMatchDto = z.infer<typeof createMatchSchemaZod>;
