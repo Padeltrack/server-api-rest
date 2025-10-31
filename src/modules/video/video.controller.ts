@@ -14,6 +14,9 @@ import {
 import { planVideoFolder } from '../vimeo/viemo.constant';
 import { cleanUploadedFiles } from '../../middleware/multer.middleware';
 
+// Escapa caracteres especiales de expresiones regulares para tratar la búsqueda como texto literal
+const escapeRegex = (value: string): string => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
 export const getVideos = async (req: Request, res: Response) => {
   req.logger = req.logger.child({ service: 'videos', serviceHandler: 'getVideos' });
   req.logger.info({ status: 'start' });
@@ -35,18 +38,19 @@ export const getVideos = async (req: Request, res: Response) => {
     }
 
     if (search) {
+      const regexSearch = new RegExp(escapeRegex(String(search)), 'i');
       query.$or = [
-        { nombre: { $regex: search, $options: 'i' } },
-        { descripcion: { $regex: search, $options: 'i' } },
-        { objetivos: { $regex: search, $options: 'i' } },
-        { momentoDeUso: { $regex: search, $options: 'i' } },
-        { contraccion: { $regex: search, $options: 'i' } },
-        { tipoEstimulo: { $regex: search, $options: 'i' } },
-        { musculos: { $regex: search, $options: 'i' } },
-        { sistemaControl: { $regex: search, $options: 'i' } },
-        { material: { $regex: search, $options: 'i' } },
-        { observacion: { $regex: search, $options: 'i' } },
-        { recomendaciones: { $regex: search, $options: 'i' } },
+        { nombre: { $regex: regexSearch } },
+        { descripcion: { $regex: regexSearch } },
+        { objetivos: { $regex: regexSearch } },
+        { momentoDeUso: { $regex: regexSearch } },
+        { contraccion: { $regex: regexSearch } },
+        { tipoEstimulo: { $regex: regexSearch } },
+        { musculos: { $regex: regexSearch } },
+        { sistemaControl: { $regex: regexSearch } },
+        { material: { $regex: regexSearch } },
+        { observacion: { $regex: regexSearch } },
+        { recomendaciones: { $regex: regexSearch } },
       ];
     }
 
