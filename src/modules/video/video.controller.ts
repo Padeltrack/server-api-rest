@@ -114,9 +114,6 @@ export const getVideoById = async (req: Request, res: Response) => {
       });
       video.thumbnail = thumbnail;
       video.linkVideo = linkVideo;
-    } else {
-      video.thumbnail = 'https://placehold.co/600x400?text=video%20not%20found';
-      video.linkVideo = '#';
     }
 
     return res.status(200).json({ video: transformTranslatedDocument(video, language) });
