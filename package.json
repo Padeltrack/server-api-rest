@@ -16,7 +16,8 @@
     "execute:uploadVideoData": "ts-node src/scripts/uploadExercisesVideo.script.ts",
     "migrate:schema:plans": "set NODE_ENV=development && ts-node src/scripts/migratePlansToTranslation.script.ts",
     "migrate:schema:onboarding": "set NODE_ENV=development && ts-node src/scripts/migrateOnboardingToTranslation.script.ts",
-    "migrate:schema:exam": "set NODE_ENV=development && ts-node src/scripts/migrateExamToTranslation.script.ts"
+    "migrate:schema:exam": "set NODE_ENV=development && ts-node src/scripts/migrateExamToTranslation.script.ts",
+    "migrate:schema:videos": "set NODE_ENV=development && ts-node src/scripts/migrateVideosToTranslation.script.ts"
   },
   "author": "GandresCoello18",
   "license": "ISC",

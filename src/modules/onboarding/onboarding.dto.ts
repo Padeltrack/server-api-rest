@@ -5,7 +5,9 @@ export const updateOnboardingSchema = z.object({
     .string({ required_error: 'onboarding.validation.questionRequired' })
     .min(1, 'onboarding.validation.questionRequired'),
   options: z.array(
-    z.string({ required_error: 'onboarding.validation.answerRequired' }).min(1, 'onboarding.validation.answerRequired'),
+    z
+      .string({ required_error: 'onboarding.validation.answerRequired' })
+      .min(1, 'onboarding.validation.answerRequired'),
   ),
 });
 

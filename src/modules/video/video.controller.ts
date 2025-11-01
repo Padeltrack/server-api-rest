@@ -15,6 +15,10 @@ import {
 import { planVideoFolder } from '../vimeo/viemo.constant';
 import { cleanUploadedFiles } from '../../middleware/multer.middleware';
 import { formatZodErrorResponse } from '../../shared/util/zod.util';
+import {
+  getRequestLanguage,
+  transformTranslatedDocument,
+} from '../../middleware/translation.middleware';
 
 export const getVideos = async (req: Request, res: Response) => {
   req.logger = req.logger.child({ service: 'videos', serviceHandler: 'getVideos' });
@@ -26,6 +30,7 @@ export const getVideos = async (req: Request, res: Response) => {
     const skip = (page - 1) * limit;
     const search = req.query?.search || '';
     let weeks = (req.query?.weeks as string) || '';
+    const language = getRequestLanguage(req);
 
     let numberWeeks: number[] = [];
     if (weeks) numberWeeks = weeks.split(',').map(Number);
@@ -37,18 +42,19 @@ export const getVideos = async (req: Request, res: Response) => {
     }
 
     if (search) {
+      const pathTranslate = `translate.${language}`;
       query.$or = [
-        { nombre: { $regex: search, $options: 'i' } },
-        { descripcion: { $regex: search, $options: 'i' } },
-        { objetivos: { $regex: search, $options: 'i' } },
-        { momentoDeUso: { $regex: search, $options: 'i' } },
-        { contraccion: { $regex: search, $options: 'i' } },
-        { tipoEstimulo: { $regex: search, $options: 'i' } },
-        { musculos: { $regex: search, $options: 'i' } },
-        { sistemaControl: { $regex: search, $options: 'i' } },
-        { material: { $regex: search, $options: 'i' } },
-        { observacion: { $regex: search, $options: 'i' } },
-        { recomendaciones: { $regex: search, $options: 'i' } },
+        { [`${pathTranslate}.nombre`]: { $regex: search, $options: 'i' } },
+        { [`${pathTranslate}.descripcion`]: { $regex: search, $options: 'i' } },
+        { [`${pathTranslate}.objetivos`]: { $regex: search, $options: 'i' } },
+        { [`${pathTranslate}.momentoDeUso`]: { $regex: search, $options: 'i' } },
+        { [`${pathTranslate}.contraccion`]: { $regex: search, $options: 'i' } },
+        { [`${pathTranslate}.tipoEstimulo`]: { $regex: search, $options: 'i' } },
+        { [`${pathTranslate}.musculos`]: { $regex: search, $options: 'i' } },
+        { [`${pathTranslate}.sistemaControl`]: { $regex: search, $options: 'i' } },
+        { [`${pathTranslate}.material`]: { $regex: search, $options: 'i' } },
+        { [`${pathTranslate}.observacion`]: { $regex: search, $options: 'i' } },
+        { [`${pathTranslate}.recomendaciones`]: { $regex: search, $options: 'i' } },
       ];
     }
 
@@ -56,7 +62,9 @@ export const getVideos = async (req: Request, res: Response) => {
     const videos = await VideoMongoModel.find(query)
       .skip(skip)
       .limit(limit)
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .lean();
+
     const videosLinks = await Promise.all(
       videos.map(async (video: any) => {
         if (video?.idVideoVimeo) {
@@ -65,12 +73,16 @@ export const getVideos = async (req: Request, res: Response) => {
             videoVimeo: getVideoVimeo,
           });
           return {
-            ...video._doc,
+            ...video,
             thumbnail,
             linkVideo,
           };
         }
-        return video._doc;
+        return {
+          ...video,
+          thumbnail: 'https://placehold.co/600x400?text=video%20not%20found',
+          linkVideo: '#',
+        };
       }),
     );
 
@@ -87,12 +99,13 @@ export const getVideoById = async (req: Request, res: Response) => {
 
   try {
     const _id = req.params.id;
+    const language = getRequestLanguage(req);
 
     if (!_id) {
       return res.status(400).json({ message: req.t('videos.validation.idRequired') });
     }
 
-    const video: any = await VideoMongoModel.findOne({ _id });
+    const video: any = await VideoMongoModel.findOne({ _id }).lean();
 
     if (video?.idVideoVimeo) {
       const getVideoVimeo = await getVimeoVideoById({ id: video.idVideoVimeo });
@@ -103,7 +116,7 @@ export const getVideoById = async (req: Request, res: Response) => {
       video._doc.linkVideo = linkVideo;
     }
 
-    return res.status(200).json({ video });
+    return res.status(200).json({ video: transformTranslatedDocument(video, language) });
   } catch (error) {
     req.logger.error({ status: 'error', code: 500, error: error.message });
     return res.status(401).json({ message: req.t('videos.detail.error') });
@@ -140,23 +153,78 @@ export const addVideo = async (req: Request, res: Response) => {
       return res.status(400).json({ message: req.t('videos.validation.fileRequired') });
     }
 
+    const language = getRequestLanguage(req);
+    const {
+      nombre,
+      descripcion,
+      nivelFisico,
+      objetivos,
+      momentoDeUso,
+      contraccion,
+      tipoEstimulo,
+      zonaCuerpo,
+      musculos,
+      sistemaControl,
+      series,
+      repeticiones,
+      areaContenido,
+      zonaPista,
+      tipoGolpe,
+      nivelJuego,
+      espacio,
+      material,
+      formato,
+      observacion,
+      recomendaciones,
+      plan,
+      semanas,
+    } = videoData;
+
     const result: any = await uploadVideoToVimeo({
       video: {
         filePath,
         name:
-          videoData.nombre ||
+          nombre ||
           req.file?.originalname ||
           `Video subido desde la plataforma ${new Date().toISOString()}`,
-        description: videoData.descripcion,
+        description: descripcion,
       },
       folderId: planVideoFolder,
       isPrivate: true,
     });
 
+    const translationData = {
+      [language]: {
+        nombre: nombre || '',
+        descripcion: descripcion || '',
+        nivelFisico: nivelFisico || '',
+        objetivos: objetivos || '',
+        momentoDeUso: momentoDeUso || '',
+        contraccion: contraccion || '',
+        tipoEstimulo: tipoEstimulo || '',
+        zonaCuerpo: zonaCuerpo || '',
+        musculos: musculos || '',
+        sistemaControl: sistemaControl || '',
+        series: series || '',
+        repeticiones: repeticiones || '',
+        areaContenido: areaContenido || '',
+        zonaPista: zonaPista || '',
+        tipoGolpe: tipoGolpe || '',
+        nivelJuego: nivelJuego || '',
+        espacio: espacio || '',
+        material: material || '',
+        formato: formato || '',
+        observacion: observacion || '',
+        recomendaciones: recomendaciones || '',
+      },
+    };
+
     await VideoMongoModel.create({
       _id: new ObjectId().toHexString(),
-      ...videoData,
       idVideoVimeo: result.uri.split('/').pop(),
+      plan,
+      semanas,
+      translate: translationData,
     });
 
     return res.status(200).json({
@@ -206,15 +274,18 @@ export const updateFileVideo = async (req: Request, res: Response) => {
       await deleteVimeoVideo({ idVideoVimeo });
     }
 
+    const language = getRequestLanguage(req);
+    const translate = getVideo.translate as any;
     const nameVideo =
-      getVideo.nombre ||
+      translate?.[language]?.nombre ||
+      translate?.es?.nombre ||
       req.file?.originalname ||
       `Video subido desde la plataforma ${new Date().toISOString()}`;
     const result: any = await uploadVideoToVimeo({
       video: {
         filePath: videoPath,
         name: nameVideo,
-        description: getVideo?.descripcion || '',
+        description: translate?.[language]?.descripcion || translate?.es?.descripcion || '',
       },
       folderId: planVideoFolder,
       isPrivate: true,
@@ -246,7 +317,7 @@ export const updateVideo = async (req: Request, res: Response) => {
       plan: JSON.parse(req.body?.plan || '[]'),
     };
     const videoData = UpdateVideoSchemaZod.parse(parseBody);
-    const { nombre, descripcion } = videoData;
+    const language = getRequestLanguage(req);
 
     if (!videoId) {
       return res.status(400).json({
@@ -254,7 +325,7 @@ export const updateVideo = async (req: Request, res: Response) => {
       });
     }
 
-    const getVideo = await VideoMongoModel.findOne({ _id: videoId });
+    const getVideo = await VideoMongoModel.findOne({ _id: videoId }).lean();
     if (!getVideo) {
       return res.status(404).json({
         message: 'Vídeo no encontrado',
@@ -266,18 +337,77 @@ export const updateVideo = async (req: Request, res: Response) => {
     const thumbnailBuffer = await extractBufferToFileThumbnail(req);
 
     const idVideoVimeo = getVideo?.idVideoVimeo;
-    const isChangeName = nombre !== getVideo?.nombre || descripcion !== getVideo?.descripcion;
-    const isUpdatedVimeo = isChangeName || videoPath || thumbnailBuffer;
+    const fields: any = {};
+
+    if (videoData.plan) fields['plan'] = videoData.plan;
+    if (videoData.semanas) fields['semanas'] = videoData.semanas;
+
+    const pathTranslate = `translate.${language}`;
+
+    const {
+      nombre,
+      descripcion,
+      nivelFisico,
+      objetivos,
+      momentoDeUso,
+      contraccion,
+      tipoEstimulo,
+      zonaCuerpo,
+      musculos,
+      sistemaControl,
+      series,
+      repeticiones,
+      areaContenido,
+      zonaPista,
+      tipoGolpe,
+      nivelJuego,
+      espacio,
+      material,
+      formato,
+      observacion,
+      recomendaciones,
+    } = videoData;
+
+    if (nombre) fields[`${pathTranslate}.nombre`] = nombre;
+    if (descripcion) fields[`${pathTranslate}.descripcion`] = descripcion;
+    if (nivelFisico) fields[`${pathTranslate}.nivelFisico`] = nivelFisico;
+    if (objetivos) fields[`${pathTranslate}.objetivos`] = objetivos;
+    if (momentoDeUso) fields[`${pathTranslate}.momentoDeUso`] = momentoDeUso;
+    if (contraccion) fields[`${pathTranslate}.contraccion`] = contraccion;
+    if (tipoEstimulo) fields[`${pathTranslate}.tipoEstimulo`] = tipoEstimulo;
+    if (zonaCuerpo) fields[`${pathTranslate}.zonaCuerpo`] = zonaCuerpo;
+    if (musculos) fields[`${pathTranslate}.musculos`] = musculos;
+    if (sistemaControl) fields[`${pathTranslate}.sistemaControl`] = sistemaControl;
+    if (series) fields[`${pathTranslate}.series`] = series;
+    if (repeticiones) fields[`${pathTranslate}.repeticiones`] = repeticiones;
+    if (areaContenido) fields[`${pathTranslate}.areaContenido`] = areaContenido;
+    if (zonaPista) fields[`${pathTranslate}.zonaPista`] = zonaPista;
+    if (tipoGolpe) fields[`${pathTranslate}.tipoGolpe`] = tipoGolpe;
+    if (nivelJuego) fields[`${pathTranslate}.nivelJuego`] = nivelJuego;
+    if (espacio) fields[`${pathTranslate}.espacio`] = espacio;
+    if (material) fields[`${pathTranslate}.material`] = material;
+    if (formato) fields[`${pathTranslate}.formato`] = formato;
+    if (observacion) fields[`${pathTranslate}.observacion`] = observacion;
+    if (recomendaciones) fields[`${pathTranslate}.recomendaciones`] = recomendaciones;
+
+    const translate = getVideo.translate as any;
+    const oldNombre = translate?.[language]?.nombre || translate?.es?.nombre;
+    const oldDescripcion = translate?.[language]?.descripcion || translate?.es?.descripcion;
+    const isChangeName = nombre && nombre !== oldNombre;
+    const isChangeDesc = descripcion && descripcion !== oldDescripcion;
+    const isUpdatedVimeo = isChangeName || isChangeDesc || videoPath || thumbnailBuffer;
 
     if (!videoPath && thumbnailBuffer) {
       await setThumbnailToVimeo({ idVideoVimeo, thumbnailBuffer });
     } else if (idVideoVimeo && isUpdatedVimeo) {
+      const nameToUse = nombre || oldNombre;
+      const descToUse = descripcion !== undefined ? descripcion : oldDescripcion;
       await updateVideoToVimeo({
         idVideoVimeo,
         filePath: videoPath,
         thumbnailBuffer,
-        name: nombre,
-        description: descripcion,
+        name: nameToUse,
+        description: descToUse,
       });
     }
 
@@ -285,15 +415,13 @@ export const updateVideo = async (req: Request, res: Response) => {
 
     const video = await VideoMongoModel.findOneAndUpdate(
       { _id: videoId },
-      {
-        $set: { ...videoData },
-      },
+      { $set: fields },
       { new: true },
-    );
+    ).lean();
 
     return res.status(200).json({
       message: req.t('videos.update.success'),
-      video,
+      video: video ? transformTranslatedDocument(video, language) : null,
     });
   } catch (error) {
     if (error instanceof ZodError) {

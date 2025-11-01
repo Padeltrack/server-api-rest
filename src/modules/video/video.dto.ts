@@ -24,6 +24,7 @@ export const CreateVideoSchemaZod = z.object({
   nivelJuego: z.string({ required_error: 'videos.validation.gameLevelRequired' }).optional(),
   espacio: z.string({ required_error: 'videos.validation.spaceRequired' }).optional(),
   material: z.string({ required_error: 'videos.validation.materialRequired' }).optional(),
+  formato: z.string({ required_error: 'videos.validation.formatRequired' }).optional(),
   tipoGolpe: z.string({ required_error: 'videos.validation.strokeTypeRequired' }).optional(),
   observacion: z.string({ required_error: 'videos.validation.observationRequired' }).optional(),
   recomendaciones: z
@@ -51,6 +52,7 @@ export const UpdateVideoSchemaZod = z.object({
   nivelJuego: z.string().optional(),
   espacio: z.string().optional(),
   material: z.string().optional(),
+  formato: z.string().optional(),
   tipoGolpe: z.string().optional(),
   observacion: z.string().optional(),
   recomendaciones: z.string().optional(),

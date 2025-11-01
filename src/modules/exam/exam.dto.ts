@@ -40,7 +40,11 @@ export const ExamGradeRegisterSchemaZod = z.object({
   answers: z.array(
     z.object({
       questionnaireId: z.string({ required_error: 'exams.validation.questionIdRequired' }),
-      score: z.number({ required_error: 'exams.validation.scoreRequired' }).min(0).max(10).positive(),
+      score: z
+        .number({ required_error: 'exams.validation.scoreRequired' })
+        .min(0)
+        .max(10)
+        .positive(),
     }),
   ),
 });

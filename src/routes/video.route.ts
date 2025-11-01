@@ -11,15 +11,23 @@ import { authenticate } from '../middleware/auth.middleware';
 import { SelectRoleModel } from '../modules/user/user.model';
 import { authorize } from '../middleware/roles.middleware';
 import { uploadVideo } from '../middleware/multer.middleware';
+import { translationCollectionMiddleware } from '../middleware/translation.middleware';
 
 const videoRoutes = Router();
 const pathVideo = '/video';
 
-videoRoutes.get(`${pathVideo}/all`, authenticate, authorize(SelectRoleModel.SuperAdmin), getVideos);
+videoRoutes.get(
+  `${pathVideo}/all`,
+  authenticate,
+  authorize(SelectRoleModel.SuperAdmin),
+  translationCollectionMiddleware,
+  getVideos,
+);
 videoRoutes.get(
   `${pathVideo}/:id`,
   authenticate,
   authorize(SelectRoleModel.SuperAdmin),
+  translationCollectionMiddleware,
   getVideoById,
 );
 videoRoutes.post(
